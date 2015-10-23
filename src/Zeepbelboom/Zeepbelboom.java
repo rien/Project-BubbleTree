@@ -1,47 +1,35 @@
 package Zeepbelboom;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by rien on 10/9/15.
  */
-public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection<E>{
+public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection<E> {
 
     protected int size;
     protected int aantalZeepbellen;
 
     protected Zeepbel<E> root;
 
-    public Zeepbelboom(int k){
+    public Zeepbelboom(int k) {
         this.root = new Zeepbel<E>(k, this);
         aantalZeepbellen = 1;
     }
 
-    public E getWortelSleutel(){
+    public E getWortelSleutel() {
         return root.getWortelSleutel();
     }
 
-    public Iterator<Zeepbel<E>> zeepbelIterator(){
+    public Iterator<Zeepbel<E>> zeepbelIterator() {
         List<Zeepbel<E>> list = new ArrayList<>(aantalZeepbellen);
-        addZeepbelInorder(root, list);
+        root.getRoot().traverseInorder(t -> {
+            Zeepbel<E> zb = t.getZeepbel();
+            if (zb.getRoot() == t) {
+                list.add(zb);
+            }
+        }, t -> true);
         return list.iterator();
-    }
-
-    /**
-     * loop over je toppe in inorde
-     * wanneer je een bubbleroot tegenkomt, voeg m toe aan de stack
-     * als je terugkeert, haal de root van de stack in de lijst
-     *
-     *
-     *
-     *
-     *
-     */
-    protected void addZeepbelInorder(Zeepbel<E> w, List<Zeepbel<E>> list){
-
     }
 
     public abstract void balanceer();
@@ -99,7 +87,9 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public Iterator<E> iterator() {
-        return null;
+        ArrayList<E> items = new ArrayList<>(size);
+        root.getRoot().traverseInorder(t -> items.add(t.getItem()), t -> true);
+        return items.iterator();
     }
 
     /**

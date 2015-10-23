@@ -77,32 +77,8 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
      */
     @Override
     public Iterator<E> iterator() {
-        @SuppressWarnings("unchecked")
         ArrayList<E> items = new ArrayList<>(size);
-        Stack<Top<E>> s = new Stack<>();
-        Top<E> t = root;
-        //Stop alle linkerkinderen in de stack
-        while (t != null && t.getZeepbel() == this){
-            s.push(t);
-            t = t.getLeftChild();
-        }
-        //Haal de toppen één voor één uit de stack
-        while (s.size() > 0) {
-            t = s.pop();
-
-            //Behandel de top.
-            items.add(t.getItem());
-
-
-            //Voeg de rechterkinderen toe
-            if (t.hasRight()){
-                t = t.getRightChild();
-                while (t != null && t.getZeepbel() == this){
-                    s.push(t);
-                    t = t.getLeftChild();
-                }
-            }
-        }
+        root.traverseInorder(t -> items.add(t.getItem()), t -> t.getZeepbel() == this);
         return items.iterator();
     }
 

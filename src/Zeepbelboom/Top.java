@@ -1,5 +1,11 @@
 package Zeepbelboom;
 
+import java.util.Iterator;
+import java.util.Stack;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 /**
  * Created by rien on 10/15/15.
  */
@@ -165,5 +171,35 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
     @Override
     public int compareTo(E o) {
         return item.compareTo(o);
+    }
+
+
+    public void traverseInorder(Consumer<Top<E>> consumer, Predicate<Top<E>> predicate){
+        Top<E> t = this;
+        Stack<Top<E>> s = new Stack<>();
+        //Stop alle linkerkinderen in de stack
+        while (t != null && predicate.test(t)){
+            s.push(t);
+            t = t.getLeftChild();
+        }
+        //Haal de toppen één voor één uit de stack
+        while (!s.isEmpty()) {
+            t = s.pop();
+
+            //Behandel de top.
+            consumer.accept(t);
+
+
+            //Voeg de rechterkinderen toe
+            if (t.hasRight()){
+                t = t.getRightChild();
+                while (t != null && predicate.test(t)){
+                    s.push(t);
+                    t = t.getLeftChild();
+                }
+            }
+        }
+
+
     }
 }

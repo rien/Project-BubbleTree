@@ -15,6 +15,7 @@ package Zeepbelboom;
  * - Neem K het ander kind van K. Neem K2 het grootse/kleinste kind binnen dezelfde zeepbel.
  * - Verwijder dit kind en plaats het op de plaats van P en plaats P de plaats van X.
  * Stel: ander kind van K2  (NU) is leeg:
+ *      Duw K2 bij P.
  *      Doe nu alsof K2 werd verwijderd en do zo verder.
  */
 public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
