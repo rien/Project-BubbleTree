@@ -34,6 +34,8 @@ public class TestZeepbel {
          *   0      3        7     9
          *       2     5
          *            4
+         *
+         *   Met 7, 8, 9 niet in de zeepbel.
          */
         items = new int[10];
         toppen = new ArrayList<>();

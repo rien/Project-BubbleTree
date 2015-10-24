@@ -1,5 +1,7 @@
 package Zeepbelboom;
 
+import com.sun.istack.internal.NotNull;
+
 import java.util.*;
 
 /**
@@ -10,26 +12,39 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     protected int size;
     protected int aantalZeepbellen;
 
-    protected Zeepbel<E> root;
+    protected Zeepbel<E> rootBubble;
 
     public Zeepbelboom(int k) {
-        this.root = new Zeepbel<E>(k, this);
+        this.rootBubble = new Zeepbel<E>(k, this);
         aantalZeepbellen = 1;
     }
 
     public E getWortelSleutel() {
-        return root.getWortelSleutel();
+        return rootBubble.getWortelSleutel();
     }
+
 
     public Iterator<Zeepbel<E>> zeepbelIterator() {
         List<Zeepbel<E>> list = new ArrayList<>(aantalZeepbellen);
-        root.getRoot().traverseInorder(t -> {
+        rootBubble.getRoot().traverseInorder(t -> {
             Zeepbel<E> zb = t.getZeepbel();
             if (zb.getRoot() == t) {
                 list.add(zb);
             }
         }, t -> true);
         return list.iterator();
+    }
+
+    public void setRootBubble(Zeepbel<E> rootBubble){
+        this.rootBubble = rootBubble;
+    }
+
+    public Zeepbel<E> getRootBubble(){
+        return rootBubble;
+    }
+
+    public Top<E> getRoot(){
+        return rootBubble.getRoot();
     }
 
     public abstract void balanceer();
@@ -74,7 +89,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public boolean contains(Object o) {
-        return false;
+        return getRoot().find((o)) != null;
     }
 
     /**
@@ -88,7 +103,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     @Override
     public Iterator<E> iterator() {
         ArrayList<E> items = new ArrayList<>(size);
-        root.getRoot().traverseInorder(t -> items.add(t.getItem()), t -> true);
+        rootBubble.getRoot().traverseInorder(t -> items.add(t.getItem()), t -> true);
         return items.iterator();
     }
 
@@ -110,7 +125,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        Object[] a = new Object[size];
+        Iterator<E> it = iterator();
+        int i = 0;
+        while (it.hasNext()){
+            a[i] = it.next();
+        }
+        return a;
     }
 
     /**
@@ -157,7 +178,16 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public <T> T[] toArray(T[] a) {
-        return null;
+        //TODO
+        if (a.length < size){
+            a = ((T[]) new Object[size]);
+        }
+        int i = 0;
+        Iterator<E> it= iterator();
+        while (i < a.length){
+            a[i++] = it.hasNext() ? (T)it.next() : null;
+        }
+        return a;
     }
 
     /**
@@ -243,7 +273,12 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        for (Object o: c){
+            if (!contains(o)){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -272,7 +307,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        return false;
+        boolean changed = false;
+        for (E e: c){
+            if (add(e)){
+                changed = true;
+            }
+        }
+        return changed;
     }
 
     /**
@@ -300,7 +341,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        boolean changed = false;
+        for(Object o: c){
+            if (remove(o)){
+                changed = true;
+            }
+        }
+        return changed;
     }
 
     /**
@@ -327,7 +374,17 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        Iterator<E> it = iterator();
+        E item;
+        boolean changed = false;
+        while (it.hasNext()){
+            item = it.next();
+            if (!c.contains(item)){
+                remove(item);
+                changed = true;
+            }
+        }
+        return changed;
     }
 
     /**

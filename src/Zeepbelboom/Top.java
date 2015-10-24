@@ -13,8 +13,6 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
 
     private E item;
-    private boolean removed;
-
 
     private Zeepbel<E> zeepbel;
 
@@ -23,12 +21,10 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
     private Top<E> rightChild;
 
     public Top(E item){
-        removed = false;
         this.item = item;
     }
 
     public Top(E item, Zeepbel<E> zeepbel){
-        removed = false;
         this.item = item;
         this.zeepbel = zeepbel;
     }
@@ -65,14 +61,6 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         this.item = item;
     }
 
-    public boolean isRemoved(){
-        return removed;
-    }
-
-    public void remove(){
-        this.removed = true;
-    }
-
     public boolean hasLeft(){
         return leftChild != null;
     }
@@ -104,8 +92,10 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         }
     }
 
-    public Top<E> find(E o){
-        int comp = item.compareTo(o);
+    public Top<E> find(Object o){
+        @SuppressWarnings("unchecked")
+        E item = (E) o;
+        int comp = item.compareTo(item);
         if (comp == 0){
             return this;
         }
@@ -113,7 +103,7 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         if (child == null){
             return null;
         } else {
-            return child.find(o);
+            return child.find(item);
         }
 
     }

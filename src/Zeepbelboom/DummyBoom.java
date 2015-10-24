@@ -8,6 +8,7 @@ public class DummyBoom<E extends Comparable<E>> extends Zeepbelboom<E> {
     public DummyBoom(int k) {
         super(k);
     }
+    }
 
     @Override
     public void balanceer() {
@@ -49,12 +50,12 @@ public class DummyBoom<E extends Comparable<E>> extends Zeepbelboom<E> {
      */
     @Override
     public boolean add(E o) {
-        if (root == null){
-            this.root = new Zeepbel<E>(Integer.MAX_VALUE, this, new Top<E>(o));
+        if (rootBubble == null){
+            this.rootBubble = new Zeepbel<E>(Integer.MAX_VALUE, this, new Top<E>(o));
             size++;
             return true;
         } else {
-            if(root.getRoot().add(o)){
+            if(rootBubble.getRoot().add(o)){
                 size++;
                 return true;
             } else {
@@ -66,7 +67,7 @@ public class DummyBoom<E extends Comparable<E>> extends Zeepbelboom<E> {
 
     public boolean remove(E o) {
 
-        Top<E> top = root.getRoot().find(o);
+        Top<E> top = rootBubble.getRoot().find(o);
         if (top == null){
             return false;
         } else {
