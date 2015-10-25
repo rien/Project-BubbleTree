@@ -29,4 +29,14 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
     public void balanceer() {
 
     }
+
+    @Override
+    public boolean add(E e) {
+        return false;
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return false;
+    }
 }
