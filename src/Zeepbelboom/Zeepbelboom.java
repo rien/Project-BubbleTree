@@ -89,7 +89,22 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public boolean contains(Object o) {
-        return getRoot().find((o)) != null;
+        @SuppressWarnings("unchecked")
+        E item = (E) o;
+        Top<E> top = getRoot();
+        int comp;
+        while (top != null){
+            comp = top.compareTo(item);
+            if (comp < 0){
+                top = top.getLeftChild();
+            } else  if (comp > 0){
+                top = top.getRightChild();
+            } else {
+                //Comp == 0, dus we hebben o gevonden.
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

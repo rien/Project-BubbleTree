@@ -92,6 +92,11 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         }
     }
 
+    /**
+     * Recursieve manier om een Top met item o terug te vinden.
+     *
+     * @return het kind van deze Top die o bevat, of null wanneer geen enkel kind o bevat.
+     */
     public Top<E> find(Object o){
         @SuppressWarnings("unchecked")
         E item = (E) o;
