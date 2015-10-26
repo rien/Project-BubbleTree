@@ -12,24 +12,26 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
 
     private int size;
     private final int maxSize;
-
     private Top<E> root;
     private Zeepbelboom<E> tree;
 
-    public Zeepbel(int maxSize, Zeepbelboom<E> tree){
-        if (maxSize < 2){
-            throw new IllegalArgumentException(String.format("Zeepbelboom heeft een" +
-                    "minimale maxSize-waarde van 2, maar kreeg  %d %n", maxSize));
-        }
-        this.maxSize = maxSize;
+    public Zeepbel(Zeepbelboom<E> tree){
+        this.maxSize = tree.getBubbleMaxSize();
         this.tree = tree;
         this.size = 0;
     }
 
-    public Zeepbel(int maxSize, Zeepbelboom<E> tree, Top<E> root){
-        this(maxSize, tree);
-        size = 1;
+    /**
+     * Alternate constructor which accepts a Top to be set as roo. Automatically sets the bubble of this
+     * top to the newly made bubble.
+     *
+     * @param tree of which this bubble is a part of.
+     * @param root which has to be the root of this bubble.
+     */
+    public Zeepbel(Zeepbelboom<E> tree, Top<E> root){
+        this(tree);
         this.root = root;
+        root.setZeepbel(this);
     }
 
     public Top<E> getRoot(){
@@ -43,7 +45,6 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     public E getWortelSleutel(){
         return root.getItem();
     }
-
 
     public int getMaxSize() {
         return maxSize;
@@ -69,6 +70,31 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
         return size == 0;
     }
 
+    /**
+     * @return true if you are not allowed to add another item to this bubble.
+     */
+    public boolean isFull(){
+        return size >= maxSize;
+    }
+
+    /**
+     * Method to tell this bubble an item has been added.
+     *
+     * @return true if the bubble is too big and has to be split up.
+     * @throws IllegalStateException if the size of the bubble is too big (maxSize + 2 or more).
+     */
+    public boolean topAdded(){
+        size++;
+        if (size > maxSize + 1){
+            throw new IllegalStateException("Bubble is too big!");
+        }
+        return size == maxSize + 1;
+    }
+
+    public void topsRemoved(int amount){
+        size -= amount;
+    }
+
 
     /**
      * Returns an iterator over elements of type {@code T}.
@@ -82,9 +108,12 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
         return items.iterator();
     }
 
-
-
-    public void clear() {
-
+    /**
+     * @return the size of the current bubble, for debugging purposes.
+     */
+    public int checkBubbleSize(){
+        ArrayList<E> items = new ArrayList<>(size);
+        root.traverseInorder(t -> items.add(t.getItem()), t -> t.getZeepbel() == this);
+        return items.size();
     }
 }

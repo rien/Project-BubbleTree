@@ -39,7 +39,7 @@ public class TestZeepbel {
          */
         items = new int[10];
         toppen = new ArrayList<>();
-        zeepbel = new Zeepbel<Integer>(10,null);
+        zeepbel = new Zeepbel<Integer>(null);
         zeepbelToppen = new HashSet<>();
         for (int i = 0; i < items.length; i++) {
             items[i] = i; //i+1 for convenience

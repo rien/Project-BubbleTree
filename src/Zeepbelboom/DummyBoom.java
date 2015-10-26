@@ -8,12 +8,6 @@ public class DummyBoom<E extends Comparable<E>> extends Zeepbelboom<E> {
     public DummyBoom(int k) {
         super(k);
     }
-    }
-
-    @Override
-    public void balanceer() {
-
-    }
 
     /**
      * Ensures that this collection contains the specified element (optional
@@ -51,7 +45,7 @@ public class DummyBoom<E extends Comparable<E>> extends Zeepbelboom<E> {
     @Override
     public boolean add(E o) {
         if (rootBubble == null){
-            this.rootBubble = new Zeepbel<E>(Integer.MAX_VALUE, this, new Top<E>(o));
+            this.rootBubble = new Zeepbel<E>(this, new Top<E>(o));
             size++;
             return true;
         } else {
@@ -62,6 +56,31 @@ public class DummyBoom<E extends Comparable<E>> extends Zeepbelboom<E> {
                 return false;
             }
         }
+    }
+
+    /**
+     * Removes a single instance of the specified element from this
+     * collection, if it is present (optional operation).  More formally,
+     * removes an element <tt>e</tt> such that
+     * <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt>, if
+     * this collection contains one or more such elements.  Returns
+     * <tt>true</tt> if this collection contained the specified element (or
+     * equivalently, if this collection changed as a result of the call).
+     *
+     * @param o element to be removed from this collection, if present
+     * @return <tt>true</tt> if an element was removed as a result of this call
+     * @throws ClassCastException            if the type of the specified element
+     *                                       is incompatible with this collection
+     *                                       (<a href="#optional-restrictions">optional</a>)
+     * @throws NullPointerException          if the specified element is null and this
+     *                                       collection does not permit null elements
+     *                                       (<a href="#optional-restrictions">optional</a>)
+     * @throws UnsupportedOperationException if the <tt>remove</tt> operation
+     *                                       is not supported by this collection
+     */
+    @Override
+    public boolean remove(Object o) {
+        return false;
     }
 
 

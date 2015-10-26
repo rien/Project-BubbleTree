@@ -12,11 +12,6 @@ public class Zeepbelboom2<E extends Comparable<E>> extends Zeepbelboom<E> {
         super(k);
     }
 
-    @Override
-    public void balanceer() {
-
-    }
-
     /**
      * Ensures that this collection contains the specified element (optional
      * operation).  Returns <tt>true</tt> if this collection changed as a

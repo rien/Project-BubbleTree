@@ -16,7 +16,7 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
     private Zeepbel<E> zeepbel;
 
-    private  Top<E> parent;
+    private Top<E> parent;
     private Top<E> leftChild;
     private Top<E> rightChild;
 
@@ -24,6 +24,9 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         this.item = item;
     }
 
+    /**
+     *@deprecated
+     */
     public Top(E item, Zeepbel<E> zeepbel){
         this.item = item;
         this.zeepbel = zeepbel;
@@ -33,16 +36,19 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         return leftChild;
     }
 
-    public void setLeftChild(Top<E> leftChild) {
-        this.leftChild = leftChild;
-    }
-
     public Top<E> getParent() {
         return parent;
     }
 
-    public void setParent(Top<E> parent) {
+    private void setParent(Top<E> parent) {
         this.parent = parent;
+    }
+
+    public void setLeftChild(Top<E> leftChild) {
+        this.leftChild = leftChild;
+        if (leftChild != null){
+            leftChild.setParent(this);
+        }
     }
 
     public Top<E> getRightChild() {
@@ -51,6 +57,17 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
     public void setRightChild(Top<E> rightChild) {
         this.rightChild = rightChild;
+        if (rightChild != null){
+            rightChild.setParent(this);
+        }
+    }
+
+    public void setChild(Top<E> child){
+        if (compareTo(child.getItem()) < 0){
+            setLeftChild(child);
+        } else {
+            setRightChild(child);
+        }
     }
 
     public E getItem() {
@@ -69,14 +86,33 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         return rightChild != null;
     }
 
+    public boolean leftChildInSameBubble(){
+        return leftChild.getZeepbel() == this.getZeepbel();
+    }
+
+    public boolean rightChildInSameBubble(){
+        return rightChild.getZeepbel() == this.getZeepbel();
+    }
+
     public Zeepbel<E> getZeepbel() {
         return zeepbel;
     }
 
-    public void setZeepbel(Zeepbel<E> zeepbel){
+    /**
+     * Voegt de huide top toe aan de zeepbel.
+     * @param zeepbel
+     * @return true wanneer door deze toevoeging de zeepbel moet gesplitst worden.
+     */
+    public boolean setZeepbel(Zeepbel<E> zeepbel){
         this.zeepbel = zeepbel;
+        return zeepbel.topAdded();
     }
 
+    /**
+     * Recursive method to add an item to one of the children of this Top.
+     * @return true if the item was added, false if the item was already in one of the children.
+     * @deprecated
+     */
     public boolean add(E o){
         int comp = item.compareTo(o);
         if (comp == 0){
@@ -85,7 +121,6 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         Top<E> child = comp < 0 ? leftChild : rightChild;
         if (child == null){
             child = new Top<E>(o);
-            child.setParent(this);
             return true;
         } else {
             return child.add(o);
@@ -94,8 +129,8 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
     /**
      * Recursieve manier om een Top met item o terug te vinden.
-     *
      * @return het kind van deze Top die o bevat, of null wanneer geen enkel kind o bevat.
+     * @deprecated
      */
     public Top<E> find(Object o){
         @SuppressWarnings("unchecked")
@@ -112,8 +147,6 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         }
 
     }
-
-
 
     @Override
     public int hashCode() {
@@ -168,7 +201,10 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         return item.compareTo(o);
     }
 
-
+    /**
+     * @param consumer which accepts the next top when the tree is traversed inorder.
+     * @param predicate to which a new top has to comply before it can be traversed.
+     */
     public void traverseInorder(Consumer<Top<E>> consumer, Predicate<Top<E>> predicate){
         Top<E> t = this;
         Stack<Top<E>> s = new Stack<>();

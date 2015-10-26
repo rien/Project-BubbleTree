@@ -10,19 +10,24 @@ import java.util.*;
 public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection<E> {
 
     protected int size;
+    protected final int bubbleMaxSize;
     protected int aantalZeepbellen;
 
     protected Zeepbel<E> rootBubble;
 
     public Zeepbelboom(int k) {
-        this.rootBubble = new Zeepbel<E>(k, this);
-        aantalZeepbellen = 1;
+        if (k < 2){
+            throw new IllegalArgumentException(String.format("Zeepbelboom heeft een" +
+                    "minimale k-waarde van 2, maar kreeg  %d %n", k));
+        }
+        size = 0;
+        aantalZeepbellen = 0;
+        bubbleMaxSize = k;
     }
 
     public E getWortelSleutel() {
         return rootBubble.getWortelSleutel();
     }
-
 
     public Iterator<Zeepbel<E>> zeepbelIterator() {
         List<Zeepbel<E>> list = new ArrayList<>(aantalZeepbellen);
@@ -47,7 +52,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         return rootBubble.getRoot();
     }
 
-    public abstract void balanceer();
+    public int getBubbleMaxSize(){return bubbleMaxSize;}
 
     /**
      * Returns the number of elements in this collection.  If this collection
@@ -348,6 +353,8 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public void clear() {
-
+        size = 0;
+        rootBubble = null;
+        aantalZeepbellen = 0;
     }
 }
