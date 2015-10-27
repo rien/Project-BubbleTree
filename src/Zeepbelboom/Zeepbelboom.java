@@ -1,7 +1,5 @@
 package Zeepbelboom;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.*;
 
 /**
@@ -54,19 +52,39 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
 
     public int getBubbleMaxSize(){return bubbleMaxSize;}
 
+    protected void splitBubbleAlt(Top<E> parent, Top<E> root, Zeepbel<E> bubble){
+        Top<E> rightRoot = root.getRightChild();
+        Top<E> leftRoot = root.getLeftChild();
+        // Zet de rechterwortel als wortel van de rechterzeepbel
+        bubble.setRoot(rightRoot);
+        // Vorm een nieuwe zeepbel
+        Zeepbel<E> newBubble = new Zeepbel<E>(this);
+        // Alle kinderen van de nieuwe zeepbelwortel die nog in de oude zeepbel zitten worden lid van de nieuwe zeepbel.
+        leftRoot.traverseInorder(t -> t.setZeepbel(newBubble), t -> t.getZeepbel() == bubble);
+        // Maak de linkerwortel de wortel van de linkerzeepbel
+        newBubble.setRoot(leftRoot);
+        // De huidige zeepbel bevat de toppen uit de nieuwe zeepbel niet meer en ook niet de opgeborrelde top.
+        bubble.topsRemoved(newBubble.size() + 1);
+        // Duw de huidige root omhoog
+        pushRootUp(parent,root);
+    }
+
     /**
      *
-     * @param newRoot
-     * @param oldBubble
+     * @param leftRoot
+     * @param rightRoot
+     * @param bubble
      */
-    protected void fixBubble(Top<E> newRoot, Zeepbel<E> oldBubble){
+
+    protected void splitBubble(Top<E> leftRoot,Top<E> rightRoot, Zeepbel<E> bubble){
+        bubble.setRoot(rightRoot);
         //Vorm een nieuwe zeepbel
         Zeepbel<E> newBubble = new Zeepbel<E>(this);
         //Alle kinderen van de nieuwe zeepbelwortel die nog in de oude zeepbel zitten worden lid van de nieuwe zeepbel.
-        newRoot.traverseInorder(t -> t.setZeepbel(newBubble),t -> t.getZeepbel() == oldBubble);
-        newBubble.setRoot(newRoot);
+        leftRoot.traverseInorder(t -> t.setZeepbel(newBubble), t -> t.getZeepbel() == bubble);
+        newBubble.setRoot(leftRoot);
         //De huidige zeepbel bevat de toppen uit de nieuwe zeepbel niet meer en ook niet de opgeborrelde top.
-        oldBubble.topsRemoved(newBubble.size() + 1);
+        bubble.topsRemoved(newBubble.size() + 1);
     }
 
     /**
@@ -87,11 +105,12 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
             parent.setChild(top);
             Zeepbel<E> parentBubble = parent.getZeepbel();
             if (top.setZeepbel(parentBubble)) {
-                splitBubble(parentBubble);
+                shrinkBubble(parentBubble);
             }
         }
-
     }
+
+
 
 
 
@@ -184,13 +203,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         Top<E> child = new Top<E>(e);
         parent.setChild(child);
         if(child.setZeepbel(zb)){ //The bubble is full and this has to be solved.
-            splitBubble(zb);
+            shrinkBubble(zb);
         }
         size++;
         return true;
     }
 
-    protected abstract void splitBubble(Zeepbel<E> bubble);
+    protected abstract void shrinkBubble(Zeepbel<E> bubble);
 
     /**
      * Returns <tt>true</tt> if this collection contains the specified element.

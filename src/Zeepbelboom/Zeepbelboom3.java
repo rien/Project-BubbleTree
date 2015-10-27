@@ -15,7 +15,7 @@ public class Zeepbelboom3<E extends Comparable<E>> extends Zeepbelboom<E> {
     }
 
     @Override
-    protected void splitBubble(Zeepbel<E> bubble) {
+    protected void shrinkBubble(Zeepbel<E> bubble) {
 
     }
 

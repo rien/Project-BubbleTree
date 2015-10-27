@@ -13,15 +13,14 @@ public class Zeepbelboom2<E extends Comparable<E>> extends Zeepbelboom<E> {
     }
 
     @Override
-    protected void splitBubble(Zeepbel<E> bubble) {
+    protected void shrinkBubble(Zeepbel<E> bubble) {
         Top<E> parent = bubble.getRoot().getParent();
         balanceBubble(bubble);
         Top<E> root = bubble.getRoot();
         Top<E> leftRoot = root.getLeftChild();
         Top<E> rightRoot = root.getRightChild();
-        bubble.setRoot(rightRoot);
 
-        fixBubble(leftRoot, bubble);
+        splitBubble(leftRoot,rightRoot, bubble);
         pushRootUp(parent, root);
     }
 
@@ -29,18 +28,22 @@ public class Zeepbelboom2<E extends Comparable<E>> extends Zeepbelboom<E> {
     private void balanceBubble(Zeepbel<E> zb){
         List<Top<E>> nodes = new ArrayList<>();
         List<Top<E>> children = new ArrayList<>();
-        getRoot().traverseInorder(t -> {
+        zb.getRoot().traverseInorder(t -> {
                     nodes.add(t);
-                    if (!t.hasLeft() || t.getLeftChild().getZeepbel() != zb){
+                    if (!t.hasLeft() || t.getLeftChild().getZeepbel() != zb) {
                         children.add(t.getLeftChild());
                     }
-                    if(!t.hasRight() || t.getRightChild().getZeepbel() != zb){
+                    if (!t.hasRight() || t.getRightChild().getZeepbel() != zb) {
                         children.add(t.getRightChild());
                     }
                 },
-                t -> t.getZeepbel() == zb);
-
+                t -> t.getZeepbel() == zb
+        );
+        //TODO: Midden op de juiste manier?
         Top<E> newRoot = listToTree(nodes,0,nodes.size()-1);
+        if (newRoot == null){
+            throw new IllegalStateException();
+        }
         newRoot.removeParent();
         zb.setRoot(newRoot);
         int nextChild = 0;
@@ -55,11 +58,8 @@ public class Zeepbelboom2<E extends Comparable<E>> extends Zeepbelboom<E> {
     }
 
     private Top<E> listToTree(List<Top<E>> list, int start, int end){
-        if (start == end){
-            Top<E> leaf = list.get(start);
-            leaf.setRightChild(null);
-            leaf.setLeftChild(null);
-            return leaf;
+        if (end < start){
+            return null;
         } else {
             int mid = start + ((end - start)/2);
             Top<E> root = list.get(mid);

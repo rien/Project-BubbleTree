@@ -27,11 +27,12 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
 
     @Override
     @SuppressWarnings("SuspiciousNameCombination")
-    protected void splitBubble(Zeepbel<E> bubble){
+    protected void shrinkBubble(Zeepbel<E> bubble){
         Top<E> a = bubble.getRoot();
         Top<E> parent = a.getParent();
         Top<E> up; //Top die 'opborrelt';
-        Top<E> newBubbleRoot; //Top die de root vormt van de nieuwe zeepbel
+        Top<E> newBubbleRoot; //Top die de root moet worden van de nieuwe zeepbel
+        Top<E> oldBubbleRoot; //Top die de root moet worden van de oude zeepbel
         if (!(a.hasLeft() && a.leftChildInSameBubble())){
             //Roteer de eerste drie toppen in de zeepbel:
             Top<E> b = a.getRightChild();
@@ -47,7 +48,7 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
                 Top<E> x = b.getLeftChild();
                 a.setRightChild(x);
                 b.setLeftChild(a);
-                bubble.setRoot(c);
+                oldBubbleRoot = c;
                 up = b;
             } else {
                 /* P\               P\
@@ -63,7 +64,7 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
                 b.setLeftChild(y);
                 c.setLeftChild(a);
                 c.setRightChild(b);
-                bubble.setRoot(b);
+                oldBubbleRoot = b;
                 up = c;
             }
         } else if (!(a.hasRight() && a.rightChildInSameBubble())){
@@ -80,7 +81,7 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
                 Top<E> y = b.getRightChild();
                 a.setLeftChild(y);
                 b.setRightChild(a);
-                bubble.setRoot(c);
+                oldBubbleRoot = c;
                 up = b;
             } else {
                 /*     P\          P\
@@ -96,7 +97,7 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
                 b.setRightChild(x);
                 c.setLeftChild(b);
                 c.setRightChild(a);
-                bubble.setRoot(b);
+                oldBubbleRoot = b;
                 up = c;
             }
         } else {
@@ -109,11 +110,11 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
             Top<E> b = a.getLeftChild();
             Top<E> c = a.getRightChild();
             newBubbleRoot = b;
-            bubble.setRoot(c);
+            oldBubbleRoot = c;
             up = a;
         }
 
-        fixBubble(newBubbleRoot, bubble);
+        splitBubble(newBubbleRoot,oldBubbleRoot, bubble);
         pushRootUp(parent,up);
     }
 }
