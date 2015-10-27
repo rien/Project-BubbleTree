@@ -17,11 +17,7 @@ public class Zeepbelboom2<E extends Comparable<E>> extends Zeepbelboom<E> {
         Top<E> parent = bubble.getRoot().getParent();
         balanceBubble(bubble);
         Top<E> root = bubble.getRoot();
-        Top<E> leftRoot = root.getLeftChild();
-        Top<E> rightRoot = root.getRightChild();
-
-        splitBubble(leftRoot,rightRoot, bubble);
-        pushRootUp(parent, root);
+        splitBubble(parent, root, bubble);
     }
 
 

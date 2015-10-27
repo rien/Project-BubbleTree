@@ -28,15 +28,12 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
     @Override
     @SuppressWarnings("SuspiciousNameCombination")
     protected void shrinkBubble(Zeepbel<E> bubble){
-        Top<E> a = bubble.getRoot();
-        Top<E> parent = a.getParent();
-        Top<E> up; //Top die 'opborrelt';
-        Top<E> newBubbleRoot; //Top die de root moet worden van de nieuwe zeepbel
-        Top<E> oldBubbleRoot; //Top die de root moet worden van de oude zeepbel
+        Top<E> a = bubble.getRoot(); //Huidige root
+        Top<E> parent = a.getParent(); //Parent van de huidige root die in een bovenliggende zeepbel zit.
+        Top<E> up; //Top die aan de bovenliggende zeepbel wordt toegevoegd.
         if (!(a.hasLeft() && a.leftChildInSameBubble())){
             //Roteer de eerste drie toppen in de zeepbel:
             Top<E> b = a.getRightChild();
-            newBubbleRoot = a;
             if (b.hasRight() && b.rightChildInSameBubble()){
                 /* P\                P\
                  *   A                 B
@@ -48,7 +45,6 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
                 Top<E> x = b.getLeftChild();
                 a.setRightChild(x);
                 b.setLeftChild(a);
-                oldBubbleRoot = c;
                 up = b;
             } else {
                 /* P\               P\
@@ -64,12 +60,10 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
                 b.setLeftChild(y);
                 c.setLeftChild(a);
                 c.setRightChild(b);
-                oldBubbleRoot = b;
                 up = c;
             }
         } else if (!(a.hasRight() && a.rightChildInSameBubble())){
             Top<E> b = a.getLeftChild();
-            newBubbleRoot = a;
             if (b.hasLeft() && b.leftChildInSameBubble()){
                 /*     P\           P\
                  *      A            B
@@ -77,11 +71,9 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
                  *  C/ \Y        W/\X Y/\Z
                  * W/\X
                  */
-                Top<E> c = b.getLeftChild();
                 Top<E> y = b.getRightChild();
                 a.setLeftChild(y);
                 b.setRightChild(a);
-                oldBubbleRoot = c;
                 up = b;
             } else {
                 /*     P\          P\
@@ -97,7 +89,6 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
                 b.setRightChild(x);
                 c.setLeftChild(b);
                 c.setRightChild(a);
-                oldBubbleRoot = b;
                 up = c;
             }
         } else {
@@ -107,14 +98,8 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
              *
              * Hier zitten A, B, en C in dezelfde zeepbel. Er moet dus niet geroteerd worden, enkel gesplitst.
              */
-            Top<E> b = a.getLeftChild();
-            Top<E> c = a.getRightChild();
-            newBubbleRoot = b;
-            oldBubbleRoot = c;
             up = a;
         }
-
-        splitBubble(newBubbleRoot,oldBubbleRoot, bubble);
-        pushRootUp(parent,up);
+        splitBubble(parent, up, bubble);
     }
 }

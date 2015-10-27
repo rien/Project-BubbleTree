@@ -52,7 +52,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
 
     public int getBubbleMaxSize(){return bubbleMaxSize;}
 
-    protected void splitBubbleAlt(Top<E> parent, Top<E> root, Zeepbel<E> bubble){
+    protected void splitBubble(Top<E> parent, Top<E> root, Zeepbel<E> bubble){
         Top<E> rightRoot = root.getRightChild();
         Top<E> leftRoot = root.getLeftChild();
         // Zet de rechterwortel als wortel van de rechterzeepbel
@@ -66,25 +66,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         // De huidige zeepbel bevat de toppen uit de nieuwe zeepbel niet meer en ook niet de opgeborrelde top.
         bubble.topsRemoved(newBubble.size() + 1);
         // Duw de huidige root omhoog
-        pushRootUp(parent,root);
-    }
-
-    /**
-     *
-     * @param leftRoot
-     * @param rightRoot
-     * @param bubble
-     */
-
-    protected void splitBubble(Top<E> leftRoot,Top<E> rightRoot, Zeepbel<E> bubble){
-        bubble.setRoot(rightRoot);
-        //Vorm een nieuwe zeepbel
-        Zeepbel<E> newBubble = new Zeepbel<E>(this);
-        //Alle kinderen van de nieuwe zeepbelwortel die nog in de oude zeepbel zitten worden lid van de nieuwe zeepbel.
-        leftRoot.traverseInorder(t -> t.setZeepbel(newBubble), t -> t.getZeepbel() == bubble);
-        newBubble.setRoot(leftRoot);
-        //De huidige zeepbel bevat de toppen uit de nieuwe zeepbel niet meer en ook niet de opgeborrelde top.
-        bubble.topsRemoved(newBubble.size() + 1);
+        pushRootUp(parent, root);
     }
 
     /**
