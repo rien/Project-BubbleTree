@@ -17,9 +17,9 @@ import static CustomAssert.AssertBool.assertTrue;
 @Ignore
 public class TestZeepbelBoom {
 
-    private static int K = 3;
-    private static int TEST_SIZE = 10;
-    private static int SEED = 587994422;
+    private static int K = 7;
+    private static int TEST_SIZE = 10000;
+    private static int SEED = 587884422;
 
     Zeepbelboom<Integer> zeepbelboom;
     ArrayList<Integer> items;
@@ -27,17 +27,18 @@ public class TestZeepbelBoom {
     @Before
     public void init(){
         items = new ArrayList<>();
-        zeepbelboom = new Zeepbelboom1<Integer>(K);
+        zeepbelboom = new Zeepbelboom2<Integer>(K);
         for (int i = 0; i < TEST_SIZE; i++) {
             items.add(i);
         }
         Collections.shuffle(items, new Random(SEED));
-
+        assertTrue(zeepbelboom.addAll(items));
+        Top<Integer> root = zeepbelboom.getRoot();
+        assertTrue(zeepbelboom.size() == items.size());
     }
 
     @Test
     public void testAdd(){
-        assertTrue(zeepbelboom.addAll(items));
         items.forEach(i -> assertTrue(String.format("Item %d not in zeepbelboom!", i),zeepbelboom.contains(i)));
     }
 

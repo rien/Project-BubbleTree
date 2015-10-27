@@ -1,7 +1,7 @@
 package Zeepbelboom;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rien on 10/15/15.
@@ -12,66 +12,62 @@ public class Zeepbelboom2<E extends Comparable<E>> extends Zeepbelboom<E> {
         super(k);
     }
 
-    /**
-     * Ensures that this collection contains the specified element (optional
-     * operation).  Returns <tt>true</tt> if this collection changed as a
-     * result of the call.  (Returns <tt>false</tt> if this collection does
-     * not permit duplicates and already contains the specified element.)<p>
-     * <p>
-     * Collections that support this operation may place limitations on what
-     * elements may be added to this collection.  In particular, some
-     * collections will refuse to add <tt>null</tt> elements, and others will
-     * impose restrictions on the type of elements that may be added.
-     * Collection classes should clearly specify in their documentation any
-     * restrictions on what elements may be added.<p>
-     * <p>
-     * If a collection refuses to add a particular element for any reason
-     * other than that it already contains the element, it <i>must</i> throw
-     * an exception (rather than returning <tt>false</tt>).  This preserves
-     * the invariant that a collection always contains the specified element
-     * after this call returns.
-     *
-     * @param e element whose presence in this collection is to be ensured
-     * @return <tt>true</tt> if this collection changed as a result of the
-     * call
-     * @throws UnsupportedOperationException if the <tt>add</tt> operation
-     *                                       is not supported by this collection
-     * @throws ClassCastException            if the class of the specified element
-     *                                       prevents it from being added to this collection
-     * @throws NullPointerException          if the specified element is null and this
-     *                                       collection does not permit null elements
-     * @throws IllegalArgumentException      if some property of the element
-     *                                       prevents it from being added to this collection
-     * @throws IllegalStateException         if the element cannot be added at this
-     *                                       time due to insertion restrictions
-     */
     @Override
-    public boolean add(E e) {
-        return false;
+    protected void splitBubble(Zeepbel<E> bubble) {
+        Top<E> parent = bubble.getRoot().getParent();
+        balanceBubble(bubble);
+        Top<E> root = bubble.getRoot();
+        Top<E> leftRoot = root.getLeftChild();
+        Top<E> rightRoot = root.getRightChild();
+        bubble.setRoot(rightRoot);
+
+        fixBubble(leftRoot, bubble);
+        pushRootUp(parent, root);
     }
 
-    /**
-     * Removes a single instance of the specified element from this
-     * collection, if it is present (optional operation).  More formally,
-     * removes an element <tt>e</tt> such that
-     * <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt>, if
-     * this collection contains one or more such elements.  Returns
-     * <tt>true</tt> if this collection contained the specified element (or
-     * equivalently, if this collection changed as a result of the call).
-     *
-     * @param o element to be removed from this collection, if present
-     * @return <tt>true</tt> if an element was removed as a result of this call
-     * @throws ClassCastException            if the type of the specified element
-     *                                       is incompatible with this collection
-     *                                       (<a href="#optional-restrictions">optional</a>)
-     * @throws NullPointerException          if the specified element is null and this
-     *                                       collection does not permit null elements
-     *                                       (<a href="#optional-restrictions">optional</a>)
-     * @throws UnsupportedOperationException if the <tt>remove</tt> operation
-     *                                       is not supported by this collection
-     */
-    @Override
-    public boolean remove(Object o) {
-        return false;
+
+    private void balanceBubble(Zeepbel<E> zb){
+        List<Top<E>> nodes = new ArrayList<>();
+        List<Top<E>> children = new ArrayList<>();
+        getRoot().traverseInorder(t -> {
+                    nodes.add(t);
+                    if (!t.hasLeft() || t.getLeftChild().getZeepbel() != zb){
+                        children.add(t.getLeftChild());
+                    }
+                    if(!t.hasRight() || t.getRightChild().getZeepbel() != zb){
+                        children.add(t.getRightChild());
+                    }
+                },
+                t -> t.getZeepbel() == zb);
+
+        Top<E> newRoot = listToTree(nodes,0,nodes.size()-1);
+        newRoot.removeParent();
+        zb.setRoot(newRoot);
+        int nextChild = 0;
+        for (Top<E> t : nodes) {
+            if (!t.hasLeft()){
+                t.setLeftChild(children.get(nextChild++));
+            }
+            if (!t.hasRight()){
+                t.setRightChild(children.get(nextChild++));
+            }
+        }
     }
+
+    private Top<E> listToTree(List<Top<E>> list, int start, int end){
+        if (start == end){
+            Top<E> leaf = list.get(start);
+            leaf.setRightChild(null);
+            leaf.setLeftChild(null);
+            return leaf;
+        } else {
+            int mid = start + ((end - start)/2);
+            Top<E> root = list.get(mid);
+            root.setLeftChild(listToTree(list, start, mid - 1));
+            root.setRightChild(listToTree(list, mid + 1, end));
+            return root;
+        }
+    }
+
+
 }

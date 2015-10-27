@@ -11,7 +11,7 @@ import org.junit.runner.notification.Failure;
 public class RunAllTests {
 
     public static void main(String[] args) {
-        Result result = JUnitCore.runClasses(TestZeepbel.class, TestZeepbelBoom.class, RandomItemStressTest.class);
+        Result result = JUnitCore.runClasses(TestZeepbelBoom.class, RandomItemStressTest.class);
         for (Failure failure : result.getFailures()) {
             System.out.printf("%s: %s%n", failure.getTestHeader(), failure.getMessage());
             System.out.println(failure.getTrace());

@@ -26,48 +26,10 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
     }
 
     @Override
-    public boolean add(E e) {
-        //Als de boom leeg is maken we de eerste zeepbel aan.
-        if (isEmpty() || getRoot() == null){
-            Zeepbel<E> rootBubble = new Zeepbel<E>(this, new Top<E>(e));
-
-            setRootBubble(rootBubble);
-            size++;
-            return true;
-        }
-
-        //Zoek de parent van de toe te voegen top.
-        Top<E> top = getRoot();
-        Top<E> parent = null;
-        int comp;
-        while (top != null){
-            comp = top.compareTo(e);
-            parent = top;
-            if (comp < 0){
-                top = parent.getLeftChild();
-            } else if (comp > 0){
-                top = parent.getRightChild();
-            } else {
-                // e is al in de zeepbelboom.
-                return false;
-            }
-        }
-
-        //Nu is parent de Top waaraan het nieuwe item e moet toegevoegd worden.
-        Zeepbel<E> zb = parent.getZeepbel();
-        Top<E> child = new Top<E>(e);
-        parent.setChild(child);
-        if(child.setZeepbel(zb)){ //The bubble is full and this has to be solved.
-            splitBubble(zb);
-        }
-        size++;
-        return true;
-    }
-
     @SuppressWarnings("SuspiciousNameCombination")
-    private void splitBubble(Zeepbel<E> bubble){
+    protected void splitBubble(Zeepbel<E> bubble){
         Top<E> a = bubble.getRoot();
-        Top<E> p = a.getParent();
+        Top<E> parent = a.getParent();
         Top<E> up; //Top die 'opborrelt';
         Top<E> newBubbleRoot; //Top die de root vormt van de nieuwe zeepbel
         if (!(a.hasLeft() && a.leftChildInSameBubble())){
@@ -82,7 +44,7 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
                  *      Y/\Z
                  */
                 Top<E> c = b.getRightChild();
-                Top<E> x = a.getRightChild();
+                Top<E> x = b.getLeftChild();
                 a.setRightChild(x);
                 b.setLeftChild(a);
                 bubble.setRoot(c);
@@ -95,8 +57,8 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
                  *  X/\Y
                  */
                 Top<E> c = b.getLeftChild();
-                Top<E> x = c.getRightChild();
-                Top<E> y = c.getLeftChild();
+                Top<E> x = c.getLeftChild();
+                Top<E> y = c.getRightChild();
                 a.setRightChild(x);
                 b.setLeftChild(y);
                 c.setLeftChild(a);
@@ -151,30 +113,7 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
             up = a;
         }
 
-        //Vorm een nieuwe zeepbel
-        Zeepbel<E> newBubble = new Zeepbel<E>(this, newBubbleRoot);
-        //Alle kinderen van de nieuwe zeepbelwortel die nog in de oude zeepbel zitten worden lid van de nieuwe zeepbel.
-        newBubbleRoot.traverseInorder(t -> t.setZeepbel(newBubble),t -> t.getZeepbel() == bubble);
-        //De huidige zeepbel bevat de toppen uit de nieuwe zeepbel niet meer en ook niet de opgeborrelde top.
-        bubble.topsRemoved(newBubble.size() - 1);
-
-        //Laat nu de gekozen top 'opborrelen';
-        if(p == null){
-            //We zitten bij de root en moeten een nieuwe bubbel aanmaken
-            Zeepbel<E> rootBubble = new Zeepbel<E>(this, up);
-            up.setZeepbel(rootBubble);
-            setRootBubble(rootBubble);
-        } else {
-            Zeepbel<E> parentBubble = p.getZeepbel();
-            if (up.setZeepbel(parentBubble)) {
-                splitBubble(parentBubble);
-            }
-        }
-    }
-
-
-    @Override
-    public boolean remove(Object o) {
-        throw new UnsupportedOperationException();
+        fixBubble(newBubbleRoot, bubble);
+        pushRootUp(parent,up);
     }
 }

@@ -55,6 +55,47 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     public int getBubbleMaxSize(){return bubbleMaxSize;}
 
     /**
+     *
+     * @param newRoot
+     * @param oldBubble
+     */
+    protected void fixBubble(Top<E> newRoot, Zeepbel<E> oldBubble){
+        //Vorm een nieuwe zeepbel
+        Zeepbel<E> newBubble = new Zeepbel<E>(this);
+        //Alle kinderen van de nieuwe zeepbelwortel die nog in de oude zeepbel zitten worden lid van de nieuwe zeepbel.
+        newRoot.traverseInorder(t -> t.setZeepbel(newBubble),t -> t.getZeepbel() == oldBubble);
+        newBubble.setRoot(newRoot);
+        //De huidige zeepbel bevat de toppen uit de nieuwe zeepbel niet meer en ook niet de opgeborrelde top.
+        oldBubble.topsRemoved(newBubble.size() + 1);
+    }
+
+    /**
+     * Voeg de oude wortel van een zojuist gesplitste zeepbel toe aan de ouderzeepbel.
+     * Indien nodig zal de ouderzeepbel ook splitsen.
+     *
+     * @param parent ouder van de top.
+     * @param top die toegevoegd moet worden aan de bovenliggende zeepbel.
+     */
+    protected void pushRootUp(Top<E> parent, Top<E> top){
+        //Laat nu de gekozen top 'opborrelen';
+        if(parent == null){
+            //We zitten bij de root en moeten een nieuwe bubbel aanmaken
+            top.removeParent();
+            Zeepbel<E> rootBubble = new Zeepbel<E>(this, top);
+            setRootBubble(rootBubble);
+        } else {
+            parent.setChild(top);
+            Zeepbel<E> parentBubble = parent.getZeepbel();
+            if (top.setZeepbel(parentBubble)) {
+                splitBubble(parentBubble);
+            }
+        }
+
+    }
+
+
+
+    /**
      * Returns the number of elements in this collection.  If this collection
      * contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
      * <tt>Integer.MAX_VALUE</tt>.
@@ -75,6 +116,81 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     public boolean isEmpty() {
         return size == 0;
     }
+
+
+    /**
+     * Ensures that this collection contains the specified element (optional
+     * operation).  Returns <tt>true</tt> if this collection changed as a
+     * result of the call.  (Returns <tt>false</tt> if this collection does
+     * not permit duplicates and already contains the specified element.)<p>
+     * <p>
+     * Collections that support this operation may place limitations on what
+     * elements may be added to this collection.  In particular, some
+     * collections will refuse to add <tt>null</tt> elements, and others will
+     * impose restrictions on the type of elements that may be added.
+     * Collection classes should clearly specify in their documentation any
+     * restrictions on what elements may be added.<p>
+     * <p>
+     * If a collection refuses to add a particular element for any reason
+     * other than that it already contains the element, it <i>must</i> throw
+     * an exception (rather than returning <tt>false</tt>).  This preserves
+     * the invariant that a collection always contains the specified element
+     * after this call returns.
+     *
+     * @param e element whose presence in this collection is to be ensured
+     * @return <tt>true</tt> if this collection changed as a result of the
+     * call
+     * @throws UnsupportedOperationException if the <tt>add</tt> operation
+     *                                       is not supported by this collection
+     * @throws ClassCastException            if the class of the specified element
+     *                                       prevents it from being added to this collection
+     * @throws NullPointerException          if the specified element is null and this
+     *                                       collection does not permit null elements
+     * @throws IllegalArgumentException      if some property of the element
+     *                                       prevents it from being added to this collection
+     * @throws IllegalStateException         if the element cannot be added at this
+     *                                       time due to insertion restrictions
+     */
+    @Override
+    public boolean add(E e) {
+        //Als de boom leeg is maken we de eerste zeepbel aan.
+        if (isEmpty() || getRoot() == null){
+            Zeepbel<E> rootBubble = new Zeepbel<E>(this, new Top<E>(e));
+
+            setRootBubble(rootBubble);
+            size++;
+            return true;
+        }
+
+        //Zoek de parent van de toe te voegen top.
+        Top<E> top = getRoot();
+        Top<E> parent = null;
+        int comp;
+        while (top != null){
+            comp = top.compareTo(e);
+            parent = top;
+            if (comp < 0){
+                top = parent.getRightChild();
+            } else if (comp > 0){
+                top = parent.getLeftChild();
+            } else {
+                // e is al in de zeepbelboom.
+                return false;
+            }
+        }
+
+        //Nu is parent de Top waaraan het nieuwe item e moet toegevoegd worden.
+        Zeepbel<E> zb = parent.getZeepbel();
+        Top<E> child = new Top<E>(e);
+        parent.setChild(child);
+        if(child.setZeepbel(zb)){ //The bubble is full and this has to be solved.
+            splitBubble(zb);
+        }
+        size++;
+        return true;
+    }
+
+    protected abstract void splitBubble(Zeepbel<E> bubble);
 
     /**
      * Returns <tt>true</tt> if this collection contains the specified element.
@@ -101,14 +217,40 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         while (top != null){
             comp = top.compareTo(item);
             if (comp < 0){
-                top = top.getLeftChild();
-            } else  if (comp > 0){
                 top = top.getRightChild();
+            } else  if (comp > 0){
+                top = top.getLeftChild();
             } else {
                 //Comp == 0, dus we hebben o gevonden.
                 return true;
             }
         }
+        return false;
+    }
+
+
+    /**
+     * Removes a single instance of the specified element from this
+     * collection, if it is present (optional operation).  More formally,
+     * removes an element <tt>e</tt> such that
+     * <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt>, if
+     * this collection contains one or more such elements.  Returns
+     * <tt>true</tt> if this collection contained the specified element (or
+     * equivalently, if this collection changed as a result of the call).
+     *
+     * @param o element to be removed from this collection, if present
+     * @return <tt>true</tt> if an element was removed as a result of this call
+     * @throws ClassCastException            if the type of the specified element
+     *                                       is incompatible with this collection
+     *                                       (<a href="#optional-restrictions">optional</a>)
+     * @throws NullPointerException          if the specified element is null and this
+     *                                       collection does not permit null elements
+     *                                       (<a href="#optional-restrictions">optional</a>)
+     * @throws UnsupportedOperationException if the <tt>remove</tt> operation
+     *                                       is not supported by this collection
+     */
+    @Override
+    public boolean remove(Object o) {
         return false;
     }
 

@@ -44,6 +44,10 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         this.parent = parent;
     }
 
+    public void removeParent(){
+        this.parent = null;
+    }
+
     public void setLeftChild(Top<E> leftChild) {
         this.leftChild = leftChild;
         if (leftChild != null){
@@ -64,9 +68,9 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
     public void setChild(Top<E> child){
         if (compareTo(child.getItem()) < 0){
-            setLeftChild(child);
-        } else {
             setRightChild(child);
+        } else {
+            setLeftChild(child);
         }
     }
 
