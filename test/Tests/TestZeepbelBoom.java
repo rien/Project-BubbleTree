@@ -110,4 +110,10 @@ public class TestZeepbelBoom {
         }
     }
 
+    @Test
+    public void testRemove(){
+        items.forEach(i -> assertTrue("Item was not found!",zeepbelboom.remove(i)));
+        assertTrue("Zeepbelboom was not empty!",zeepbelboom.isEmpty());
+    }
+
 }

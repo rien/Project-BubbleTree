@@ -1,6 +1,7 @@
 package Zeepbelboom;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Created by rien on 10/9/15.
@@ -52,6 +53,14 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
 
     public int getBubbleMaxSize(){return bubbleMaxSize;}
 
+    /**
+     * Splitst een zeepbel in twee.
+     *
+     * @param parent ouder waaraan de huidige root van de zeepbel zal worden toegevoegd aan zijn zeepbel.
+     * @param root top die als kinderen de wortels bevat van de nieuwe zeepbellen, die na de operatie wordt toegevoegd
+     *             aan de bovenliggende zeepbel.
+     * @param bubble die in twee gesplitst moet worden
+     */
     protected void splitBubble(Top<E> parent, Top<E> root, Zeepbel<E> bubble){
         Top<E> rightRoot = root.getRightChild();
         Top<E> leftRoot = root.getLeftChild();
@@ -91,10 +100,6 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
             }
         }
     }
-
-
-
-
 
     /**
      * Returns the number of elements in this collection.  If this collection
@@ -211,22 +216,41 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public boolean contains(Object o) {
+        return find(o, t -> {}, t->{});
+    }
+
+    /**
+     * Vind een object in de zeepbelboom.
+     *
+     * @param o object die moet gevonden worden.
+     * @param found als het object gevonden werd wordt het aan deze consumer meegegeven.
+     * @param closest als het object niet in de zeepbelboom zit wordt de top aan deze consumer weergegeven
+     *                die normaal de parent van de top zou zijn die het item bevat, moest het item zich
+     *                in de zeepbelboom bevinden.
+     * @throws ClassCastException wanneer het type van o niet overeenkomt met het type van de boom.
+     * @return
+     */
+    protected boolean find(Object o, Consumer<Top<E>> found, Consumer<Top<E>> closest){
         @SuppressWarnings("unchecked")
         E item = (E) o;
         Top<E> top = getRoot();
+        Top<E> parent = null;
         int comp;
         while (top != null){
+            parent = top;
             comp = top.compareTo(item);
             if (comp < 0){
-                top = top.getRightChild();
+                top = parent.getRightChild();
             } else  if (comp > 0){
-                top = top.getLeftChild();
+                top = parent.getLeftChild();
             } else {
                 //Comp == 0, dus we hebben o gevonden.
+                found.accept(top);
                 return true;
             }
         }
-        return false;
+        closest.accept(parent);
+       return false;
     }
 
 
@@ -252,7 +276,21 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public boolean remove(Object o) {
-        return false;
+        return find(o, this::removeTop, t->{});
+    }
+
+    /**
+     * Verwijderd de gegeven top uit de zeepbelboom en balanceert indien nodig.
+     *
+     * @param top uit de zeepbelboom die moet verwijderd worden.
+     */
+    public void removeTop(Top<E> top){
+        if (!(top.hasRight() && top.hasLeft())){
+            // We zitten met een blad
+        } else {
+            // We zitten met een interne top
+        }
+
     }
 
     /**

@@ -24,14 +24,6 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         this.item = item;
     }
 
-    /**
-     *@deprecated
-     */
-    public Top(E item, Zeepbel<E> zeepbel){
-        this.item = item;
-        this.zeepbel = zeepbel;
-    }
-
     public Top<E> getLeftChild() {
         return leftChild;
     }
@@ -78,10 +70,6 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         return item;
     }
 
-    public void setItem(E item) {
-        this.item = item;
-    }
-
     public boolean hasLeft(){
         return leftChild != null;
     }
@@ -110,46 +98,6 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
     public boolean setZeepbel(Zeepbel<E> zeepbel){
         this.zeepbel = zeepbel;
         return zeepbel.topAdded();
-    }
-
-    /**
-     * Recursive method to add an item to one of the children of this Top.
-     * @return true if the item was added, false if the item was already in one of the children.
-     * @deprecated
-     */
-    public boolean add(E o){
-        int comp = item.compareTo(o);
-        if (comp == 0){
-            return false;
-        }
-        Top<E> child = comp < 0 ? leftChild : rightChild;
-        if (child == null){
-            child = new Top<E>(o);
-            return true;
-        } else {
-            return child.add(o);
-        }
-    }
-
-    /**
-     * Recursieve manier om een Top met item o terug te vinden.
-     * @return het kind van deze Top die o bevat, of null wanneer geen enkel kind o bevat.
-     * @deprecated
-     */
-    public Top<E> find(Object o){
-        @SuppressWarnings("unchecked")
-        E item = (E) o;
-        int comp = item.compareTo(item);
-        if (comp == 0){
-            return this;
-        }
-        Top<E> child = comp < 0 ? leftChild : rightChild;
-        if (child == null){
-            return null;
-        } else {
-            return child.find(item);
-        }
-
     }
 
     @Override
@@ -206,8 +154,10 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
     }
 
     /**
-     * @param consumer which accepts the next top when the tree is traversed inorder.
-     * @param predicate to which a new top has to comply before it can be traversed.
+     * Methode om in inorde te itereren over de kinderen van de huidige top.
+     *
+     * @param consumer lambda die de volgende top behandeld.
+     * @param predicate waaraan een top moet voldoen om te kunnen toegevoegd worden.
      */
     public void traverseInorder(Consumer<Top<E>> consumer, Predicate<Top<E>> predicate){
         Top<E> t = this;
