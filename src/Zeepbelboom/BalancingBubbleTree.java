@@ -29,9 +29,7 @@ public abstract class BalancingBubbleTree<E extends Comparable<E>> extends Zeepb
         );
         //TODO: Midden op de juiste manier?
         Top<E> newRoot = listToTree(nodes,0,nodes.size()-1);
-        if (newRoot == null){
-            throw new IllegalStateException();
-        }
+        assert newRoot != null;
         newRoot.removeParent();
         zb.setRoot(newRoot);
         int nextChild = 0;

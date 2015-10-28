@@ -78,21 +78,21 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     }
 
     /**
-     * Method to tell this bubble an item has been added.
+     * Methode die aan de zeepbel verteld dat er zojuist een top is toegevoegd.
      *
-     * @return true if the bubble is too big and has to be split up.
-     * @throws IllegalStateException if the size of the bubble is too big (maxSize + 2 or more).
+     * @throws IllegalStateException wanneer de zeepbel al gebalanceerd had moeten zijn.
+     * @return true wanneer de zeepbel moet gebalanceerd worden.
      */
     public boolean topAdded(){
+        assert size <= maxSize : "Bubble is too big!";
+
         size++;
-        if (size > maxSize + 1){
-            throw new IllegalStateException("Bubble is too big!");
-        }
         return size == maxSize + 1;
     }
 
     public void topsRemoved(int amount){
         size -= amount;
+        assert size > 0;
     }
 
 

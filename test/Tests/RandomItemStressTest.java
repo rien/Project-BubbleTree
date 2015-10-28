@@ -5,8 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.IntFunction;
 
 import static CustomAssert.AssertBool.assertTrue;
@@ -16,9 +14,9 @@ import static CustomAssert.AssertBool.assertTrue;
  */
 public class RandomItemStressTest {
 
-    private static int TEST_SIZE = 100000;
+    private static int TEST_SIZE = 1000000;
     private static long SEED = 698697970;
-    private static int MAX_K_SIZE = 100;
+    private static int MAX_N = 20; //K = 2^N
 
 
     Integer[] items;
@@ -45,8 +43,8 @@ public class RandomItemStressTest {
         long testContainsTime;
         long testRemoveTime;
         for (IntFunction<Zeepbelboom<Integer>> zeepBelboomConstructor : constructors){
-            for (int i = 0; i < MAX_K_SIZE - 2; i++) {
-                int k = i+2; //Want k <= 2
+            for (int i = 1; i < MAX_N; i++) {
+                int k = twoPower(i);
                 System.out.printf("%nTests for K=%d%n -> Add: ", k);
                 tmpTime = System.currentTimeMillis();
                 boom = zeepBelboomConstructor.apply(k);
@@ -88,6 +86,17 @@ public class RandomItemStressTest {
 
 
 
+    }
+
+    static int twoPower(int n){
+        int result = 1;
+        for (int i = 1; i <= n; i++) {
+            result *= 2;
+            if (result < 0){
+                throw new ArithmeticException("overflow");
+            }
+        }
+        return result;
     }
 
 

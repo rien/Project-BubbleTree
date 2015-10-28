@@ -90,6 +90,54 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         return zeepbel;
     }
 
+    public void removeChild(Top<E> top){
+        if (leftChild == top){
+            leftChild = null;
+        } else if (rightChild == top){
+            rightChild = null;
+        } else {
+            throw new IllegalArgumentException("The given node is not a child of this node!");
+        }
+        zeepbel.topsRemoved(1);
+    }
+
+    public Top<E> findClosestChild(){
+        Top<E> top = rightChild;
+        while (top.hasLeft()){
+            top = top.getLeftChild();
+        }
+        return top;
+    }
+
+    public void swapPlace(Top<E> other){
+        Top<E> tempParent = this.parent;
+        Top<E> tempRight = this.rightChild;
+        Top<E> tempLeft = this.leftChild;
+        Zeepbel<E> tempBubble = this.zeepbel;
+
+        this.parent = other.parent;
+        this.leftChild = other.leftChild;
+        this.rightChild = other.rightChild;
+        this.zeepbel = other.zeepbel;
+        other.parent = tempParent;
+        other.leftChild = tempLeft;
+        other.rightChild = tempRight;
+        other.zeepbel = tempBubble;
+
+        if (other.zeepbel.getRoot() == other){
+            other.zeepbel.setRoot(this);
+        }
+        if (tempBubble.getRoot() == this){
+            tempBubble.setRoot(other);
+        }
+    }
+
+    public void swapItem(Top<E> other){
+        E temp = this.item;
+        this.item = other.item;
+        other.item = temp;
+    }
+
     /**
      * Voegt de huide top toe aan de zeepbel.
      * @param zeepbel

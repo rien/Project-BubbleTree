@@ -282,15 +282,45 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     /**
      * Verwijderd de gegeven top uit de zeepbelboom en balanceert indien nodig.
      *
-     * @param top uit de zeepbelboom die moet verwijderd worden.
+     * @param toRemove uit de zeepbelboom die moet verwijderd worden.
      */
-    public void removeTop(Top<E> top){
-        if (!(top.hasRight() && top.hasLeft())){
-            // We zitten met een blad
-        } else {
-            // We zitten met een interne top
+    public void removeTop(Top<E> toRemove){
+        if (toRemove.hasRight() && toRemove.hasLeft()){
+            //We zitten met een interne top, dus wisselen deze van plaats met de kleinste top uit de rechterdeelboom.
+            Top<E> closest = toRemove.findClosestChild();
+            toRemove.swapPlace(closest);
+            /*
+             * Ook een mogelijkheid:
+             * toRemove.swapItem(closest);
+             * toRemove = closest;
+             *
+             */
         }
+        // De top is een blad.
 
+        Zeepbel<E> zb = toRemove.getZeepbel();
+        if (zb.size() > 1){
+            //De top zit niet alleen in de zeepbel, er moet dus niets op zeepbelniveau veranderd worden.
+
+            if (!toRemove.hasLeft() && !toRemove.hasRight()){
+                //De top heeft zelf geen kinderen (en is dus ook geen root), dus kunnen we de gewoon verwijderen.
+                toRemove.getParent().removeChild(toRemove);
+            } else if (toRemove.hasLeft()){
+                //De top heeft enkel een linkerkind
+                toRemove.getParent().setChild(toRemove.getLeftChild());
+                zb.topsRemoved(1);
+            } else {
+                //De top heeft enkel een richterkind
+                toRemove.getParent().setChild(toRemove.getRightChild());
+                zb.topsRemoved(1);
+            }
+        } else {
+            //Speciaal geval: door het verwijderen van de top komen we een lege zeepbel uit
+
+
+
+
+        }
     }
 
     /**
