@@ -4,17 +4,19 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * Created by rien on 10/9/15.
+ * @author Rien Maertens
+ *
+ * Abstracte superklasse voor zeepbelbomen.
  */
 public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection<E> {
 
-    protected int size;
-    protected final int bubbleMaxSize;
-    protected int aantalZeepbellen;
+    private int size;
+    private final int bubbleMaxSize;
+    private int aantalZeepbellen;
 
-    protected Zeepbel<E> rootBubble;
+    private Zeepbel<E> rootBubble;
 
-    public Zeepbelboom(int k) {
+    Zeepbelboom(int k) {
         if (k < 2){
             throw new IllegalArgumentException(String.format("Zeepbelboom heeft een" +
                     "minimale k-waarde van 2, maar kreeg  %d %n", k));
@@ -24,10 +26,16 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         bubbleMaxSize = k;
     }
 
+    /**
+     * @return de sleutel van de wortel van de boom.
+     */
     public E getWortelSleutel() {
         return rootBubble.getWortelSleutel();
     }
 
+    /**
+     * @return een iterator van alle zeepbellen die in inorde gesorteerd zijn.
+     */
     public Iterator<Zeepbel<E>> zeepbelIterator() {
         List<Zeepbel<E>> list = new ArrayList<>(aantalZeepbellen);
         rootBubble.getRoot().traverseInorder(t -> {
@@ -39,18 +47,16 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         return list.iterator();
     }
 
-    public void setRootBubble(Zeepbel<E> rootBubble){
+    private void setRootBubble(Zeepbel<E> rootBubble){
         this.rootBubble = rootBubble;
     }
-
-    public Zeepbel<E> getRootBubble(){
-        return rootBubble;
-    }
-
     public Top<E> getRoot(){
         return rootBubble.getRoot();
     }
 
+    /**
+     * @return maximum grootte van een zeepbel (k).
+     */
     public int getBubbleMaxSize(){return bubbleMaxSize;}
 
     /**
@@ -61,7 +67,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      *             aan de bovenliggende zeepbel.
      * @param bubble die in twee gesplitst moet worden.
      */
-    protected void splitAndPushUp(Top<E> parent, Top<E> root, Zeepbel<E> bubble){
+    void splitAndPushUp(Top<E> parent, Top<E> root, Zeepbel<E> bubble){
         // Deel de zeepbel in twee
         split(root, bubble);
         // Duw de huidige root omhoog
@@ -71,10 +77,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     /**
      * Splits een zeepbel in twee.
      *
+     * Enkel de toppen die del uitmaken van de opgegeven zeepbel worden overlopen en
+     * aangezien een zeepbel een maximaal aantal toppen heeft (k) werkt deze methode in constante tijd.
+     *
      * @param root top die als kinderen de wortels bevat van de nieuwe zeepbellen.
      * @param bubble die in twee gesplitst moet worden.
      */
-    protected void split(Top<E> root, Zeepbel<E> bubble){
+    void split(Top<E> root, Zeepbel<E> bubble){
         Top<E> rightRoot = root.getRightChild();
         Top<E> leftRoot = root.getLeftChild();
         // Zet de rechterwortel als wortel van de rechterzeepbel
@@ -96,7 +105,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      * @param parent ouder van de top.
      * @param top die toegevoegd moet worden aan de bovenliggende zeepbel.
      */
-    protected void pushRootUp(Top<E> parent, Top<E> top){
+    private void pushRootUp(Top<E> parent, Top<E> top){
         //Laat nu de gekozen top 'opborrelen';
         if(parent == null){
             //We zitten bij de root en moeten een nieuwe bubbel aanmaken
@@ -110,7 +119,12 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         }
     }
 
-    protected void createNewRootBubble(Top<E> top){
+    /**
+     * Maak een nieuwe zeepbel aan in de wortel.
+     *
+     * @param top die de wortel van de nieuwe wortelzeepbel moet worden.
+     */
+    void createNewRootBubble(Top<E> top){
         top.removeParent();
         Zeepbel<E> rootBubble = new Zeepbel<E>(this, top);
         setRootBubble(rootBubble);
@@ -120,10 +134,10 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     /**
      * Voegt meerdere toppen toe aan de zeepbel van parent en splitst deze zeepbel indien nodig.
      *
-     * @param parent
-     * @param tops
+     * @param parent waaraan de eerste van de toppen het kind van is.
+     * @param tops lijst van toppen die moeten toegevoegd worden aan de zeepbel van de ouder.
      */
-    protected void pushMultipleUp(Top<E> parent, List<Top<E>> tops){
+    void pushMultipleUp(Top<E> parent, List<Top<E>> tops){
         assert parent != null : "De parent mag niet null zijn! Je zit waarschijnlijk in de root.";
         Zeepbel<E> parentBubble = parent.getZeepbel();
         boolean balanceAfter;
@@ -148,11 +162,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
-     * Returns the number of elements in this collection.  If this collection
-     * contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
-     * <tt>Integer.MAX_VALUE</tt>.
-     *
-     * @return the number of elements in this collection
+     * @return het aantal elementen in de zeepbelboom.
      */
     @Override
     public int size() {
@@ -160,9 +170,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
-     * Returns <tt>true</tt> if this collection contains no elements.
-     *
-     * @return <tt>true</tt> if this collection contains no elements
+     * @return <tt>true</tt> als deze zeepbelboom leeg is.
      */
     @Override
     public boolean isEmpty() {
@@ -171,37 +179,15 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
 
 
     /**
-     * Ensures that this collection contains the specified element (optional
-     * operation).  Returns <tt>true</tt> if this collection changed as a
-     * result of the call.  (Returns <tt>false</tt> if this collection does
-     * not permit duplicates and already contains the specified element.)<p>
-     * <p>
-     * Collections that support this operation may place limitations on what
-     * elements may be added to this collection.  In particular, some
-     * collections will refuse to add <tt>null</tt> elements, and others will
-     * impose restrictions on the type of elements that may be added.
-     * Collection classes should clearly specify in their documentation any
-     * restrictions on what elements may be added.<p>
-     * <p>
-     * If a collection refuses to add a particular element for any reason
-     * other than that it already contains the element, it <i>must</i> throw
-     * an exception (rather than returning <tt>false</tt>).  This preserves
-     * the invariant that a collection always contains the specified element
-     * after this call returns.
+     * Voeg een item toe aan de zeepbelboom. Dit gebeurt in logaritmische tijd.
      *
-     * @param e element whose presence in this collection is to be ensured
-     * @return <tt>true</tt> if this collection changed as a result of the
-     * call
-     * @throws UnsupportedOperationException if the <tt>add</tt> operation
-     *                                       is not supported by this collection
-     * @throws ClassCastException            if the class of the specified element
-     *                                       prevents it from being added to this collection
-     * @throws NullPointerException          if the specified element is null and this
-     *                                       collection does not permit null elements
-     * @throws IllegalArgumentException      if some property of the element
-     *                                       prevents it from being added to this collection
-     * @throws IllegalStateException         if the element cannot be added at this
-     *                                       time due to insertion restrictions
+     * @param e item die moet toegevoegd worden aan de zeepbelboom.
+     * @return <tt>true</tt> als het item nog niet in de zeepbelboom zat en is toegevoegd.
+     *
+     * @throws ClassCastException            als de klasse van het meegegeven item niet
+     *                                       compatibel is met deze zeepbelboom en dus
+     *                                       niet kon toegevoegd worden.
+     * @throws NullPointerException          als het toe te voegen element <tt>null</tt> is.
      */
     @Override
     public boolean add(E e) {
@@ -214,56 +200,42 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
             return true;
         }
 
-        //Zoek de parent van de toe te voegen top.
-        Top<E> top = getRoot();
-        Top<E> parent = null;
-        int comp;
-        while (top != null){
-            comp = top.compareTo(e);
-            parent = top;
-            if (comp < 0){
-                top = parent.getRightChild();
-            } else if (comp > 0){
-                top = parent.getLeftChild();
-            } else {
-                // e is al in de zeepbelboom.
-                return false;
-            }
-        }
-
-        //Nu is parent de Top waaraan het nieuwe item e moet toegevoegd worden.
-        Zeepbel<E> zb = parent.getZeepbel();
-        Top<E> child = new Top<E>(e);
-        parent.setChild(child);
-        if(child.setZeepbel(zb)){ //The bubble is full and this has to be solved.
-            shrinkBubble(zb);
-        }
-        size++;
-        return true;
+        //Wanneer het item gevonden werd en al in de zeepbel zit moet false teruggegeven worden.
+        return !find(
+                e,
+                t->{/*De top werd gevonden en moet niet meer toegevoegd worden*/},
+                t->addToParent(new Top<E>(e), t)
+        );
     }
 
     /**
-     *  Methode die moet worden opgeropen wanneer een zeepbel zijn maximale overschrijd en moet verkleind worden.
+     * Voeg een nieuwe top toe aan een top die al in de zeepbelboom zit.
+     * @param child toe te voegen top.
+     * @param parent ouder waaraan het kind moet toegevoegd worden.
+     */
+    private void addToParent(Top<E> child, Top<E> parent){
+        Zeepbel<E> zb = parent.getZeepbel();
+        parent.setChild(child);
+        if(child.setZeepbel(zb)){
+            //De zeepbel zit overvol en moet verkleind worden.
+            shrinkBubble(zb);
+        }
+        size++;
+    }
+
+    /**
+     * Methode die moet worden opgeropen wanneer een zeepbel zijn maximale overschrijd en moet verkleind worden.
      *
      * @param bubble die moet verkleind worden.
      */
     protected abstract void shrinkBubble(Zeepbel<E> bubble);
 
     /**
-     * Returns <tt>true</tt> if this collection contains the specified element.
-     * More formally, returns <tt>true</tt> if and only if this collection
-     * contains at least one element <tt>e</tt> such that
-     * <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt>.
+     * Kijk of het gegeven object in de zeepbelboom zit.
      *
-     * @param o element whose presence in this collection is to be tested
-     * @return <tt>true</tt> if this collection contains the specified
-     * element
-     * @throws ClassCastException   if the type of the specified element
-     *                              is incompatible with this collection
-     *                              (<a href="#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified element is null and this
-     *                              collection does not permit null elements
-     *                              (<a href="#optional-restrictions">optional</a>)
+     * @param o object die gezocht wordt.
+     * @return <tt>true</tt> als het object zich in de zeepbelboom bevind.
+     * @throws NullPointerException         wanneer o <tt>null</tt> is.
      */
     @Override
     public boolean contains(Object o) {
@@ -272,16 +244,20 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
 
     /**
      * Vind een object in de zeepbelboom.
+     * Dit gebeurt in logaritmische tijd in relatie met het aantal elementen in de zeepbelboom.
      *
      * @param o object die moet gevonden worden.
      * @param found als het object gevonden werd wordt het aan deze consumer meegegeven.
      * @param closest als het object niet in de zeepbelboom zit wordt de top aan deze consumer weergegeven
      *                die normaal de parent van de top zou zijn die het item bevat, moest het item zich
      *                in de zeepbelboom bevinden.
-     * @throws ClassCastException wanneer het type van o niet overeenkomt met het type van de boom.
-     * @return
+     *
+     * @return <tt>true</tt> wanneer het object gevonden werd.
+     * @throws ClassCastException           wanneer het type van o niet overeenkomt
+     *                                      met het type van de boom.
+     * @throws NullPointerException         wanneer o <tt>null</tt> is.
      */
-    protected boolean find(Object o, Consumer<Top<E>> found, Consumer<Top<E>> closest){
+    private boolean find(Object o, Consumer<Top<E>> found, Consumer<Top<E>> closest){
         @SuppressWarnings("unchecked")
         E item = (E) o;
         Top<E> top = getRoot();
@@ -306,24 +282,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
 
 
     /**
-     * Removes a single instance of the specified element from this
-     * collection, if it is present (optional operation).  More formally,
-     * removes an element <tt>e</tt> such that
-     * <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt>, if
-     * this collection contains one or more such elements.  Returns
-     * <tt>true</tt> if this collection contained the specified element (or
-     * equivalently, if this collection changed as a result of the call).
+     * Probeer een object uit de zeepbelboom te verwijderen.
      *
-     * @param o element to be removed from this collection, if present
-     * @return <tt>true</tt> if an element was removed as a result of this call
-     * @throws ClassCastException            if the type of the specified element
-     *                                       is incompatible with this collection
-     *                                       (<a href="#optional-restrictions">optional</a>)
-     * @throws NullPointerException          if the specified element is null and this
-     *                                       collection does not permit null elements
-     *                                       (<a href="#optional-restrictions">optional</a>)
-     * @throws UnsupportedOperationException if the <tt>remove</tt> operation
-     *                                       is not supported by this collection
+     * @param o het te verwijderen object.
+     * @return <tt>true</tt> als het element zich in de zeepbelboom bevond en verwijderd werd.
+     * @throws ClassCastException            als het type van het te verwijderen object
+     *                                       incompatibel is met de huidige zeepbelboom.
+     * @throws NullPointerException          als het te verwijderen object <tt>null</tt> is.
      */
     @Override
     public boolean remove(Object o) {
@@ -331,11 +296,11 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
-     * Verwijderd de gegeven top uit de zeepbelboom en balanceert indien nodig.
+     * Verwijder een top uit de zeepbelboom en balanceert indien nodig.
      *
      * @param toRemove uit de zeepbelboom die moet verwijderd worden.
      */
-    public void removeTop(Top<E> toRemove){
+    private void removeTop(Top<E> toRemove){
         if (toRemove.hasRight() && toRemove.hasLeft()){
             //We zitten met een interne top, dus wisselen deze van plaats met de kleinste top uit de rechterdeelboom.
             Top<E> closest = toRemove.findClosestChild();
@@ -371,7 +336,12 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         }
     }
 
-    public void removeLeaf(Top<E> toRemove){
+    /**
+     *  Verwijder een blad uit de zeepbelboom.
+     *
+     * @param toRemove blad van de zeepbelboom
+     */
+    private void removeLeaf(Top<E> toRemove){
         Zeepbel<E> zb = toRemove.getZeepbel();
         if (!toRemove.hasLeft() && !toRemove.hasRight()){
             //De top heeft zelf geen kinderen (en is dus ook geen root), dus kunnen we de gewoon verwijderen.
@@ -388,12 +358,8 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
-     * Returns an iterator over the elements in this collection.  There are no
-     * guarantees concerning the order in which the elements are returned
-     * (unless this collection is an instance of some class that provides a
-     * guarantee).
-     *
-     * @return an <tt>Iterator</tt> over the elements in this collection
+
+     * @return Een <tt>Iterator</tt> over alle elementen van de zeepbelboom.
      */
     @Override
     public Iterator<E> iterator() {
@@ -403,20 +369,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
-     * Returns an array containing all of the elements in this collection.
-     * If this collection makes any guarantees as to what order its elements
-     * are returned by its iterator, this method must return the elements in
-     * the same order.
-     * <p>
-     * <p>The returned array will be "safe" in that no references to it are
-     * maintained by this collection.  (In other words, this method must
-     * allocate a new array even if this collection is backed by an array).
-     * The caller is thus free to modify the returned array.
-     * <p>
-     * <p>This method acts as bridge between array-based and collection-based
-     * APIs.
-     *
-     * @return an array containing all of the elements in this collection
+     * @return een array met alle elementen van de zeepbelboom, in volgorde.
      */
     @Override
     public Object[] toArray() {
@@ -430,46 +383,14 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
-     * Returns an array containing all of the elements in this collection;
-     * the runtime type of the returned array is that of the specified array.
-     * If the collection fits in the specified array, it is returned therein.
-     * Otherwise, a new array is allocated with the runtime type of the
-     * specified array and the size of this collection.
-     * <p>
-     * <p>If this collection fits in the specified array with room to spare
-     * (i.e., the array has more elements than this collection), the element
-     * in the array immediately following the end of the collection is set to
-     * <tt>null</tt>.  (This is useful in determining the length of this
-     * collection <i>only</i> if the caller knows that this collection does
-     * not contain any <tt>null</tt> elements.)
-     * <p>
-     * <p>If this collection makes any guarantees as to what order its elements
-     * are returned by its iterator, this method must return the elements in
-     * the same order.
-     * <p>
-     * <p>Like the {@link #toArray()} method, this method acts as bridge between
-     * array-based and collection-based APIs.  Further, this method allows
-     * precise control over the runtime type of the output array, and may,
-     * under certain circumstances, be used to save allocation costs.
-     * <p>
-     * <p>Suppose <tt>x</tt> is a collection known to contain only strings.
-     * The following code can be used to dump the collection into a newly
-     * allocated array of <tt>String</tt>:
-     * <p>
-     * <pre>
-     *     String[] y = x.toArray(new String[0]);</pre>
+     * Plaatst alle elementen van de zeepbelboom in de opgegeven array wanneer deze groot genoeg is.
      *
-     * Note that <tt>toArray(new Object[0])</tt> is identical in function to
-     * <tt>toArray()</tt>.
-     *
-     * @param a the array into which the elements of this collection are to be
-     *          stored, if it is big enough; otherwise, a new array of the same
-     *          runtime type is allocated for this purpose.
-     * @return an array containing all of the elements in this collection
-     * @throws ArrayStoreException  if the runtime type of the specified array
-     *                              is not a supertype of the runtime type of every element in
-     *                              this collection
-     * @throws NullPointerException if the specified array is null
+     * @param a array waar alle elementen van de zeepbelboom in geplaatst moeten worden. Indien a groot genoeg is
+     *          wordt deze ook teruggegeven, als a te klein is wordt er een nieuwe array aangemaakt en teruggeven die
+     *          wel groot genoeg is.
+     * @return een array waar alle elementen van de zeepbelboom inzitten.
+     * @throws ArrayStoreException  als het type van de array niet compatibel is.
+     * @throws NullPointerException als de opgegeven array <tt>null</tt> is.
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -486,21 +407,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
-     * Returns <tt>true</tt> if this collection contains all of the elements
-     * in the specified collection.
+     * Kijk of alle elementen van een collection ook te vinden zijn in deze zeepbelboom.
      *
-     * @param c collection to be checked for containment in this collection
-     * @return <tt>true</tt> if this collection contains all of the elements
-     * in the specified collection
-     * @throws ClassCastException   if the types of one or more elements
-     *                              in the specified collection are incompatible with this
-     *                              collection
-     *                              (<a href="#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified collection contains one
-     *                              or more null elements and this collection does not permit null
-     *                              elements
-     *                              (<a href="#optional-restrictions">optional</a>),
-     *                              or if the specified collection is null.
+     * @param c de collection die moet doorzocht worden.
+     * @return <tt>true</tt> als deze zeepbelboom alle elementen uit de opgegeven collectie bevat.
+     * @throws ClassCastException   als de type van één of meer elementen uit de collectie niet
+     *                              compatibel is met deze zeepbelboom.
+     * @throws NullPointerException als een element uit de collectie null is.
      * @see #contains(Object)
      */
     @Override
@@ -514,27 +427,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
-     * Adds all of the elements in the specified collection to this collection
-     * (optional operation).  The behavior of this operation is undefined if
-     * the specified collection is modified while the operation is in progress.
-     * (This implies that the behavior of this call is undefined if the
-     * specified collection is this collection, and this collection is
-     * nonempty.)
+     * Voeg alle elementen uit een collectie toe aan de zeepbelboom.
      *
-     * @param c collection containing elements to be added to this collection
-     * @return <tt>true</tt> if this collection changed as a result of the call
-     * @throws UnsupportedOperationException if the <tt>addAll</tt> operation
-     *                                       is not supported by this collection
-     * @throws ClassCastException            if the class of an element of the specified
-     *                                       collection prevents it from being added to this collection
-     * @throws NullPointerException          if the specified collection contains a
-     *                                       null element and this collection does not permit null elements,
-     *                                       or if the specified collection is null
-     * @throws IllegalArgumentException      if some property of an element of the
-     *                                       specified collection prevents it from being added to this
-     *                                       collection
-     * @throws IllegalStateException         if not all the elements can be added at
-     *                                       this time due to insertion restrictions
+     * @param c de collectie waarvan alle elementen moeten toegevoegd worden.
+     * @return <tt>true</tt> als de huidige zeepbelboom veranderd is door deze operatie.
+     * @throws ClassCastException   als de type van één of meer elementen uit de collectie niet
+     *                              compatibel is met deze zeepbelboom.
+     * @throws NullPointerException als een element uit de collectie null is.l
      * @see #add(Object)
      */
     @Override
@@ -549,25 +448,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
-     * Removes all of this collection's elements that are also contained in the
-     * specified collection (optional operation).  After this call returns,
-     * this collection will contain no elements in common with the specified
-     * collection.
+     * Verwijder alle elementen uit de zeepbelboom die in de gegeven collectie zitten.
      *
-     * @param c collection containing elements to be removed from this collection
-     * @return <tt>true</tt> if this collection changed as a result of the
-     * call
-     * @throws UnsupportedOperationException if the <tt>removeAll</tt> method
-     *                                       is not supported by this collection
-     * @throws ClassCastException            if the types of one or more elements
-     *                                       in this collection are incompatible with the specified
-     *                                       collection
-     *                                       (<a href="#optional-restrictions">optional</a>)
-     * @throws NullPointerException          if this collection contains one or more
-     *                                       null elements and the specified collection does not support
-     *                                       null elements
-     *                                       (<a href="#optional-restrictions">optional</a>),
-     *                                       or if the specified collection is null
+     * @param c collectie met de te verwijderen elementen.
+     * @return <tt>true</tt> als de huidige zeepbelboom veranderd is door deze operatie.
+     * @throws ClassCastException   als de type van één of meer elementen uit de collectie niet
+     *                              compatibel is met deze zeepbelboom.
+     * @throws NullPointerException als een element uit de collectie null is.
      * @see #remove(Object)
      * @see #contains(Object)
      */
@@ -583,24 +470,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
-     * Retains only the elements in this collection that are contained in the
-     * specified collection (optional operation).  In other words, removes from
-     * this collection all of its elements that are not contained in the
-     * specified collection.
+     * Houd enkel de elementen in deze zeepbel over die ook te vinden zijn in de opgegeven colelctie.
      *
-     * @param c collection containing elements to be retained in this collection
-     * @return <tt>true</tt> if this collection changed as a result of the call
-     * @throws UnsupportedOperationException if the <tt>retainAll</tt> operation
-     *                                       is not supported by this collection
-     * @throws ClassCastException            if the types of one or more elements
-     *                                       in this collection are incompatible with the specified
-     *                                       collection
-     *                                       (<a href="#optional-restrictions">optional</a>)
-     * @throws NullPointerException          if this collection contains one or more
-     *                                       null elements and the specified collection does not permit null
-     *                                       elements
-     *                                       (<a href="#optional-restrictions">optional</a>),
-     *                                       or if the specified collection is null
+     * @param c collectie met elementen die moeten overgehouden worden.
+     * @return <tt>true</tt> als de huidige zeepbelboom veranderd is door deze operatie.
+     * @throws ClassCastException   als de type van één of meer elementen uit de collectie niet
+     *                              compatibel is met deze zeepbelboom.
+     * @throws NullPointerException als een element uit de collectie null is.
      * @see #remove(Object)
      * @see #contains(Object)
      */
@@ -620,11 +496,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
-     * Removes all of the elements from this collection (optional operation).
-     * The collection will be empty after this method returns.
-     *
-     * @throws UnsupportedOperationException if the <tt>clear</tt> operation
-     *                                       is not supported by this collection
+     * Verwijder alle elementen uit deze zeepbel.
      */
     @Override
     public void clear() {

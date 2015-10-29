@@ -1,22 +1,17 @@
 package Zeepbelboom;
 
 /**
- * Die probeert de onderliggende boom zo intact mogelijk te houden bij het toevoegen.
+ *
+ * @author Rien Maertens
+ *
+ * Implementatie van zeepbelboom die probeert de onderliggende boom zo intact mogelijk te houden bij het toevoegen.
  *
  * Algoritme voor toeveogen:
- * - Voeg item toe aan de boom zoals normaal en voeg de top toe aan de zeepbel van de parent
+ * - Voeg item toe aan de boom zoals normaal in een binaire boom en voeg de top toe aan de zeepbel van de parent
  * - Als de zeepbel te vol zit:
  *      - Als de root maar één kind (in dezelfde zeepbel) bevat: roteer de eerste 3
  *      - Duw de root omhoog en maak van de linker- en rechterdeelboom een nieuwe zeepbel.
  *      - Pas de bovenliggende zeepbel aan, indien nodig
- *
- * Algoritme voor verwijderen:
- * - Stel X het te verwijderen item met ouder P. P heeft een nu leeg kind.
- * - Neem K het ander kind van K. Neem K2 het grootse/kleinste kind binnen dezelfde zeepbel.
- * - Verwijder dit kind en plaats het op de plaats van P en plaats P de plaats van X.
- * Stel: ander kind van K2  (NU) is leeg:
- *      Duw K2 bij P.
- *      Doe nu alsof K2 werd verwijderd en do zo verder.
  */
 public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
 
@@ -25,6 +20,17 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
         super(k);
     }
 
+    /**
+     * Verklein de huidige zeepbel door ze in twee te splitsen.
+     * Wanneer de wortel maar één kind (in dezelfde zeepbel) heeft worden de eerste drie
+     * toppen geroteerd zodat de kinderen van de wortel in dezelfde zeepbel zitten en de zeepbel
+     * kan gesplitst worden.
+     *
+     * Dit verkleinen gebeurt in constante tijd, aangezien er telkens maar drie toppen geroteerd worden,
+     * onafhankelijk van de inputgrootte.
+     *
+     * @param bubble die moet verkleind worden.
+     */
     @Override
     @SuppressWarnings("SuspiciousNameCombination")
     protected void shrinkBubble(Zeepbel<E> bubble){

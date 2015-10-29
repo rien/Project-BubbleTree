@@ -6,18 +6,16 @@ import java.lang.IllegalArgumentException;
 import java.util.*;
 
 /**
- * Created by rien on 10/9/15.
+ * @author Rien Maertens
  */
 public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
 
     private int size;
     private final int maxSize;
     private Top<E> root;
-    private Zeepbelboom<E> tree;
 
     public Zeepbel(Zeepbelboom<E> tree){
         this.maxSize = tree.getBubbleMaxSize();
-        this.tree = tree;
         this.size = 0;
     }
 
@@ -51,11 +49,7 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     }
 
     /**
-     * Returns the number of elements in this collection.  If this collection
-     * contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
-     * <tt>Integer.MAX_VALUE</tt>.
-     *
-     * @return the number of elements in this collection
+     * @return het aatal toppen in deze zeepbel.
      */
     public int size() {
         return size;
@@ -80,8 +74,7 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     /**
      * Methode die aan de zeepbel verteld dat er zojuist een top is toegevoegd.
      *
-     * @throws IllegalStateException wanneer de zeepbel al gebalanceerd had moeten zijn.
-     * @return true wanneer de zeepbel moet gebalanceerd worden.
+     * @return <tt>true</tt> wanneer de zeepbel moet gebalanceerd worden.
      */
     public boolean topAdded(){
         assert size <= maxSize : "Bubble is too big!";
@@ -90,6 +83,11 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
         return size == maxSize + 1;
     }
 
+    /**
+     * Verteld een zeepbel hoeveel items er zojuist zijn verwijderd.
+     *
+     * @param amount aantal items die verwijderd zijn.
+     */
     public void topsRemoved(int amount){
         size -= amount;
         assert size > 0;

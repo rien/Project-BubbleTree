@@ -15,17 +15,18 @@ import static CustomAssert.AssertBool.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by rien on 10/21/15.
+ * @author Rien Maertens
+ * Test die een zeepbelboom test of alle methodes correct werken.
  */
 
 @RunWith(Parameterized.class)
 public class TestZeepbelBoom {
 
-    private static int SEED = 25547878;
+    private static final int SEED = 25547878;
 
-    private int testSize;
+    private final int testSize;
 
-    private Zeepbelboom<Integer> zeepbelboom;
+    private final Zeepbelboom<Integer> zeepbelboom;
 
     @Parameterized.Parameters
     public static Collection<Object[]> configs(){
@@ -61,7 +62,7 @@ public class TestZeepbelBoom {
 
 
 
-    private List<Integer> items;
+    private final List<Integer> items;
 
     @Test
     public void testAdd(){

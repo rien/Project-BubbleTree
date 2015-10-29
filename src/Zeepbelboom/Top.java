@@ -7,7 +7,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Created by rien on 10/15/15.
+ * @author Rien Maertens
  */
 public class Top<E extends Comparable<E>> implements Comparable<E> {
 
@@ -137,7 +137,9 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         return top;
     }
     /*
-    public void swapItems(Top<E> other){
+    Alternatieve swapmethode die alle verwijzingen aanpast
+
+    public void swap(Top<E> other){
         Top<E> tempParent = this.parent;
         Top<E> tempRight = this.rightChild;
         Top<E> tempLeft = this.leftChild;
@@ -168,8 +170,8 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
     /**
      * Voegt de huide top toe aan de zeepbel.
-     * @param zeepbel
-     * @return true wanneer door deze toevoeging de zeepbel moet gesplitst worden.
+     * @param zeepbel waaraan de top moet teoegevoegd worden.
+     * @return <tt>true</tt> wanneer door deze toevoeging de zeepbel moet gesplitst worden.
      */
     public boolean setZeepbel(Zeepbel<E> zeepbel){
         this.zeepbel = zeepbel;

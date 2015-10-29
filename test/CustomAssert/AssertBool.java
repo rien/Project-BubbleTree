@@ -3,7 +3,10 @@ package CustomAssert;
 import org.junit.Assert;
 
 /**
- * Created by rien on 10/20/15.
+ * @author Rien Maertens
+ *
+ * Eigen assertTrue en assertFalse die een standaardtekstje gaan teruggeven wanneer ze geïnitialiseerd zijn
+ * zonder message. De assertTrue van JUnit zelf geeft dan altijd "null" als bericht.
  */
 public class AssertBool extends Assert{
 
