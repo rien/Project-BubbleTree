@@ -1,4 +1,4 @@
-package Zeepbelboom;
+package zeepbelboom;
 
 import java.util.*;
 import java.util.function.Consumer;

@@ -1,15 +1,11 @@
 package Tests;
 
-import Zeepbelboom.*;
-import org.junit.Before;
-import org.junit.Ignore;
+import zeepbelboom.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.IntFunction;
 
 import static CustomAssert.AssertBool.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -118,7 +114,6 @@ public class TestZeepbelBoom {
     }
 
     @Test
-    @Ignore
     public void testRemove(){
         items.forEach(i -> assertTrue("Item was not found!",zeepbelboom.remove(i)));
         assertTrue("Zeepbelboom was not empty!",zeepbelboom.isEmpty());

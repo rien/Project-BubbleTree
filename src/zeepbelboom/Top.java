@@ -1,9 +1,7 @@
-package Zeepbelboom;
+package zeepbelboom;
 
-import java.util.Iterator;
 import java.util.Stack;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -119,6 +117,9 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         }
     }
 
+    /**
+     * @return de top met de dichtste waarde bij de huidige top.
+     */
     public Top<E> findClosestChild(){
         Top<E> top;
         if (hasRight()){
@@ -176,16 +177,6 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
     public boolean setZeepbel(Zeepbel<E> zeepbel){
         this.zeepbel = zeepbel;
         return zeepbel.topAdded();
-    }
-
-    @Override
-    public int hashCode() {
-        return item.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof Top && ((Top) obj).getItem().equals(this.item);
     }
 
     /**

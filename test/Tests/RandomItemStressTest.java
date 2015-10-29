@@ -1,6 +1,6 @@
 package Tests;
 
-import Zeepbelboom.*;
+import zeepbelboom.*;
 import org.junit.Before;
 import org.junit.Test;
 

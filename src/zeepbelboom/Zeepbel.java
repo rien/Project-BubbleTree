@@ -1,6 +1,4 @@
-package Zeepbelboom;
-
-import java.lang.IllegalArgumentException;
+package zeepbelboom;
 
 
 import java.util.*;
