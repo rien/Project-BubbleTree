@@ -54,14 +54,27 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     public int getBubbleMaxSize(){return bubbleMaxSize;}
 
     /**
-     * Splitst een zeepbel in twee.
+     * Splitst een zeepbel in twee en voeg de oude root toe aan de bovenliggende zeepbel.
      *
      * @param parent ouder waaraan de huidige root van de zeepbel zal worden toegevoegd aan zijn zeepbel.
      * @param root top die als kinderen de wortels bevat van de nieuwe zeepbellen, die na de operatie wordt toegevoegd
      *             aan de bovenliggende zeepbel.
-     * @param bubble die in twee gesplitst moet worden
+     * @param bubble die in twee gesplitst moet worden.
      */
-    protected void splitBubble(Top<E> parent, Top<E> root, Zeepbel<E> bubble){
+    protected void splitAndPushUp(Top<E> parent, Top<E> root, Zeepbel<E> bubble){
+        // Deel de zeepbel in twee
+        split(root, bubble);
+        // Duw de huidige root omhoog
+        pushRootUp(parent, root);
+    }
+
+    /**
+     * Splits een zeepbel in twee.
+     *
+     * @param root top die als kinderen de wortels bevat van de nieuwe zeepbellen.
+     * @param bubble die in twee gesplitst moet worden.
+     */
+    protected void split(Top<E> root, Zeepbel<E> bubble){
         Top<E> rightRoot = root.getRightChild();
         Top<E> leftRoot = root.getLeftChild();
         // Zet de rechterwortel als wortel van de rechterzeepbel
@@ -74,8 +87,6 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         newBubble.setRoot(leftRoot);
         // De huidige zeepbel bevat de toppen uit de nieuwe zeepbel niet meer en ook niet de opgeborrelde top.
         bubble.topsRemoved(newBubble.size() + 1);
-        // Duw de huidige root omhoog
-        pushRootUp(parent, root);
     }
 
     /**
@@ -89,15 +100,50 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         //Laat nu de gekozen top 'opborrelen';
         if(parent == null){
             //We zitten bij de root en moeten een nieuwe bubbel aanmaken
-            top.removeParent();
-            Zeepbel<E> rootBubble = new Zeepbel<E>(this, top);
-            setRootBubble(rootBubble);
+            createNewRootBubble(top);
         } else {
             parent.setChild(top);
             Zeepbel<E> parentBubble = parent.getZeepbel();
             if (top.setZeepbel(parentBubble)) {
                 shrinkBubble(parentBubble);
             }
+        }
+    }
+
+    protected void createNewRootBubble(Top<E> top){
+        top.removeParent();
+        Zeepbel<E> rootBubble = new Zeepbel<E>(this, top);
+        setRootBubble(rootBubble);
+    }
+
+
+    /**
+     * Voegt meerdere toppen toe aan de zeepbel van parent en splitst deze zeepbel indien nodig.
+     *
+     * @param parent
+     * @param tops
+     */
+    protected void pushMultipleUp(Top<E> parent, List<Top<E>> tops){
+        assert parent != null : "De parent mag niet null zijn! Je zit waarschijnlijk in de root.";
+        Zeepbel<E> parentBubble = parent.getZeepbel();
+        boolean balanceAfter;
+        int after = tops.size() + parentBubble.size();
+        if (after <= bubbleMaxSize){
+            balanceAfter = false;
+        } else if (after == bubbleMaxSize + 1){
+            balanceAfter = true;
+        } else {
+            throw new IllegalArgumentException("Teveel toppen om toe te voegen!");
+        }
+
+        // De eerste top moet eerst toegevoegd worden als kind aan de parent.
+        parent.setChild(tops.get(0));
+
+        //Voeg iedere top toe aan de parentBubble;
+        tops.forEach(t -> t.setZeepbel(parentBubble));
+        //Verklein de zeepbel indien nodig
+        if (balanceAfter){
+            shrinkBubble(parentBubble);
         }
     }
 
@@ -196,6 +242,11 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         return true;
     }
 
+    /**
+     *  Methode die moet worden opgeropen wanneer een zeepbel zijn maximale overschrijd en moet verkleind worden.
+     *
+     * @param bubble die moet verkleind worden.
+     */
     protected abstract void shrinkBubble(Zeepbel<E> bubble);
 
     /**
@@ -288,38 +339,51 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         if (toRemove.hasRight() && toRemove.hasLeft()){
             //We zitten met een interne top, dus wisselen deze van plaats met de kleinste top uit de rechterdeelboom.
             Top<E> closest = toRemove.findClosestChild();
-            toRemove.swapPlace(closest);
-            /*
-             * Ook een mogelijkheid:
-             * toRemove.swapItem(closest);
-             * toRemove = closest;
-             *
-             */
+            toRemove.swapItems(closest);
+            toRemove = closest;
         }
         // De top is een blad.
 
         Zeepbel<E> zb = toRemove.getZeepbel();
         if (zb.size() > 1){
             //De top zit niet alleen in de zeepbel, er moet dus niets op zeepbelniveau veranderd worden.
+            removeLeaf(toRemove);
 
-            if (!toRemove.hasLeft() && !toRemove.hasRight()){
-                //De top heeft zelf geen kinderen (en is dus ook geen root), dus kunnen we de gewoon verwijderen.
-                toRemove.getParent().removeChild(toRemove);
-            } else if (toRemove.hasLeft()){
-                //De top heeft enkel een linkerkind
-                toRemove.getParent().setChild(toRemove.getLeftChild());
-                zb.topsRemoved(1);
-            } else {
-                //De top heeft enkel een richterkind
-                toRemove.getParent().setChild(toRemove.getRightChild());
-                zb.topsRemoved(1);
-            }
         } else {
             //Speciaal geval: door het verwijderen van de top komen we een lege zeepbel uit
+            Top<E> sibling = toRemove.getSibling();
+            Top<E> parent = toRemove.getParent();
+
+            if (sibling.getZeepbel().size() > 1){
+                //We kunnen een top van de tweelingzeepbel gebruiken
+                if (sibling.isBubbleRoot()){
+                    Top<E> closest = sibling.findClosestChild();
+                    sibling.swapItems(closest);
+                }
+
+                //TODO
 
 
+            } else{
 
+            }
 
+        }
+    }
+
+    public void removeLeaf(Top<E> toRemove){
+        Zeepbel<E> zb = toRemove.getZeepbel();
+        if (!toRemove.hasLeft() && !toRemove.hasRight()){
+            //De top heeft zelf geen kinderen (en is dus ook geen root), dus kunnen we de gewoon verwijderen.
+            toRemove.removeFromParent();
+        } else if (toRemove.hasLeft()){
+            //De top heeft enkel een linkerkind
+            toRemove.getParent().setChild(toRemove.getLeftChild());
+            zb.topsRemoved(1);
+        } else {
+            //De top heeft enkel een richterkind
+            toRemove.getParent().setChild(toRemove.getRightChild());
+            zb.topsRemoved(1);
         }
     }
 
@@ -408,8 +472,8 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      * @throws NullPointerException if the specified array is null
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
-        //TODO
         if (a.length < size){
             a = ((T[]) new Object[size]);
         }

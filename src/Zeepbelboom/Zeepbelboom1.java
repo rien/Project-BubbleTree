@@ -100,6 +100,6 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
              */
             up = a;
         }
-        splitBubble(parent, up, bubble);
+        splitAndPushUp(parent, up, bubble);
     }
 }

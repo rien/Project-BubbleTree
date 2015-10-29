@@ -90,7 +90,15 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         return zeepbel;
     }
 
-    public void removeChild(Top<E> top){
+    public boolean isBubbleRoot(){
+        return zeepbel.getRoot() == this;
+    }
+
+    public void removeFromParent(){
+        parent.removeChild(this);
+    }
+
+    private void removeChild(Top<E> top){
         if (leftChild == top){
             leftChild = null;
         } else if (rightChild == top){
@@ -101,15 +109,35 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         zeepbel.topsRemoved(1);
     }
 
+    public Top<E> getSibling(){
+        if (parent.leftChild == this){
+            return parent.rightChild;
+        } else if (parent.rightChild == this){
+            return parent.leftChild;
+        } else {
+            throw new IllegalStateException("Parent has wrong link to children!");
+        }
+    }
+
     public Top<E> findClosestChild(){
-        Top<E> top = rightChild;
-        while (top.hasLeft()){
-            top = top.getLeftChild();
+        Top<E> top;
+        if (hasRight()){
+            top = rightChild;
+            while (top.hasLeft()){
+                top = top.getLeftChild();
+            }
+        } else if(hasLeft()) {
+            top = leftChild;
+            while (top.hasRight()){
+                top = top.getRightChild();
+            }
+        } else {
+            top = this;
         }
         return top;
     }
-
-    public void swapPlace(Top<E> other){
+    /*
+    public void swapItems(Top<E> other){
         Top<E> tempParent = this.parent;
         Top<E> tempRight = this.rightChild;
         Top<E> tempLeft = this.leftChild;
@@ -130,9 +158,9 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         if (tempBubble.getRoot() == this){
             tempBubble.setRoot(other);
         }
-    }
+    }*/
 
-    public void swapItem(Top<E> other){
+    public void swapItems(Top<E> other){
         E temp = this.item;
         this.item = other.item;
         other.item = temp;

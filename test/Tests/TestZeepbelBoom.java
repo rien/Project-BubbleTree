@@ -2,6 +2,7 @@ package Tests;
 
 import Zeepbelboom.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -38,7 +39,12 @@ public class TestZeepbelBoom {
                 {10, new Zeepbelboom2<Integer>(5)},
                 {10000, new Zeepbelboom2<Integer>(2)},
                 {10000, new Zeepbelboom2<Integer>(5)},
-                {10000, new Zeepbelboom1<Integer>(20)},
+                {10000, new Zeepbelboom2<Integer>(20)},
+                {10, new Zeepbelboom3<Integer>(2)},
+                {10, new Zeepbelboom3<Integer>(5)},
+                {10000, new Zeepbelboom3<Integer>(2)},
+                {10000, new Zeepbelboom3<Integer>(5)},
+                {10000, new Zeepbelboom3<Integer>(20)},
         });
     }
 
@@ -111,6 +117,7 @@ public class TestZeepbelBoom {
     }
 
     @Test
+    @Ignore
     public void testRemove(){
         items.forEach(i -> assertTrue("Item was not found!",zeepbelboom.remove(i)));
         assertTrue("Zeepbelboom was not empty!",zeepbelboom.isEmpty());
