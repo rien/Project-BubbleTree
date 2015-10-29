@@ -13,11 +13,9 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     private int size;
     private final int maxSize;
     private Top<E> root;
-    private Zeepbelboom<E> tree;
 
     public Zeepbel(Zeepbelboom<E> tree){
         this.maxSize = tree.getBubbleMaxSize();
-        this.tree = tree;
         this.size = 0;
     }
 

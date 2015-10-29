@@ -10,17 +10,20 @@ import java.util.function.IntFunction;
 import static CustomAssert.AssertBool.assertTrue;
 
 /**
- * Created by rien on 10/21/15.
+ * @author Rien Maertens
+ *
+ * Test die voor iedere zeepbelboom de basisbewerkingen gaat uitvoeren op een groot aantal
+ * willekeurige elementen. Deze test wordt ook meerdere keer herhaald voor verschillende k-waardes.
  */
 public class RandomItemStressTest {
 
-    private static int TEST_SIZE = 1000000;
-    private static long SEED = 698697970;
-    private static int MAX_N = 20; //K = 2^N
+    private static final int TEST_SIZE = 1000000;
+    private static final long SEED = 698697970;
+    private static final int MAX_N = 20; //K = 2^N
 
 
-    Integer[] items;
-    List<IntFunction<Zeepbelboom<Integer>>> constructors;
+    private Integer[] items;
+    private List<IntFunction<Zeepbelboom<Integer>>> constructors;
 
     @Before
     public void  init(){
@@ -33,6 +36,8 @@ public class RandomItemStressTest {
         //Prepare constructors
         constructors = new ArrayList<>();
         constructors.add(Zeepbelboom1::new);
+        constructors.add(Zeepbelboom2::new);
+        constructors.add(Zeepbelboom3::new);
     }
 
     @Test
@@ -88,7 +93,7 @@ public class RandomItemStressTest {
 
     }
 
-    static int twoPower(int n){
+    private static int twoPower(int n){
         int result = 1;
         for (int i = 1; i <= n; i++) {
             result *= 2;
