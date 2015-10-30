@@ -50,9 +50,10 @@ public class RandomItemStressTest {
         for (IntFunction<Zeepbelboom<Integer>> zeepBelboomConstructor : constructors){
             for (int i = 1; i < MAX_N; i++) {
                 int k = twoPower(i);
-                System.out.printf("%nTests for K=%d%n -> Add: ", k);
-                tmpTime = System.currentTimeMillis();
                 boom = zeepBelboomConstructor.apply(k);
+                System.out.printf("%nTests for K=%d and %s%n -> Add: ", k,boom.getClass().getCanonicalName() );
+                tmpTime = System.currentTimeMillis();
+
 
 
                 //Add test
@@ -81,11 +82,11 @@ public class RandomItemStressTest {
                 //Remove items
                 tmpTime = System.currentTimeMillis();
                 for (Integer item: items){
-                    //boom.remove(item);
+                    boom.remove(item);
                 }
                 testRemoveTime = System.currentTimeMillis() - tmpTime;
                 System.out.printf("%d ms%n -> Total: %d ms%n", testRemoveTime, testAddTime + testContainsTime + testRemoveTime);
-                //assertTrue(boom.isEmpty());
+                assertTrue(boom.isEmpty());
             }
         }
 

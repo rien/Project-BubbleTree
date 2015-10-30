@@ -92,6 +92,21 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     }
 
 
+    public Zeepbel<E> getSiblingZeepbel(){
+        Zeepbel<E> parentBubble = getRoot().getParent().getZeepbel();
+        Top<E> top = getRoot().getSibling();
+        boolean right = getRoot().compareTo(top.getItem()) < 0;
+        while (top.getZeepbel() == parentBubble){
+            top = right ? top.getRightChild() : top.getLeftChild();
+        }
+        //Top zit nu in een andere zeepbel
+        return top.getZeepbel();
+    }
+
+    public void moveAllChildrenTo(Zeepbel<E> other){
+        root.traverseInorder(t->t.setZeepbel(other),t->t.getZeepbel() == this);
+    }
+
     /**
      * Returns an iterator over elements of type {@code T}.
      *
@@ -104,6 +119,12 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
         return items.iterator();
     }
 
+    public Iterator<Top<E>> topIterator(){
+        ArrayList<Top<E>> toppen = new ArrayList<>(size);
+        root.traverseInorder(toppen::add, t->t.getZeepbel() == this);
+        return toppen.iterator();
+    }
+
     /**
      * @return the size of the current bubble, for debugging purposes.
      */
@@ -111,5 +132,10 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
         ArrayList<E> items = new ArrayList<>(size);
         root.traverseInorder(t -> items.add(t.getItem()), t -> t.getZeepbel() == this);
         return items.size();
+    }
+
+    @Override
+    public String toString() {
+        return "Zeepbel {root " + root.getItem().toString() + "}";
     }
 }

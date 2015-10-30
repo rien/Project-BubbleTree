@@ -1,5 +1,6 @@
 package zeepbelboom;
 
+import javax.naming.ldap.UnsolicitedNotification;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -13,6 +14,9 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     private int size;
     private final int bubbleMaxSize;
     private int aantalZeepbellen;
+
+    private int tombStones;
+    private final int maxTombstoneRatio = 50; //Maximaal % aan tombstones.
 
     private Zeepbel<E> rootBubble;
 
@@ -203,8 +207,9 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         //Wanneer het item gevonden werd en al in de zeepbel zit moet false teruggegeven worden.
         return !find(
                 e,
-                t->{/*De top werd gevonden en moet niet meer toegevoegd worden*/},
-                t->addToParent(new Top<E>(e), t)
+                t->{},
+                t->addToParent(new Top<>(e), t),
+                Top::unRemove
         );
     }
 
@@ -239,7 +244,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public boolean contains(Object o) {
-        return find(o, t -> {}, t->{});
+        return find(o,t->{}, t->{},t->{});
     }
 
     /**
@@ -257,7 +262,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      *                                      met het type van de boom.
      * @throws NullPointerException         wanneer o <tt>null</tt> is.
      */
-    private boolean find(Object o, Consumer<Top<E>> found, Consumer<Top<E>> closest){
+    private boolean find(Object o, Consumer<Top<E>> found, Consumer<Top<E>> closest, Consumer<Top<E>> tombStone){
         @SuppressWarnings("unchecked")
         E item = (E) o;
         Top<E> top = getRoot();
@@ -272,13 +277,19 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
                 top = parent.getLeftChild();
             } else {
                 //Comp == 0, dus we hebben o gevonden.
-                found.accept(top);
-                return true;
+                if (top.isRemoved()){
+                    tombStone.accept(top);
+                    return false;
+                } else {
+                    found.accept(top);
+                    return true;
+                }
             }
         }
         closest.accept(parent);
        return false;
     }
+
 
 
     /**
@@ -292,70 +303,162 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public boolean remove(Object o) {
-        return find(o, this::removeTop, t->{});
+        return find(o, this::removeTop,t->{},t->{});
     }
 
-    /**
-     * Verwijder een top uit de zeepbelboom en balanceert indien nodig.
-     *
-     * @param toRemove uit de zeepbelboom die moet verwijderd worden.
-     */
-    private void removeTop(Top<E> toRemove){
-        if (toRemove.hasRight() && toRemove.hasLeft()){
-            //We zitten met een interne top, dus wisselen deze van plaats met de kleinste top uit de rechterdeelboom.
-            Top<E> closest = toRemove.findClosestChild();
-            toRemove.swapItems(closest);
-            toRemove = closest;
-        }
-        // De top is een blad.
-
-        Zeepbel<E> zb = toRemove.getZeepbel();
-        if (zb.size() > 1){
-            //De top zit niet alleen in de zeepbel, er moet dus niets op zeepbelniveau veranderd worden.
-            removeLeaf(toRemove);
-
-        } else {
-            //Speciaal geval: door het verwijderen van de top komen we een lege zeepbel uit
-            Top<E> sibling = toRemove.getSibling();
-            Top<E> parent = toRemove.getParent();
-
-            if (sibling.getZeepbel().size() > 1){
-                //We kunnen een top van de tweelingzeepbel gebruiken
-                if (sibling.isBubbleRoot()){
-                    Top<E> closest = sibling.findClosestChild();
-                    sibling.swapItems(closest);
+    public void removeTop(Top<E> top){
+        top.remove();
+        size--;
+        if (size == 0){
+            clear();
+        } else if ((tombStones*100)/size >= maxTombstoneRatio){
+            //Rebuild tree
+            List<E> items = new ArrayList<>();
+            Queue<Top<E>> q = new ArrayDeque<>();
+            q.add(getRoot());
+            Top<E> t;
+            //Stop alle items in BFS-volgorde in de lijst
+            while (!q.isEmpty()){
+                t = q.remove();
+                if (!t.isRemoved()){
+                    items.add(t.getItem());
                 }
-
-                //TODO
-
-
-            } else{
-
+                if (t.hasLeft()){
+                    q.add(t.getLeftChild());
+                }
+                if (t.hasRight()){
+                    q.add(t.getRightChild());
+                }
             }
-
+            assert items.size() == size;
+            clear();
+            addAll(items);
         }
     }
+
 
     /**
-     *  Verwijder een blad uit de zeepbelboom.
-     *
-     * @param toRemove blad van de zeepbelboom
+     * Implementatie van remove() die niet werkt. Deze implementatie werkt met het effectief verwijderen van een top
+     * in plaats van gebruik te maken van grafstenen. Helaas was de tijdsdruk te groot om deze methode te debuggen
+     * en heb ik een remove() geïmplementeerd die met grafstenen werkt.
      */
-    private void removeLeaf(Top<E> toRemove){
-        Zeepbel<E> zb = toRemove.getZeepbel();
-        if (!toRemove.hasLeft() && !toRemove.hasRight()){
-            //De top heeft zelf geen kinderen (en is dus ook geen root), dus kunnen we de gewoon verwijderen.
-            toRemove.removeFromParent();
-        } else if (toRemove.hasLeft()){
-            //De top heeft enkel een linkerkind
-            toRemove.getParent().setChild(toRemove.getLeftChild());
-            zb.topsRemoved(1);
-        } else {
-            //De top heeft enkel een richterkind
-            toRemove.getParent().setChild(toRemove.getRightChild());
-            zb.topsRemoved(1);
-        }
-    }
+
+
+//     /**
+//     * Probeer een object uit de zeepbelboom te verwijderen.
+//     *
+//     * @param o het te verwijderen object.
+//     * @return <tt>true</tt> als het element zich in de zeepbelboom bevond en verwijderd werd.
+//     * @throws ClassCastException            als het type van het te verwijderen object
+//     *                                       incompatibel is met de huidige zeepbelboom.
+//     * @throws NullPointerException          als het te verwijderen object <tt>null</tt> is.
+//     */
+//    @Override
+//    public boolean remove(Object o) {
+//        return find(o, this::removeTop, t->{});
+//    }
+//
+//    /**
+//     * Verwijder een top uit de zeepbelboom en balanceert indien nodig.
+//     *
+//     * @param toRemove uit de zeepbelboom die moet verwijderd worden.
+//     */
+//    private void removeTop(Top<E> toRemove){
+//        if (toRemove.hasRight() && toRemove.hasLeft()){
+//            //We zitten met een interne top, dus wisselen deze van plaats met de kleinste top uit de rechterdeelboom.
+//            Top<E> closest = toRemove.findClosestChild();
+//            toRemove.swapItems(closest);
+//            toRemove = closest;
+//        }
+//        // De top is een blad.
+//
+//        Zeepbel<E> zb = toRemove.getZeepbel();
+//        if (zb.size() > 1){
+//            //De top zit niet alleen in de zeepbel, er moet dus niets op zeepbelniveau veranderd worden.
+//            removeLeaf(toRemove);
+//
+//        } else {
+//            //Speciaal geval: door het verwijderen van de top komen we een lege zeepbel uit
+//            Zeepbel<E> siblingZeepbel = toRemove.getZeepbel().getSiblingZeepbel();
+//            Top<E> parent = toRemove.getParent();
+//            toRemove.swapItems(parent);
+//            toRemove = parent;
+//            parent = toRemove.getParent();
+//
+//            if (siblingZeepbel.size() > 1){
+//                //We kunnen een top van de tweelingzeepbel gebruiken
+//                Top<E> top  = siblingZeepbel.getRoot().findClosestChild();
+//                toRemove.swapItems(top);
+//                toRemove = top;
+//                //toRemove zit nu in een zeepbel met  > 1 items en kan dus verwijder worden.
+//                removeLeaf(toRemove);
+//            } else if (toRemove.getZeepbel().size() > 1){
+//                //We kunnen twee zeepbellen met 1 item mergen
+//                Top<E> left = toRemove.getLeftChild();
+//                toRemove.getRightChild().setRightChild(left);
+//                toRemove.getParent().setChild(mergeZeepbelRight(toRemove));
+//            } else {
+//                Top<E> top;
+//                while (toRemove.getParent() != null && toRemove.getZeepbel() != toRemove.getParent().getZeepbel()){
+//                    siblingZeepbel = toRemove.getZeepbel().getSiblingZeepbel();
+//                    toRemove.swapItems(parent);
+//                    top = toRemove;
+//                    toRemove = parent;
+//                    boolean right = top.compareTo(parent.getItem()) < 0;
+//                    if (right){
+//                        top.setLeftChild(mergeZeepbelLeft(top));
+//                        top.setRightChild(siblingZeepbel.getRoot());
+//                    } else {
+//                        top.setRightChild(mergeZeepbelRight(top));
+//                        top.setLeftChild(siblingZeepbel.getRoot());
+//                    }
+//                    siblingZeepbel.moveAllChildrenTo(top.getZeepbel());
+//                }
+//                if (toRemove.getParent() == null){
+//                    setRootBubble(mergeZeepbelLeft(toRemove).getZeepbel());
+//                }
+//            }
+//
+//        }
+//        size--;
+//    }
+//
+//
+//    private Top<E> mergeZeepbelRight(Top<E> top){
+//        Top<E> left = top.getLeftChild();
+//        top.getRightChild().setLeftChild(left);
+//        left.setZeepbel(top.getLeftChild().getZeepbel());
+//        return top.getRightChild();
+//    }
+//
+//    private Top<E> mergeZeepbelLeft(Top<E> top){
+//        Top<E> right = top.getRightChild();
+//        top.getLeftChild().setRightChild(right);
+//        right.setZeepbel(top.getRightChild().getZeepbel());
+//        return top.getLeftChild();
+//    }
+//
+//
+//     /**
+//     *  Verwijder een blad uit de zeepbelboom.
+//     *
+//     * @param toRemove blad van de zeepbelboom
+//     */
+//    private void removeLeaf(Top<E> toRemove){
+//        Zeepbel<E> zb = toRemove.getZeepbel();
+//        if (!toRemove.hasLeft() && !toRemove.hasRight()){
+//            //De top heeft zelf geen kinderen (en is dus ook geen root), dus kunnen we de gewoon verwijderen.
+//            toRemove.removeFromParent();
+//        } else if (toRemove.hasLeft()){
+//            //De top heeft enkel een linkerkind
+//            toRemove.getParent().setChild(toRemove.getLeftChild());
+//            zb.topsRemoved(1);
+//        } else {
+//            //De top heeft enkel een richterkind
+//            toRemove.getParent().setChild(toRemove.getRightChild());
+//            zb.topsRemoved(1);
+//        }
+//    }
 
     /**
 
@@ -501,6 +604,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     @Override
     public void clear() {
         size = 0;
+        tombStones = 0;
         rootBubble = null;
         aantalZeepbellen = 0;
     }

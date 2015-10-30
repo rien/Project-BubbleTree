@@ -14,6 +14,8 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
     private Zeepbel<E> zeepbel;
 
+    private boolean removed;
+
     private Top<E> parent;
     private Top<E> leftChild;
     private Top<E> rightChild;
@@ -64,6 +66,20 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         }
     }
 
+    public boolean isRemoved() {
+        return removed;
+    }
+
+    public void remove(){
+        assert !removed;
+        this.removed = true;
+    }
+
+    public void unRemove(){
+        assert removed;
+        this.removed = false;
+    }
+
     public E getItem() {
         return item;
     }
@@ -92,20 +108,20 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         return zeepbel.getRoot() == this;
     }
 
-    public void removeFromParent(){
-        parent.removeChild(this);
-    }
-
-    private void removeChild(Top<E> top){
-        if (leftChild == top){
-            leftChild = null;
-        } else if (rightChild == top){
-            rightChild = null;
-        } else {
-            throw new IllegalArgumentException("The given node is not a child of this node!");
-        }
-        zeepbel.topsRemoved(1);
-    }
+//    public void removeFromParent(){
+//        parent.removeChild(this);
+//    }
+//
+//    private void removeChild(Top<E> top){
+//        if (leftChild == top){
+//            leftChild = null;
+//        } else if (rightChild == top){
+//            rightChild = null;
+//        } else {
+//            throw new IllegalArgumentException("The given node is not a child of this node!");
+//        }
+//        zeepbel.topsRemoved(1);
+//    }
 
     public Top<E> getSibling(){
         if (parent.leftChild == this){
@@ -255,5 +271,10 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         }
 
 
+    }
+
+    @Override
+    public String toString() {
+        return "Top: " + item.toString();
     }
 }
