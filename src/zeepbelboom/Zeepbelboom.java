@@ -265,6 +265,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     private boolean find(Object o, Consumer<Top<E>> found, Consumer<Top<E>> closest, Consumer<Top<E>> tombStone){
         @SuppressWarnings("unchecked")
         E item = (E) o;
+        if (size == 0) return false;
         Top<E> top = getRoot();
         Top<E> parent = null;
         int comp;
@@ -339,7 +340,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
 
     /**
      * Implementatie van remove() die niet werkt. Deze implementatie werkt met het effectief verwijderen van een top
-     * in plaats van gebruik te maken van grafstenen. Helaas was de tijdsdruk te groot om deze methode te debuggen
+     * in plaats van gebruik te maken van grafstenen. Helaas had ik geen tijd meer om deze methode te debuggen
      * en heb ik een remove() geïmplementeerd die met grafstenen werkt.
      */
 
@@ -608,4 +609,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         rootBubble = null;
         aantalZeepbellen = 0;
     }
+
+    @Override
+    public  abstract String toString();
 }

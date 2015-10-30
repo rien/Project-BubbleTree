@@ -16,7 +16,7 @@ public abstract class BalancingBubbleTree<E extends Comparable<E>> extends Zeepb
 
 
     /**
-     * Methde die een zeepbel balanceerd door eerst alle toppen van de zeepbel in een lijst te steken.
+     * Balanceert de zeepbel door eerst alle toppen van de zeepbel in een lijst te steken.
      * Omdat de toppen in inorde in de lijst worden gestoken is deze lijst gesorteerd en kan een nieuwe
      * gebalanceerde binaire boom recursief worden opgebouwd. Deze methode werkt in lineaire tijd, waar we
      * het aantal toppen van de te balanceren zeepbel als inputgrootte beschouwen.

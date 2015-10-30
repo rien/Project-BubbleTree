@@ -7,6 +7,7 @@ import org.junit.runners.Parameterized;
 
 import java.util.*;
 
+import static CustomAssert.AssertBool.assertFalse;
 import static CustomAssert.AssertBool.assertTrue;
 import static org.junit.Assert.assertEquals;
 
@@ -27,21 +28,28 @@ public class TestZeepbelBoom {
     @Parameterized.Parameters
     public static Collection<Object[]> configs(){
         return Arrays.asList(new Object[][]{
+
+                // testsize, zeepbelboom
                 {10, new Zeepbelboom1<Integer>(2)},
                 {10, new Zeepbelboom1<Integer>(5)},
-                {10000, new Zeepbelboom1<Integer>(2)},
-                {10000, new Zeepbelboom1<Integer>(5)},
-                {10000, new Zeepbelboom1<Integer>(20)},
+                {100000, new Zeepbelboom1<Integer>(2)},
+                {100000, new Zeepbelboom1<Integer>(5)},
+                {100000, new Zeepbelboom1<Integer>(20)},
                 {10, new Zeepbelboom2<Integer>(2)},
                 {10, new Zeepbelboom2<Integer>(5)},
-                {10000, new Zeepbelboom2<Integer>(2)},
-                {10000, new Zeepbelboom2<Integer>(5)},
-                {10000, new Zeepbelboom2<Integer>(20)},
+                {100000, new Zeepbelboom2<Integer>(2)},
+                {100000, new Zeepbelboom2<Integer>(5)},
+                {100000, new Zeepbelboom2<Integer>(20)},
                 {10, new Zeepbelboom3<Integer>(2)},
                 {10, new Zeepbelboom3<Integer>(5)},
-                {10000, new Zeepbelboom3<Integer>(2)},
-                {10000, new Zeepbelboom3<Integer>(5)},
-                {10000, new Zeepbelboom3<Integer>(20)},
+                {100000, new Zeepbelboom3<Integer>(2)},
+                {100000, new Zeepbelboom3<Integer>(5)},
+                {100000, new Zeepbelboom3<Integer>(20)},
+                {100000, new Zeepbelboom3<Integer>(20, true, 5, false)},
+                {100000, new Zeepbelboom3<Integer>(20, true, 2, false)},
+                {100000, new Zeepbelboom3<Integer>(20, false, -1, true)},
+                {100000, new Zeepbelboom3<Integer>(20, true, 5, true)},
+                {100000, new Zeepbelboom3<Integer>(20, false, -1, false)},
         });
     }
 
@@ -115,7 +123,14 @@ public class TestZeepbelBoom {
 
     @Test
     public void testRemove(){
-        items.forEach(i -> assertTrue("Item was not found!",zeepbelboom.remove(i)));
+        List<Integer> randomRemove = items.subList(0,items.size()/10);
+        Collections.shuffle(randomRemove);
+        randomRemove.forEach(zeepbelboom::remove);
+        randomRemove.forEach(t -> assertFalse(zeepbelboom.contains(t)));
+        randomRemove.forEach(t -> assertFalse(zeepbelboom.remove(t)));
+        zeepbelboom.addAll(randomRemove);
+        randomRemove.forEach(t -> assertTrue(zeepbelboom.contains(t)));
+        items.forEach(zeepbelboom::remove);
         assertTrue("Zeepbelboom was not empty!",zeepbelboom.isEmpty());
     }
 

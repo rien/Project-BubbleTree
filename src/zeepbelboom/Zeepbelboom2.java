@@ -27,6 +27,10 @@ public class Zeepbelboom2<E extends Comparable<E>> extends BalancingBubbleTree<E
         splitAndPushUp(parent, root, bubble);
     }
 
+    @Override
+    public String toString() {
+        return "Zeepbelboom2 with K=" + String.valueOf(getBubbleMaxSize());
+    }
 
 
 

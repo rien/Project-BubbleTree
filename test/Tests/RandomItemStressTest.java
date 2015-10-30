@@ -19,7 +19,7 @@ public class RandomItemStressTest {
 
     private static final int TEST_SIZE = 1000000;
     private static final long SEED = 698697970;
-    private static final int MAX_N = 20; //K = 2^N
+    private static final int MAX_N = 5; //K = 2^N
 
 
     private Integer[] items;
@@ -38,6 +38,10 @@ public class RandomItemStressTest {
         constructors.add(Zeepbelboom1::new);
         constructors.add(Zeepbelboom2::new);
         constructors.add(Zeepbelboom3::new);
+        constructors.add(k -> new Zeepbelboom3<Integer>(k,false,-1,true));
+        constructors.add(k -> new Zeepbelboom3<Integer>(k,true,5,true));
+        constructors.add(k -> new Zeepbelboom3<Integer>(k,true,5,false));
+
     }
 
     @Test
@@ -47,11 +51,11 @@ public class RandomItemStressTest {
         long testAddTime;
         long testContainsTime;
         long testRemoveTime;
-        for (IntFunction<Zeepbelboom<Integer>> zeepBelboomConstructor : constructors){
-            for (int i = 1; i < MAX_N; i++) {
+        for (int i = 1; i < MAX_N; i++) {
+            for (IntFunction<Zeepbelboom<Integer>> zeepBelboomConstructor : constructors){
                 int k = twoPower(i);
                 boom = zeepBelboomConstructor.apply(k);
-                System.out.printf("%nTests for K=%d and %s%n -> Add: ", k,boom.getClass().getCanonicalName() );
+                System.out.printf("%nTests for %s%n -> Add: ",boom.toString() );
                 tmpTime = System.currentTimeMillis();
 
 

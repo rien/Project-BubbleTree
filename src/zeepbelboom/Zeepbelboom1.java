@@ -1,5 +1,7 @@
 package zeepbelboom;
 
+import java.util.IntSummaryStatistics;
+
 /**
  *
  * @author Rien Maertens
@@ -107,5 +109,10 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
             up = a;
         }
         splitAndPushUp(parent, up, bubble);
+    }
+
+    @Override
+    public String toString() {
+        return "Zeepbelboom1 with K=" + String.valueOf(getBubbleMaxSize());
     }
 }
