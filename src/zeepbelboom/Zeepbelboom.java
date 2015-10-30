@@ -1,6 +1,5 @@
 package zeepbelboom;
 
-import javax.naming.ldap.UnsolicitedNotification;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -256,6 +255,9 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      * @param closest als het object niet in de zeepbelboom zit wordt de top aan deze consumer weergegeven
      *                die normaal de parent van de top zou zijn die het item bevat, moest het item zich
      *                in de zeepbelboom bevinden.
+     * @param tombStone als het object in de zeepbelboom zit maar een grafsteen is wordt de top aan deze
+     *
+     *
      *
      * @return <tt>true</tt> wanneer het object gevonden werd.
      * @throws ClassCastException           wanneer het type van o niet overeenkomt
@@ -294,7 +296,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
 
 
     /**
-     * Probeer een object uit de zeepbelboom te verwijderen.
+     * Probeer een object uit de zeepbelboom te verwijderen door een grafsteen te plaatsen.
+     *
+     * Het verwijderen van dit object gebeurt in logaritmische tijd want er moet enkel gezocht worden naar dit
+     * object en een grafsteen geplaatst worden.
+     *
+     * Wanneer de zeepbelboom uit een bepaald percentage grafstenen bestaat wordt de boom echter in lineaire
+     * tijd opnieuw opgebouwd.
      *
      * @param o het te verwijderen object.
      * @return <tt>true</tt> als het element zich in de zeepbelboom bevond en verwijderd werd.
@@ -307,34 +315,40 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
         return find(o, this::removeTop,t->{},t->{});
     }
 
+
     public void removeTop(Top<E> top){
         top.remove();
         size--;
         if (size == 0){
             clear();
         } else if ((tombStones*100)/size >= maxTombstoneRatio){
-            //Rebuild tree
-            List<E> items = new ArrayList<>();
-            Queue<Top<E>> q = new ArrayDeque<>();
-            q.add(getRoot());
-            Top<E> t;
-            //Stop alle items in BFS-volgorde in de lijst
-            while (!q.isEmpty()){
-                t = q.remove();
-                if (!t.isRemoved()){
-                    items.add(t.getItem());
-                }
-                if (t.hasLeft()){
-                    q.add(t.getLeftChild());
-                }
-                if (t.hasRight()){
-                    q.add(t.getRightChild());
-                }
-            }
-            assert items.size() == size;
-            clear();
-            addAll(items);
+            rebuildTree();
         }
+    }
+
+
+    public void rebuildTree(){
+        //Rebuild tree
+        List<E> items = new ArrayList<>();
+        Queue<Top<E>> q = new ArrayDeque<>();
+        q.add(getRoot());
+        Top<E> t;
+        //Stop alle items in BFS-volgorde in de lijst.
+        while (!q.isEmpty()){
+            t = q.remove();
+            if (!t.isRemoved()){
+                items.add(t.getItem());
+            }
+            if (t.hasLeft()){
+                q.add(t.getLeftChild());
+            }
+            if (t.hasRight()){
+                q.add(t.getRightChild());
+            }
+        }
+        assert items.size() == size;
+        clear();
+        addAll(items);
     }
 
 
@@ -553,6 +567,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
 
     /**
      * Verwijder alle elementen uit de zeepbelboom die in de gegeven collectie zitten.
+     * Gaat enkel controleren of de boom opnieuw moet opbouwt worden na de laatste verwijderactie.
      *
      * @param c collectie met de te verwijderen elementen.
      * @return <tt>true</tt> als de huidige zeepbelboom veranderd is door deze operatie.
@@ -564,11 +579,22 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     @Override
     public boolean removeAll(Collection<?> c) {
+        boolean deleted;
         boolean changed = false;
         for(Object o: c){
-            if (remove(o)){
+            deleted = find(o,t->{
+                t.remove();
+                size--;
+                if (size == 0){
+                    clear();
+                }
+            }, t->{}, t->{});
+            if (deleted){
                 changed = true;
             }
+        }
+        if ((tombStones*100)/size >= maxTombstoneRatio){
+            rebuildTree();
         }
         return changed;
     }

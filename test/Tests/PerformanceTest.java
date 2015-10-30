@@ -15,9 +15,9 @@ import static CustomAssert.AssertBool.assertTrue;
  * Test die voor iedere zeepbelboom de basisbewerkingen gaat uitvoeren op een groot aantal
  * willekeurige elementen. Deze test wordt ook meerdere keer herhaald voor verschillende k-waardes.
  */
-public class RandomItemStressTest {
+public class PerformanceTest {
 
-    private static final int TEST_SIZE = 1000000;
+    private static final int TEST_SIZE = 10000000;
     private static final long SEED = 698697970;
     private static final int MAX_N = 5; //K = 2^N
 
