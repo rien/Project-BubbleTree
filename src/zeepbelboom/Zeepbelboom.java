@@ -327,7 +327,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
 
-    public void rebuildTree(){
+    private void rebuildTree(){
         //Rebuild tree
         List<E> items = new ArrayList<>();
         Queue<Top<E>> q = new ArrayDeque<>();
