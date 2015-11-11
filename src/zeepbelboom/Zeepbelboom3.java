@@ -22,7 +22,7 @@ import java.util.Queue;
  *                          Als dit <tt>false</tt> is wordt de ouder volledig vol gestopt zodat die net niet splitst.
  *
  */
-public class Zeepbelboom3<E extends Comparable<E>> extends BalancingBubbleTree<E> {
+public class Zeepbelboom3<E extends Comparable<E>> extends ShrinkingBubbleTree<E> {
 
 
     private  int maxPushUp = 5;
@@ -51,7 +51,7 @@ public class Zeepbelboom3<E extends Comparable<E>> extends BalancingBubbleTree<E
     @Override
     protected void shrinkBubble(Zeepbel<E> bubble) {
         Top<E> parent = bubble.getRoot().getParent();
-        balanceBubble(bubble);
+        BubbleBalancer.balanceBubble(bubble);
         Top<E> root = bubble.getRoot();
 
         if (parent == null){
@@ -106,7 +106,7 @@ public class Zeepbelboom3<E extends Comparable<E>> extends BalancingBubbleTree<E
     public String toString() {
         String pushup = maxPushUpEnabled ? "maxPushup = " + String.valueOf(maxPushUp) : "maxPushUp disabled";
         String forceOverflow = forceParentOverflow ? "parentOverflow enabled" : "parentOverflow disabled";
-        return "Zeepbelboom3 with K=" + String.valueOf(getBubbleMaxSize()) + ", " + pushup + " and " + forceOverflow + ".";
+        return super.toString() + ", " + pushup + " and " + forceOverflow + ".";
     }
 
 

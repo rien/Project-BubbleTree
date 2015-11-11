@@ -6,14 +6,9 @@ import java.util.List;
 /**
  * @author Rien Maertens
  *
- * Abstracte superklasse voor zeepbelbomen die gebruikmaken van een balanceringsmethode in hun bubbels.
+ * Klasse die een statische methode bevat om een zeepbel intern te balanceren.
  */
-public abstract class BalancingBubbleTree<E extends Comparable<E>> extends Zeepbelboom<E> {
-
-    public BalancingBubbleTree(int k) {
-        super(k);
-    }
-
+public class BubbleBalancer {
 
     /**
      * Balanceert de zeepbel door eerst alle toppen van de zeepbel in een lijst te steken.
@@ -23,7 +18,7 @@ public abstract class BalancingBubbleTree<E extends Comparable<E>> extends Zeepb
      *
      * @param zeepbel die moet gebalanceerd worden.
      */
-    protected void balanceBubble(Zeepbel<E> zeepbel){
+    public static <E extends Comparable<E>> void balanceBubble(Zeepbel<E> zeepbel){
         List<Top<E>> nodes = new ArrayList<>();
         List<Top<E>> children = new ArrayList<>();
         zeepbel.getRoot().traverseInorder(t -> {
@@ -61,7 +56,7 @@ public abstract class BalancingBubbleTree<E extends Comparable<E>> extends Zeepb
      * @param end index tot waar de moet moet worden opgebouwd.
      * @return de <tt>Top</tt> van de gebalanceerde binaire boom.
      */
-    private Top<E> listToTree(List<Top<E>> list, int start, int end){
+    private static  <E extends Comparable<E>> Top<E> listToTree(List<Top<E>> list, int start, int end){
         if (end < start){
             return null;
         } else {

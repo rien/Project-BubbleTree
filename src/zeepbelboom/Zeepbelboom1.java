@@ -15,7 +15,7 @@ import java.util.IntSummaryStatistics;
  *      - Duw de root omhoog en maak van de linker- en rechterdeelboom een nieuwe zeepbel.
  *      - Pas de bovenliggende zeepbel aan, indien nodig
  */
-public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
+public class Zeepbelboom1<E extends Comparable<E>> extends ShrinkingBubbleTree<E> {
 
 
     public Zeepbelboom1(int k) {
@@ -109,10 +109,5 @@ public class Zeepbelboom1<E extends Comparable<E>> extends Zeepbelboom<E> {
             up = a;
         }
         splitAndPushUp(parent, up, bubble);
-    }
-
-    @Override
-    public String toString() {
-        return "Zeepbelboom1 with K=" + String.valueOf(getBubbleMaxSize());
     }
 }

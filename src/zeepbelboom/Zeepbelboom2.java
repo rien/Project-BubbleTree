@@ -6,7 +6,7 @@ package zeepbelboom;
  * Implementatie van een zeepbelboom die overvolle zeepbellen gaat verkleinen door ze eerst zo goed
  * mogelijk te balanceren om vervolgens de zeepbel in twee te splitsen en de wortel omhoog te duwen.
  */
-public class Zeepbelboom2<E extends Comparable<E>> extends BalancingBubbleTree<E> {
+public class Zeepbelboom2<E extends Comparable<E>> extends ShrinkingBubbleTree<E> {
 
     public Zeepbelboom2(int k) {
         super(k);
@@ -22,14 +22,9 @@ public class Zeepbelboom2<E extends Comparable<E>> extends BalancingBubbleTree<E
     @Override
     protected void shrinkBubble(Zeepbel<E> bubble) {
         Top<E> parent = bubble.getRoot().getParent();
-        balanceBubble(bubble);
+        BubbleBalancer.balanceBubble(bubble);
         Top<E> root = bubble.getRoot();
         splitAndPushUp(parent, root, bubble);
-    }
-
-    @Override
-    public String toString() {
-        return "Zeepbelboom2 with K=" + String.valueOf(getBubbleMaxSize());
     }
 
 
