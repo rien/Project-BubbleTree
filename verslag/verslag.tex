@@ -8,6 +8,14 @@
     \usepackage{enumerate}
     \usepackage{mathtools}
     \usepackage{graphicx}
+    \usepackage{tikz}
+    \usepackage{pgfplots}
+    \pgfplotsset{compat=1.10}
+    \usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning}
+    \tikzset
+    {
+    	tr/.style = {circle, draw=black, align=center, minimum size=1cm}
+    }
     \DeclarePairedDelimiter\floor{\lfloor}{\rfloor} 
 
     \newtheorem{opgave}{Opgave}
@@ -40,8 +48,8 @@
         Wat is de maximale diepte van een $k$-zeepbelboom met $n$ sleutels?
         \begin{enumerate}[a.]
             \item Gemeten in zeepbellen. 
-                \newline 
-                \newline
+            
+            
                 \begingroup 
                 \normalfont
                 Stel $d_z$ de diepte in zeepbellen van een zeepbelboom. $d_z$ bereikt een maximum wanneer iedere zeepbel maar één top omvat,
@@ -50,14 +58,71 @@
                 $$d_z \le \floor{\log_2 n}$$
             \endgroup
         \item Gemeten in toppen van de ten gronde liggende binaire boom.
-            \newline 
-            \newline
+
+
             \begingroup
             \normalfont
-        Stel $d_t$ de diepte in toppen van een zeepbelboom. $d_t$ bereikt een maximum wanneer we één lang pad van zeepbellen maken waar elke top van een zeepbel maximum één kind in dezelfde zeepbel bevat. De andere zeepbellen die kinderen zijn van dit lange pad zijn terug zeepbellen met grootte één. Dit ziet er dan als volgt uit:\newline
-            \begin{center}
-                \includegraphics[scale=0.75]{Tree.png}
-            \end{center}
+        Stel $d_t$ de diepte in toppen van een zeepbelboom. $d_t$ bereikt een maximum wanneer we één lang pad van zeepbellen maken waar elke top van een zeepbel maximum één kind in dezelfde zeepbel bevat. De andere zeepbellen die kinderen zijn van dit lange pad zijn terug zeepbellen met grootte één. Dit ziet er dan als volgt uit:
+        
+            \begin{figure}[h]
+            	\centering
+            	
+            	
+            	{
+					    \begin{tikzpicture}[->,>=stealth',
+					    level/.style={level distance = 2cm},
+					    level 1/.style={sibling distance=6cm},
+					    level 2/.style={sibling distance=4.5cm}, 
+					    level 3/.style={sibling distance=3cm}, 
+					    scale=0.6, transform shape]
+            		\node [tr, fill=green] {100}
+            		child {
+            			node [tr, fill=green] {90} 
+            			child {
+            				node [tr, fill=yellow] {75} 
+            				child {
+            					node [tr, fill=yellow] {50} 
+            					child{
+            						node [tr, fill=blue!50] {25}
+            						child{
+            							node [tr, fill=blue!50] {10}
+            						}
+            					}
+            					child{
+            						node [tr, fill=purple!30] {55}
+            					}
+            				}
+            				child {
+            					node [tr, fill=red!50] {80} 
+            				}
+            			}
+            			child {
+            				node [tr, fill=orange] {95}
+            				child{
+            					node [tr, fill=green!30] {94}
+            				}
+            				child{
+            					node [tr, fill=blue!30] {96}
+            				}
+            			}
+            		}
+            		child {
+            			node [tr, fill=purple!40] {110}
+            			child{
+            				node [tr, fill=yellow!50] {105}
+            			}
+            			child{
+            				node [tr, fill=gray!50] {120}
+            			}
+            		}
+            		;
+            		\end{tikzpicture}
+            	}
+            \end{figure}
+            
+            
+            
+            
             Het valt op dat wanneer we een niveau zeepbellen toevoegen, we het dubbele aantal toppen moeten toevoegen van de vorige zeepbelboom met een niveau lager. 
             Voor $n$ het aantal toppen en $z$ het aantal niveaus in zeepbellen geldt: $$n \ge \sum\limits_{i=1}^z k2^{z-1} = k(2^z-1)$$ 
             We lossen dit op naar $z$: $$z \le \log_2{(\dfrac{n+k}{k})}$$
@@ -69,7 +134,9 @@
     \endgroup 
 \end{enumerate}
     \end{opgave}	
-    \newpage
+
+
+
     \part*{Implementatie}
     Hieronder volgt er een korte uitleg over de interne structuur en algoritmes die
     ik heb gebruikt voor de implementaties van de zeepbelbomen.
