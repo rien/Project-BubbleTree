@@ -22,7 +22,7 @@ public class Zeepbelboom2<E extends Comparable<E>> extends ShrinkingBubbleTree<E
     @Override
     protected void shrinkBubble(Zeepbel<E> bubble) {
         Top<E> parent = bubble.getRoot().getParent();
-        BubbleBalancer.balanceBubble(bubble);
+        bubble.balanceBubble();
         Top<E> root = bubble.getRoot();
         splitAndPushUp(parent, root, bubble);
     }

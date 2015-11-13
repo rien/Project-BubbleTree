@@ -36,6 +36,39 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
     /**
+     * Voeg een item toe aan de zeepbelboom. Dit gebeurt in logaritmische tijd.
+     *
+     * @param e item die moet toegevoegd worden aan de zeepbelboom.
+     * @return <tt>true</tt> als het item nog niet in de zeepbelboom zat en is toegevoegd.
+     *
+     * @throws ClassCastException            als de klasse van het meegegeven item niet
+     *                                       compatibel is met deze zeepbelboom en dus
+     *                                       niet kon toegevoegd worden.
+     * @throws NullPointerException          als het toe te voegen element <tt>null</tt> is.
+     */
+    @Override
+    public boolean add(E e) {
+        //Als de boom leeg is maken we de eerste zeepbel aan.
+        if (isEmpty() || getRoot() == null){
+            Zeepbel<E> rootBubble = new Zeepbel<E>(this, new Top<E>(e));
+
+            setRootBubble(rootBubble);
+            size++;
+            return true;
+        }
+
+        //Wanneer het item gevonden werd en al in de zeepbel zit moet false teruggegeven worden.
+        return !find(
+                e,
+                t->{},
+                t->addToParent(t, e),
+                Top::unRemove
+        );
+    }
+
+    protected abstract void addToParent(Top<E> parent, E item);
+
+    /**
      * @return een iterator van alle zeepbellen die in inorde gesorteerd zijn.
      */
     public Iterator<Zeepbel<E>> zeepbelIterator() {
@@ -79,60 +112,6 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     public boolean isEmpty() {
         return size == 0;
     }
-
-
-    /**
-     * Voeg een item toe aan de zeepbelboom. Dit gebeurt in logaritmische tijd.
-     *
-     * @param e item die moet toegevoegd worden aan de zeepbelboom.
-     * @return <tt>true</tt> als het item nog niet in de zeepbelboom zat en is toegevoegd.
-     *
-     * @throws ClassCastException            als de klasse van het meegegeven item niet
-     *                                       compatibel is met deze zeepbelboom en dus
-     *                                       niet kon toegevoegd worden.
-     * @throws NullPointerException          als het toe te voegen element <tt>null</tt> is.
-     */
-    @Override
-    public boolean add(E e) {
-        //Als de boom leeg is maken we de eerste zeepbel aan.
-        if (isEmpty() || getRoot() == null){
-            Zeepbel<E> rootBubble = new Zeepbel<E>(this, new Top<E>(e));
-
-            setRootBubble(rootBubble);
-            size++;
-            return true;
-        }
-
-        //Wanneer het item gevonden werd en al in de zeepbel zit moet false teruggegeven worden.
-        return !find(
-                e,
-                t->{},
-                t->addToParent(new Top<>(e), t),
-                Top::unRemove
-        );
-    }
-
-    /**
-     * Voeg een nieuwe top toe aan een top die al in de zeepbelboom zit.
-     * @param child toe te voegen top.
-     * @param parent ouder waaraan het kind moet toegevoegd worden.
-     */
-    private void addToParent(Top<E> child, Top<E> parent){
-        Zeepbel<E> zb = parent.getZeepbel();
-        parent.setChild(child);
-        if(child.setZeepbel(zb)){
-            //De zeepbel zit overvol en moet verkleind worden.
-            shrinkBubble(zb);
-        }
-        size++;
-    }
-
-    /**
-     * Methode die moet worden opgeropen wanneer een zeepbel zijn maximale overschrijd en moet verkleind worden.
-     *
-     * @param bubble die moet verkleind worden.
-     */
-    protected abstract void shrinkBubble(Zeepbel<E> bubble);
 
     /**
      * Kijk of het gegeven object in de zeepbelboom zit.

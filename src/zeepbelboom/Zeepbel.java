@@ -72,13 +72,17 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     /**
      * Methode die aan de zeepbel verteld dat er zojuist een top is toegevoegd.
      *
-     * @return <tt>true</tt> wanneer de zeepbel moet gebalanceerd worden.
      */
-    public boolean topAdded(){
+    public void topAdded(){
         assert size <= maxSize : "Bubble is too big!";
-
         size++;
-        return size == maxSize + 1;
+    }
+
+    /**
+     * @return <tt>true</tt> wanneer de zeepbel overvol zit en moet splitsen.
+     */
+    public boolean hasToBurst(){
+        return size > maxSize;
     }
 
     /**
@@ -137,5 +141,62 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     @Override
     public String toString() {
         return "Zeepbel {root " + root.getItem().toString() + "}";
+    }
+
+
+    /**
+     * Balanceer de zeepbel door eerst alle toppen van de zeepbel in een lijst te steken.
+     * Omdat de toppen in inorde in de lijst worden gestoken is deze lijst gesorteerd en kan een nieuwe
+     * gebalanceerde binaire boom recursief worden opgebouwd. Deze methode werkt in lineaire tijd, waar we
+     * het aantal toppen van de te balanceren zeepbel als inputgrootte beschouwen.
+     */
+    public void balanceBubble(){
+        List<Top<E>> nodes = new ArrayList<>();
+        List<Top<E>> children = new ArrayList<>();
+        getRoot().traverseInorder(t -> {
+                    nodes.add(t);
+                    if (!t.hasLeft() || t.getLeftChild().getZeepbel() != this) {
+                        children.add(t.getLeftChild());
+                    }
+                    if (!t.hasRight() || t.getRightChild().getZeepbel() != this) {
+                        children.add(t.getRightChild());
+                    }
+                },
+                t -> t.getZeepbel() == this
+        );
+        Top<E> newRoot = listToTree(nodes,0,nodes.size()-1);
+        assert newRoot != null;
+        newRoot.removeParent();
+        setRoot(newRoot);
+        int nextChild = 0;
+        for (Top<E> t : nodes) {
+            if (!t.hasLeft()){
+                t.setLeftChild(children.get(nextChild++));
+            }
+            if (!t.hasRight()){
+                t.setRightChild(children.get(nextChild++));
+            }
+        }
+    }
+
+    /**
+     * Recursieve methode van een gesorteerde lijst van toppen
+     * een zo goed mogelijk gebalanceerde binaire boom opsteld.
+     *
+     * @param list van toppen die in gesorteerde volorde zitten.
+     * @param start index vanaf waar de boom moet worden opgebouwd.
+     * @param end index tot waar de moet moet worden opgebouwd.
+     * @return de <tt>Top</tt> van de gebalanceerde binaire boom.
+     */
+    private static  <E extends Comparable<E>> Top<E> listToTree(List<Top<E>> list, int start, int end){
+        if (end < start){
+            return null;
+        } else {
+            int mid = start + ((end - start)/2);
+            Top<E> root = list.get(mid);
+            root.setLeftChild(listToTree(list, start, mid - 1));
+            root.setRightChild(listToTree(list, mid + 1, end));
+            return root;
+        }
     }
 }

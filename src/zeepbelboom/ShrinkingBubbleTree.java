@@ -14,6 +14,25 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
     }
 
     /**
+     * Voeg een nieuwe item toe aan een top die al in de zeepbelboom zit.
+     * @param item toe te voegen item.
+     * @param parent ouder waaraan het kind moet toegevoegd worden.
+     */
+    protected void addToParent(Top<E> parent, E item){
+        Zeepbel<E> zb = parent.getZeepbel();
+        Top<E> child = new Top<>(item);
+        parent.setChild(child);
+        child.setZeepbel(zb);
+        if(zb.hasToBurst()){
+            //De zeepbel zit overvol en moet verkleind worden.
+            shrinkBubble(zb);
+        }
+        size++;
+    }
+
+    protected abstract void shrinkBubble(Zeepbel<E> zb);
+
+    /**
      * Splitst een zeepbel in twee en voeg de oude root toe aan de bovenliggende zeepbel.
      *
      * @param parent ouder waaraan de huidige root van de zeepbel zal worden toegevoegd aan zijn zeepbel.
@@ -67,7 +86,8 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
         } else {
             parent.setChild(top);
             Zeepbel<E> parentBubble = parent.getZeepbel();
-            if (top.setZeepbel(parentBubble)) {
+            top.setZeepbel(parentBubble);
+            if (parentBubble.hasToBurst()) {
                 shrinkBubble(parentBubble);
             }
         }

@@ -1,6 +1,7 @@
 package zeepbelboom;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 /**
  * @author Rien Maertens
@@ -14,21 +15,36 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
         super(k);
     }
 
-    /**
-     * Methode die moet worden opgeropen wanneer een zeepbel zijn maximale overschrijd en moet verkleind worden.
-     *
-     * @param bubble die moet verkleind worden.
-     */
-    @Override
-    protected void shrinkBubble(Zeepbel<E> bubble) {
+    protected void addToParent(Top<E> parent, E item){
+        Top<E> child = new Top<>(item);
+        Zeepbel<E> zb = parent.getZeepbel();
+        parent.setChild(child);
 
+        if (zb.isFull()){
+            child.setZeepbel(new Zeepbel<>(this,child));
+        } else {
+            child.setZeepbel(zb);
+            if (zb.isFull()){
+                zb.balanceBubble();
+            }
+        }
     }
 
     @Override
-    public String toString() {
-        return null;
+    protected boolean find(Object o, Consumer<Top<E>> found, Consumer<Top<E>> closest, Consumer<Top<E>> tombStone) {
+        return super.find(
+                o,
+                t->{found.accept(t);semiSplay(t);},
+                t->{closest.accept(t);semiSplay(t);},
+                tombStone
+        );
     }
 
+    private void semiSplay(Top<E> top){
+        while (getRoot() != top){
+
+        }
+    }
 
     /**
      * De volgende verwijdermethodes zijn niet gedefinieerd.

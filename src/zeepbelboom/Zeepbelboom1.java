@@ -34,7 +34,6 @@ public class Zeepbelboom1<E extends Comparable<E>> extends ShrinkingBubbleTree<E
      * @param bubble die moet verkleind worden.
      */
     @Override
-    @SuppressWarnings("SuspiciousNameCombination")
     protected void shrinkBubble(Zeepbel<E> bubble){
         Top<E> a = bubble.getRoot(); //Huidige root
         Top<E> parent = a.getParent(); //Parent van de huidige root die in een bovenliggende zeepbel zit.

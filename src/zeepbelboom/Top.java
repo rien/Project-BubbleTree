@@ -187,12 +187,11 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
     /**
      * Voegt de huide top toe aan de zeepbel.
-     * @param zeepbel waaraan de top moet teoegevoegd worden.
-     * @return <tt>true</tt> wanneer door deze toevoeging de zeepbel moet gesplitst worden.
+     * @param zeepbel waaraan de top moet toegevoegd worden.
      */
-    public boolean setZeepbel(Zeepbel<E> zeepbel){
+    public void setZeepbel(Zeepbel<E> zeepbel){
         this.zeepbel = zeepbel;
-        return zeepbel.topAdded();
+        zeepbel.topAdded();
     }
 
     /**
