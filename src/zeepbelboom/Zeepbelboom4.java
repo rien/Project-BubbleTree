@@ -1,5 +1,6 @@
 package zeepbelboom;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
 
@@ -31,6 +32,11 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
     }
 
     @Override
+    public boolean contains(Object o) {
+        return find(o,this::semiSplay,t->{/* Deze zeepbel is incompleet */},this::semiSplay);
+    }
+
+    @Override
     protected boolean find(Object o, Consumer<Top<E>> found, Consumer<Top<E>> closest, Consumer<Top<E>> tombStone) {
         return super.find(
                 o,
@@ -41,9 +47,20 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
     }
 
     private void semiSplay(Top<E> top){
-        while (getRoot() != top){
+        Zeepbel<E> zb1 = top.getZeepbel();
+        ArrayList<Top<E>> nodes = new ArrayList<>(bubbleMaxSize*3);
+        ArrayList<Top<E>> children = new ArrayList<>((bubbleMaxSize*3)+1);
+        while (zb1 == getRoot().getZeepbel() || zb1.getParentBubble() == getRoot().getZeepbel()){
+            Zeepbel<E> zb2 = zb1.getParentBubble();
+            Zeepbel<E> zb3 = zb2.getParentBubble();
+            zb3.getRoot().traverseAndAdd(
+                    nodes,
+                    children,
+                    t -> t.getZeepbel() == zb1 || t.getZeepbel() == zb2 || t.getZeepbel() == zb3
+            );
 
         }
+
     }
 
     /**

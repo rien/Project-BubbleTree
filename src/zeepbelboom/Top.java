@@ -1,5 +1,7 @@
 package zeepbelboom;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -271,6 +273,23 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
 
     }
+
+    public void traverseAndAdd(Collection<Top<E>> nodes, Collection<Top<E>> children, Predicate<Top<E>> predicate){
+        traverseInorder(
+                t->{
+                    nodes.add(t);
+                    if (!t.hasLeft() || !predicate.test(t.getLeftChild())){
+                        children.add(t.getLeftChild());
+                    }
+                    if(!t.hasRight() || !predicate.test(t.getRightChild())){
+                        children.add(t.getRightChild());
+                    }
+                },
+                predicate
+        );
+
+    }
+
 
     @Override
     public String toString() {

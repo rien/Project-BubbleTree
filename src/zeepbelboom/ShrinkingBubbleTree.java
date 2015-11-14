@@ -269,7 +269,7 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
 //
 //        } else {
 //            //Speciaal geval: door het verwijderen van de top komen we een lege zeepbel uit
-//            Zeepbel<E> siblingZeepbel = toRemove.getZeepbel().getSiblingZeepbel();
+//            Zeepbel<E> siblingZeepbel = toRemove.getZeepbel().getSiblingbubble();
 //            Top<E> parent = toRemove.getParent();
 //            toRemove.swapItems(parent);
 //            toRemove = parent;
@@ -290,7 +290,7 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
 //            } else {
 //                Top<E> top;
 //                while (toRemove.getParent() != null && toRemove.getZeepbel() != toRemove.getParent().getZeepbel()){
-//                    siblingZeepbel = toRemove.getZeepbel().getSiblingZeepbel();
+//                    siblingZeepbel = toRemove.getZeepbel().getSiblingbubble();
 //                    toRemove.swapItems(parent);
 //                    top = toRemove;
 //                    toRemove = parent;
