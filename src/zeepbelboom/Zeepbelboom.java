@@ -17,7 +17,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     protected int tombStones;
     protected final int maxTombstoneRatio = 50; //Maximaal % aan tombstones.
 
-    private Zeepbel<E> rootBubble;
+    protected Zeepbel<E> rootBubble;
 
     Zeepbelboom(int k) {
         if (k < 2){
@@ -49,10 +49,8 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     @Override
     public boolean add(E e) {
         //Als de boom leeg is maken we de eerste zeepbel aan.
-        if (isEmpty() || getRoot() == null){
-            Zeepbel<E> rootBubble = new Zeepbel<E>(this, new Top<E>(e));
-
-            setRootBubble(rootBubble);
+        if (isEmpty()){
+            rootBubble = new Zeepbel<>(this, new Top<>(e));
             size++;
             return true;
         }

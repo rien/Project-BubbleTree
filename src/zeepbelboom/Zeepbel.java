@@ -157,21 +157,30 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
      * het aantal toppen van de te balanceren zeepbel als inputgrootte beschouwen.
      */
     public void balanceBubble(){
-        List<Top<E>> nodes = new ArrayList<>();
-        List<Top<E>> children = new ArrayList<>();
-        getRoot().traverseAndAdd(nodes,children,t -> t.getZeepbel() == this);
-        TreeBuilder<E> builder = TreeBuilder.fromList(nodes);
-        Top<E> newRoot = builder.getRoot();
-        newRoot.removeParent();
-        setRoot(newRoot);
-        int nextChild = 0;
-        for (Top<E> t : builder.leaves()) {
-            if (!t.hasLeft()){
-                t.setLeftChild(children.get(nextChild++));
-            }
-            if (!t.hasRight()){
-                t.setRightChild(children.get(nextChild++));
-            }
-        }
+        if (size > 2){
+            List<Top<E>> nodes = new ArrayList<>();
+            List<Top<E>> children = new ArrayList<>();
+            getRoot().traverseAndAdd(nodes,children,t -> t.getZeepbel() == this);
+            TreeBuilder<E> builder = new TreeBuilder<>(nodes);
+            Top<E> newRoot = builder.getRoot();
+            builder.attachChildren(children);
+            newRoot.removeParent();
+            setRoot(newRoot);
+       }
+    }
+
+    public void clear(){
+        this.size = 0;
+        this.root = null;
+    }
+
+    @Override
+    public int hashCode() {
+        return root.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this;
     }
 }

@@ -17,13 +17,9 @@ import static org.junit.Assert.assertEquals;
  */
 
 @RunWith(Parameterized.class)
-public class TestZeepbelBoom {
+public class TestZeepbelBoom extends ZeepbelBoomTest {
 
     private static final int SEED = 25547878;
-
-    private final int testSize;
-
-    private final Zeepbelboom<Integer> zeepbelboom;
 
     @Parameterized.Parameters
     public static Collection<Object[]> configs(){
@@ -53,47 +49,15 @@ public class TestZeepbelBoom {
         });
     }
 
-    public TestZeepbelBoom(int testSize, Zeepbelboom<Integer> zeepbelboom){
-        this.testSize = testSize;
-        this.zeepbelboom = zeepbelboom;
-        items = new ArrayList<>();
-        for (int i = 0; i < testSize; i++) {
-            items.add(i);
-        }
-        Collections.shuffle(items, new Random(SEED));
-        zeepbelboom.addAll(items);
+
+    public TestZeepbelBoom(int testSize, Zeepbelboom<Integer> zeepbelboom) {
+        super(testSize, zeepbelboom);
     }
-
-
-
-    private final List<Integer> items;
 
     @Test
     public void testAdd(){
         assertTrue(zeepbelboom.size() == items.size());
         items.forEach(i -> assertTrue(String.format("Item %d not in zeepbelboom!", i), zeepbelboom.contains(i)));
-    }
-
-    @Test
-    public void testZeepbelIterator(){
-        Iterator<Zeepbel<Integer>> it = zeepbelboom.zeepbelIterator();
-        Integer prev = null;
-        Integer currentItem;
-        Zeepbel<Integer> currentZeepbel;
-        while (it.hasNext()){
-            currentZeepbel = it.next();
-            currentItem = currentZeepbel.getWortelSleutel();
-            if (prev != null){
-                assertTrue(prev < currentItem);
-            }
-            prev = currentItem;
-        }
-    }
-
-    @Test
-    public void testZeepbelSize(){
-        Iterator<Zeepbel<Integer>> zit = zeepbelboom.zeepbelIterator();
-        zit.forEachRemaining(zb -> assertTrue("Zeepbelboom has wrong size!", zb.checkBubbleSize() == zb.size()));
     }
 
     @Test

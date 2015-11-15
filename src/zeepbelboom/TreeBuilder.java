@@ -13,33 +13,16 @@ import java.util.List;
 public class TreeBuilder<E extends Comparable<E>> {
 
     private List<Top<E>> nodes;
-    private int start, end;
     private Top<E> root;
     private List<Top<E>> leaves;
 
-    private TreeBuilder(List<Top<E>> nodes, int start, int end){
+    public TreeBuilder(List<Top<E>> nodes){
         this.nodes = nodes;
-        this.start = start;
-        this.end = end;
         build();
     }
 
-    public static <E extends Comparable<E>> TreeBuilder<E> fromList(List<Top<E>> nodes, int start, int end){
-        return new TreeBuilder<>(nodes, start, end);
-    }
-
-    public static <E extends Comparable<E>> TreeBuilder<E> fromList(List<Top<E>> nodes){
-        return new TreeBuilder<>(nodes, 0, nodes.size()-1);
-    }
-
-    public static <E extends Comparable<E>> TreeBuilder<E> fromBubble(Zeepbel<E> zb){
-        List<Top<E>> nodes = new ArrayList<>();
-        zb.getRoot().traverseInorder(nodes::add, t -> t.getZeepbel() == zb);
-        return fromList(nodes);
-    }
-
     private Top<E> build(){
-        root = listToTree(nodes, start, end);
+        root = listToTree(nodes, 0, nodes.size() - 1);
         leaves = new ArrayList<>();
         root.traverseInorder(
                 t->{if(!t.hasLeft() || !t.hasRight()){
@@ -47,6 +30,12 @@ public class TreeBuilder<E extends Comparable<E>> {
                 }},
                 t -> true);
         return root;
+    }
+
+    public void toBubble(Zeepbel<E> zb){
+        zb.clear();
+        zb.setRoot(root);
+        nodes.forEach(t->t.setZeepbel(zb));
     }
 
     public Top<E> getRoot(){
@@ -58,7 +47,14 @@ public class TreeBuilder<E extends Comparable<E>> {
         return leaves;
     }
 
-
+    public void attachChildren(List<Top<E>> children){
+        assert children.size() == nodes.size() + 1;
+        int i = 0;
+        for (Top<E> t : leaves) {
+            if (!t.hasLeft()) t.setLeftChild(children.get(i++));
+            if (!t.hasRight()) t.setRightChild(children.get(i++));
+        }
+    }
 
     /**
      * Recursieve methode van een gesorteerde lijst van toppen
