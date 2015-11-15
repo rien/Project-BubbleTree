@@ -50,9 +50,9 @@ public class Zeepbelboom3<E extends Comparable<E>> extends ShrinkingBubbleTree<E
      */
     @Override
     protected void shrinkBubble(Zeepbel<E> bubble) {
-        Top<E> parent = bubble.getRoot().getParent();
+        Node<E> parent = bubble.getRoot().getParent();
         bubble.balanceBubble();
-        Top<E> root = bubble.getRoot();
+        Node<E> root = bubble.getRoot();
 
         if (parent == null){
             //We zitten aan de wortel, dus we moeten een nieuwe aanmaken.
@@ -76,8 +76,8 @@ public class Zeepbelboom3<E extends Comparable<E>> extends ShrinkingBubbleTree<E
                 //De bovenliggende zeepbel is vol en moet dus op een normale manier geplitst worden.
                 splitAndPushUp(parent, root, root.getZeepbel());
             } else {
-                List<Top<E>> topsToPush = new ArrayList<>(amountToPush);
-                Queue<Top<E>> children = new ArrayDeque<>();
+                List<Node<E>> topsToPush = new ArrayList<>(amountToPush);
+                Queue<Node<E>> children = new ArrayDeque<>();
 
                 //Ga op een BFS-manier door de zeepbel en blijf splitsen tot we genoeg toppen hebben
                 // of één van de kinderen null is

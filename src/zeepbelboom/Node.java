@@ -1,7 +1,6 @@
 package zeepbelboom;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -9,7 +8,7 @@ import java.util.function.Predicate;
 /**
  * @author Rien Maertens
  */
-public class Top<E extends Comparable<E>> implements Comparable<E> {
+public class Node<E extends Comparable<E>> implements Comparable<E> {
 
 
     private E item;
@@ -18,23 +17,23 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
     private boolean removed;
 
-    private Top<E> parent;
-    private Top<E> leftChild;
-    private Top<E> rightChild;
+    private Node<E> parent;
+    private Node<E> leftChild;
+    private Node<E> rightChild;
 
-    public Top(E item){
+    public Node(E item){
         this.item = item;
     }
 
-    public Top<E> getLeftChild() {
+    public Node<E> getLeftChild() {
         return leftChild;
     }
 
-    public Top<E> getParent() {
+    public Node<E> getParent() {
         return parent;
     }
 
-    private void setParent(Top<E> parent) {
+    private void setParent(Node<E> parent) {
         this.parent = parent;
     }
 
@@ -42,25 +41,25 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         this.parent = null;
     }
 
-    public void setLeftChild(Top<E> leftChild) {
+    public void setLeftChild(Node<E> leftChild) {
         this.leftChild = leftChild;
         if (leftChild != null){
             leftChild.setParent(this);
         }
     }
 
-    public Top<E> getRightChild() {
+    public Node<E> getRightChild() {
         return rightChild;
     }
 
-    public void setRightChild(Top<E> rightChild) {
+    public void setRightChild(Node<E> rightChild) {
         this.rightChild = rightChild;
         if (rightChild != null){
             rightChild.setParent(this);
         }
     }
 
-    public void setChild(Top<E> child){
+    public void setChild(Node<E> child){
         if (compareTo(child.getItem()) < 0){
             setRightChild(child);
         } else {
@@ -114,7 +113,7 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 //        parent.removeChild(this);
 //    }
 //
-//    private void removeChild(Top<E> top){
+//    private void removeChild(Node<E> top){
 //        if (leftChild == top){
 //            leftChild = null;
 //        } else if (rightChild == top){
@@ -125,7 +124,7 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 //        zeepbel.topsRemoved(1);
 //    }
 
-    public Top<E> getSibling(){
+    public Node<E> getSibling(){
         if (parent.leftChild == this){
             return parent.rightChild;
         } else if (parent.rightChild == this){
@@ -138,30 +137,30 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
     /**
      * @return de top met de dichtste waarde bij de huidige top.
      */
-    public Top<E> findClosestChild(){
-        Top<E> top;
+    public Node<E> findClosestChild(){
+        Node<E> node;
         if (hasRight()){
-            top = rightChild;
-            while (top.hasLeft()){
-                top = top.getLeftChild();
+            node = rightChild;
+            while (node.hasLeft()){
+                node = node.getLeftChild();
             }
         } else if(hasLeft()) {
-            top = leftChild;
-            while (top.hasRight()){
-                top = top.getRightChild();
+            node = leftChild;
+            while (node.hasRight()){
+                node = node.getRightChild();
             }
         } else {
-            top = this;
+            node = this;
         }
-        return top;
+        return node;
     }
     /*
     Alternatieve swapmethode die alle verwijzingen aanpast
 
-    public void swap(Top<E> other){
-        Top<E> tempParent = this.parent;
-        Top<E> tempRight = this.rightChild;
-        Top<E> tempLeft = this.leftChild;
+    public void swap(Node<E> other){
+        Node<E> tempParent = this.parent;
+        Node<E> tempRight = this.rightChild;
+        Node<E> tempLeft = this.leftChild;
         Zeepbel<E> tempBubble = this.zeepbel;
 
         this.parent = other.parent;
@@ -181,7 +180,7 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
         }
     }*/
 
-    public void swapItems(Top<E> other){
+    public void swapItems(Node<E> other){
         E temp = this.item;
         this.item = other.item;
         other.item = temp;
@@ -245,9 +244,9 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
      * @param consumer lambda die de volgende top behandeld.
      * @param predicate waaraan een top moet voldoen om te kunnen toegevoegd worden.
      */
-    public void traverseInorder(Consumer<Top<E>> consumer, Predicate<Top<E>> predicate){
-        Top<E> t = this;
-        Stack<Top<E>> s = new Stack<>();
+    public void traverseInorder(Consumer<Node<E>> consumer, Predicate<Node<E>> predicate){
+        Node<E> t = this;
+        Stack<Node<E>> s = new Stack<>();
         //Stop alle linkerkinderen in de stack
         while (t != null && predicate.test(t)){
             s.push(t);
@@ -274,7 +273,7 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
     }
 
-    public void traverseAndAdd(Collection<Top<E>> nodes, Collection<Top<E>> children, Predicate<Top<E>> predicate){
+    public void traverseAndAdd(Collection<Node<E>> nodes, Collection<Node<E>> children, Predicate<Node<E>> predicate){
         traverseInorder(
                 t->{
                     nodes.add(t);
@@ -293,6 +292,6 @@ public class Top<E extends Comparable<E>> implements Comparable<E> {
 
     @Override
     public String toString() {
-        return "Top: " + item.toString();
+        return "Node: " + item.toString();
     }
 }

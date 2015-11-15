@@ -2,7 +2,6 @@ package zeepbelboom;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * @author Rien Maertens
@@ -16,8 +15,8 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
         super(k);
     }
 
-    protected void addToParent(Top<E> parent, E item){
-        Top<E> child = new Top<>(item);
+    protected void addToParent(Node<E> parent, E item){
+        Node<E> child = new Node<>(item);
         Zeepbel<E> zb = parent.getZeepbel();
         parent.setChild(child);
         size++;
@@ -37,7 +36,7 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
     }
 
     @Override
-    protected boolean find(Object o, Consumer<Top<E>> found, Consumer<Top<E>> closest, Consumer<Top<E>> tombStone) {
+    protected boolean find(Object o, Consumer<Node<E>> found, Consumer<Node<E>> closest, Consumer<Node<E>> tombStone) {
         return super.find(
                 o,
                 t->{found.accept(t);semiSplay(t);},
@@ -46,14 +45,14 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
         );
     }
 
-    private void semiSplay(Top<E> top){
-        Zeepbel<E> bubble = top.getZeepbel();
+    private void semiSplay(Node<E> node){
+        Zeepbel<E> bubble = node.getZeepbel();
         Zeepbel<E> parentBubble;
         Zeepbel<E> grandParentBubble;
-        List<Top<E>> nodes = new ArrayList<>(bubbleMaxSize*3);
-        List<Top<E>> children = new ArrayList<>((bubbleMaxSize*3)+1);
+        List<Node<E>> nodes = new ArrayList<>(bubbleMaxSize*3);
+        List<Node<E>> children = new ArrayList<>((bubbleMaxSize*3)+1);
 
-        //Om vlug te kunnen bepalen of een top in een van de drie zeepbellen zit
+        //Om vlug te kunnen bepalen of een node in een van de drie zeepbellen zit
         Set<Zeepbel<E>> zb = new HashSet<>();
 
         while (
@@ -63,7 +62,7 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
                 ){
             parentBubble = bubble.getParentBubble();
             grandParentBubble = parentBubble.getParentBubble();
-            Top<E> parent = grandParentBubble.getRoot().getParent();
+            Node<E> parent = grandParentBubble.getRoot().getParent();
 
             zb.add(bubble);
             zb.add(parentBubble);

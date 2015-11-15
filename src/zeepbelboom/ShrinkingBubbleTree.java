@@ -18,9 +18,9 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
      * @param item toe te voegen item.
      * @param parent ouder waaraan het kind moet toegevoegd worden.
      */
-    protected void addToParent(Top<E> parent, E item){
+    protected void addToParent(Node<E> parent, E item){
         Zeepbel<E> zb = parent.getZeepbel();
-        Top<E> child = new Top<>(item);
+        Node<E> child = new Node<>(item);
         parent.setChild(child);
         child.setZeepbel(zb);
         if(zb.hasToBurst()){
@@ -40,7 +40,7 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
      *             aan de bovenliggende zeepbel.
      * @param bubble die in twee gesplitst moet worden.
      */
-    void splitAndPushUp(Top<E> parent, Top<E> root, Zeepbel<E> bubble){
+    void splitAndPushUp(Node<E> parent, Node<E> root, Zeepbel<E> bubble){
         // Deel de zeepbel in twee
         split(root, bubble);
         // Duw de huidige root omhoog
@@ -56,9 +56,9 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
      * @param root top die als kinderen de wortels bevat van de nieuwe zeepbellen.
      * @param bubble die in twee gesplitst moet worden.
      */
-    void split(Top<E> root, Zeepbel<E> bubble){
-        Top<E> rightRoot = root.getRightChild();
-        Top<E> leftRoot = root.getLeftChild();
+    void split(Node<E> root, Zeepbel<E> bubble){
+        Node<E> rightRoot = root.getRightChild();
+        Node<E> leftRoot = root.getLeftChild();
         // Zet de rechterwortel als wortel van de rechterzeepbel
         bubble.setRoot(rightRoot);
         // Vorm een nieuwe zeepbel
@@ -75,18 +75,18 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
      * Voeg de oude wortel van een zojuist gesplitste zeepbel toe aan de ouderzeepbel.
      * Indien nodig zal de ouderzeepbel ook splitsen.
      *
-     * @param parent ouder van de top.
-     * @param top die toegevoegd moet worden aan de bovenliggende zeepbel.
+     * @param parent ouder van de node.
+     * @param node die toegevoegd moet worden aan de bovenliggende zeepbel.
      */
-    private void pushRootUp(Top<E> parent, Top<E> top){
-        //Laat nu de gekozen top 'opborrelen';
+    private void pushRootUp(Node<E> parent, Node<E> node){
+        //Laat nu de gekozen node 'opborrelen';
         if(parent == null){
             //We zitten bij de root en moeten een nieuwe bubbel aanmaken
-            createNewRootBubble(top);
+            createNewRootBubble(node);
         } else {
-            parent.setChild(top);
+            parent.setChild(node);
             Zeepbel<E> parentBubble = parent.getZeepbel();
-            top.setZeepbel(parentBubble);
+            node.setZeepbel(parentBubble);
             if (parentBubble.hasToBurst()) {
                 shrinkBubble(parentBubble);
             }
@@ -96,11 +96,11 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
     /**
      * Maak een nieuwe zeepbel aan in de wortel.
      *
-     * @param top die de wortel van de nieuwe wortelzeepbel moet worden.
+     * @param node die de wortel van de nieuwe wortelzeepbel moet worden.
      */
-    void createNewRootBubble(Top<E> top){
-        top.removeParent();
-        Zeepbel<E> rootBubble = new Zeepbel<E>(this, top);
+    void createNewRootBubble(Node<E> node){
+        node.removeParent();
+        Zeepbel<E> rootBubble = new Zeepbel<E>(this, node);
         setRootBubble(rootBubble);
     }
 
@@ -109,13 +109,13 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
      * Voegt meerdere toppen toe aan de zeepbel van parent en splitst deze zeepbel indien nodig.
      *
      * @param parent waaraan de eerste van de toppen het kind van is.
-     * @param tops lijst van toppen die moeten toegevoegd worden aan de zeepbel van de ouder.
+     * @param nodes lijst van toppen die moeten toegevoegd worden aan de zeepbel van de ouder.
      */
-    void pushMultipleUp(Top<E> parent, List<Top<E>> tops){
+    void pushMultipleUp(Node<E> parent, List<Node<E>> nodes){
         assert parent != null : "De parent mag niet null zijn! Je zit waarschijnlijk in de root.";
         Zeepbel<E> parentBubble = parent.getZeepbel();
         boolean balanceAfter;
-        int after = tops.size() + parentBubble.size();
+        int after = nodes.size() + parentBubble.size();
         if (after <= bubbleMaxSize){
             balanceAfter = false;
         } else if (after == bubbleMaxSize + 1){
@@ -125,10 +125,10 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
         }
 
         // De eerste top moet eerst toegevoegd worden als kind aan de parent.
-        parent.setChild(tops.get(0));
+        parent.setChild(nodes.get(0));
 
         //Voeg iedere top toe aan de parentBubble;
-        tops.forEach(t -> t.setZeepbel(parentBubble));
+        nodes.forEach(t -> t.setZeepbel(parentBubble));
         //Verklein de zeepbel indien nodig
         if (balanceAfter){
             shrinkBubble(parentBubble);
@@ -157,8 +157,8 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
     }
 
 
-    public void removeTop(Top<E> top){
-        top.remove();
+    public void removeTop(Node<E> node){
+        node.remove();
         size--;
         if (size == 0){
             clear();
@@ -171,9 +171,9 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
     private void rebuildTree(){
         //Rebuild tree
         List<E> items = new ArrayList<>();
-        Queue<Top<E>> q = new ArrayDeque<>();
+        Queue<Node<E>> q = new ArrayDeque<>();
         q.add(getRoot());
-        Top<E> t;
+        Node<E> t;
         //Stop alle items in BFS-volgorde in de lijst.
         while (!q.isEmpty()){
             t = q.remove();
@@ -253,10 +253,10 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
 //     *
 //     * @param toRemove uit de zeepbelboom die moet verwijderd worden.
 //     */
-//    private void removeTop(Top<E> toRemove){
+//    private void removeTop(Node<E> toRemove){
 //        if (toRemove.hasRight() && toRemove.hasLeft()){
 //            //We zitten met een interne top, dus wisselen deze van plaats met de kleinste top uit de rechterdeelboom.
-//            Top<E> closest = toRemove.findClosestChild();
+//            Node<E> closest = toRemove.findClosestChild();
 //            toRemove.swapItems(closest);
 //            toRemove = closest;
 //        }
@@ -270,25 +270,25 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
 //        } else {
 //            //Speciaal geval: door het verwijderen van de top komen we een lege zeepbel uit
 //            Zeepbel<E> siblingZeepbel = toRemove.getZeepbel().getSiblingbubble();
-//            Top<E> parent = toRemove.getParent();
+//            Node<E> parent = toRemove.getParent();
 //            toRemove.swapItems(parent);
 //            toRemove = parent;
 //            parent = toRemove.getParent();
 //
 //            if (siblingZeepbel.size() > 1){
 //                //We kunnen een top van de tweelingzeepbel gebruiken
-//                Top<E> top  = siblingZeepbel.getRoot().findClosestChild();
+//                Node<E> top  = siblingZeepbel.getRoot().findClosestChild();
 //                toRemove.swapItems(top);
 //                toRemove = top;
 //                //toRemove zit nu in een zeepbel met  > 1 items en kan dus verwijder worden.
 //                removeLeaf(toRemove);
 //            } else if (toRemove.getZeepbel().size() > 1){
 //                //We kunnen twee zeepbellen met 1 item mergen
-//                Top<E> left = toRemove.getLeftChild();
+//                Node<E> left = toRemove.getLeftChild();
 //                toRemove.getRightChild().setRightChild(left);
 //                toRemove.getParent().setChild(mergeZeepbelRight(toRemove));
 //            } else {
-//                Top<E> top;
+//                Node<E> top;
 //                while (toRemove.getParent() != null && toRemove.getZeepbel() != toRemove.getParent().getZeepbel()){
 //                    siblingZeepbel = toRemove.getZeepbel().getSiblingbubble();
 //                    toRemove.swapItems(parent);
@@ -314,15 +314,15 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
 //    }
 //
 //
-//    private Top<E> mergeZeepbelRight(Top<E> top){
-//        Top<E> left = top.getLeftChild();
+//    private Node<E> mergeZeepbelRight(Node<E> top){
+//        Node<E> left = top.getLeftChild();
 //        top.getRightChild().setLeftChild(left);
 //        left.setZeepbel(top.getLeftChild().getZeepbel());
 //        return top.getRightChild();
 //    }
 //
-//    private Top<E> mergeZeepbelLeft(Top<E> top){
-//        Top<E> right = top.getRightChild();
+//    private Node<E> mergeZeepbelLeft(Node<E> top){
+//        Node<E> right = top.getRightChild();
 //        top.getLeftChild().setRightChild(right);
 //        right.setZeepbel(top.getRightChild().getZeepbel());
 //        return top.getLeftChild();
@@ -334,7 +334,7 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
 //     *
 //     * @param toRemove blad van de zeepbelboom
 //     */
-//    private void removeLeaf(Top<E> toRemove){
+//    private void removeLeaf(Node<E> toRemove){
 //        Zeepbel<E> zb = toRemove.getZeepbel();
 //        if (!toRemove.hasLeft() && !toRemove.hasRight()){
 //            //De top heeft zelf geen kinderen (en is dus ook geen root), dus kunnen we de gewoon verwijderen.

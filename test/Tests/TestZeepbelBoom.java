@@ -62,7 +62,7 @@ public class TestZeepbelBoom extends ZeepbelBoomTest {
 
     @Test
     public void testZeepbelHoogte(){
-        List<Top<Integer>> leaves = new ArrayList<>();
+        List<Node<Integer>> leaves = new ArrayList<>();
         List<Integer> heights = new ArrayList<>();
         zeepbelboom.getRoot().traverseInorder(
                 t -> {
@@ -70,7 +70,7 @@ public class TestZeepbelBoom extends ZeepbelBoomTest {
                         leaves.add(t);
                     }
                 }, t->true);
-        for (Top<Integer> t: leaves) {
+        for (Node<Integer> t: leaves) {
             int height = 0;
             while (t != null){
                 if (t.getZeepbel().getRoot() == t){

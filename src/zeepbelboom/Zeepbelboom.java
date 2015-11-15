@@ -50,7 +50,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     public boolean add(E e) {
         //Als de boom leeg is maken we de eerste zeepbel aan.
         if (isEmpty()){
-            rootBubble = new Zeepbel<>(this, new Top<>(e));
+            rootBubble = new Zeepbel<>(this, new Node<>(e));
             size++;
             return true;
         }
@@ -60,11 +60,11 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
                 e,
                 t->{},
                 t->addToParent(t, e),
-                Top::unRemove
+                Node::unRemove
         );
     }
 
-    protected abstract void addToParent(Top<E> parent, E item);
+    protected abstract void addToParent(Node<E> parent, E item);
 
     /**
      * @return een iterator van alle zeepbellen die in inorde gesorteerd zijn.
@@ -85,7 +85,7 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     }
 
 
-    public Top<E> getRoot(){
+    public Node<E> getRoot(){
         return rootBubble.getRoot();
     }
 
@@ -141,26 +141,26 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      *                                      met het type van de boom.
      * @throws NullPointerException         wanneer o <tt>null</tt> is.
      */
-    protected boolean find(Object o, Consumer<Top<E>> found, Consumer<Top<E>> closest, Consumer<Top<E>> tombStone){
+    protected boolean find(Object o, Consumer<Node<E>> found, Consumer<Node<E>> closest, Consumer<Node<E>> tombStone){
         E item = castToType(o);
         if (size == 0) return false;
-        Top<E> top = getRoot();
-        Top<E> parent = null;
+        Node<E> node = getRoot();
+        Node<E> parent = null;
         int comp;
-        while (top != null){
-            parent = top;
-            comp = top.compareTo(item);
+        while (node != null){
+            parent = node;
+            comp = node.compareTo(item);
             if (comp < 0){
-                top = parent.getRightChild();
+                node = parent.getRightChild();
             } else  if (comp > 0){
-                top = parent.getLeftChild();
+                node = parent.getLeftChild();
             } else {
                 //Comp == 0, dus we hebben o gevonden.
-                if (top.isRemoved()){
-                    tombStone.accept(top);
+                if (node.isRemoved()){
+                    tombStone.accept(node);
                     return false;
                 } else {
-                    found.accept(top);
+                    found.accept(node);
                     return true;
                 }
             }

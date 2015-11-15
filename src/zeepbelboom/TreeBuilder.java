@@ -1,10 +1,6 @@
 package zeepbelboom;
 
-import sun.reflect.generics.tree.Tree;
-
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -12,16 +8,16 @@ import java.util.List;
  */
 public class TreeBuilder<E extends Comparable<E>> {
 
-    private List<Top<E>> nodes;
-    private Top<E> root;
-    private List<Top<E>> leaves;
+    private List<Node<E>> nodes;
+    private Node<E> root;
+    private List<Node<E>> leaves;
 
-    public TreeBuilder(List<Top<E>> nodes){
+    public TreeBuilder(List<Node<E>> nodes){
         this.nodes = nodes;
         build();
     }
 
-    private Top<E> build(){
+    private Node<E> build(){
         root = listToTree(nodes, 0, nodes.size() - 1);
         leaves = new ArrayList<>();
         root.traverseInorder(
@@ -38,19 +34,19 @@ public class TreeBuilder<E extends Comparable<E>> {
         nodes.forEach(t->t.setZeepbel(zb));
     }
 
-    public Top<E> getRoot(){
+    public Node<E> getRoot(){
         assert root != null : "Tree root accessed before it was built";
         return root;
     }
 
-    public Iterable<Top<E>> leaves(){
+    public Iterable<Node<E>> leaves(){
         return leaves;
     }
 
-    public void attachChildren(List<Top<E>> children){
+    public void attachChildren(List<Node<E>> children){
         assert children.size() == nodes.size() + 1;
         int i = 0;
-        for (Top<E> t : leaves) {
+        for (Node<E> t : leaves) {
             if (!t.hasLeft()) t.setLeftChild(children.get(i++));
             if (!t.hasRight()) t.setRightChild(children.get(i++));
         }
@@ -63,14 +59,14 @@ public class TreeBuilder<E extends Comparable<E>> {
      * @param list van toppen die in gesorteerde volorde zitten.
      * @param start index vanaf waar de boom moet worden opgebouwd.
      * @param end index tot waar de moet moet worden opgebouwd.
-     * @return de <tt>Top</tt> van de gebalanceerde binaire boom.
+     * @return de <tt>Node</tt> van de gebalanceerde binaire boom.
      */
-    private Top<E> listToTree(List<Top<E>> list, int start, int end){
+    private Node<E> listToTree(List<Node<E>> list, int start, int end){
         if (end < start){
             return null;
         } else {
             int mid = start + ((end - start)/2);
-            Top<E> root = list.get(mid);
+            Node<E> root = list.get(mid);
             root.setLeftChild(listToTree(list, start, mid - 1));
             root.setRightChild(listToTree(list, mid + 1, end));
             return root;

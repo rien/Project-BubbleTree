@@ -1,7 +1,5 @@
 package zeepbelboom;
 
-import java.util.IntSummaryStatistics;
-
 /**
  *
  * @author Rien Maertens
@@ -35,12 +33,12 @@ public class Zeepbelboom1<E extends Comparable<E>> extends ShrinkingBubbleTree<E
      */
     @Override
     protected void shrinkBubble(Zeepbel<E> bubble){
-        Top<E> a = bubble.getRoot(); //Huidige root
-        Top<E> parent = a.getParent(); //Parent van de huidige root die in een bovenliggende zeepbel zit.
-        Top<E> up; //Top die aan de bovenliggende zeepbel wordt toegevoegd.
+        Node<E> a = bubble.getRoot(); //Huidige root
+        Node<E> parent = a.getParent(); //Parent van de huidige root die in een bovenliggende zeepbel zit.
+        Node<E> up; //Node die aan de bovenliggende zeepbel wordt toegevoegd.
         if (!(a.hasLeft() && a.leftChildInSameBubble())){
             //Roteer de eerste drie toppen in de zeepbel:
-            Top<E> b = a.getRightChild();
+            Node<E> b = a.getRightChild();
             if (b.hasRight() && b.rightChildInSameBubble()){
                 /* P\                P\
                  *   A                 B
@@ -48,8 +46,8 @@ public class Zeepbelboom1<E extends Comparable<E>> extends ShrinkingBubbleTree<E
                  *   X/ \C         W/\X Y/\Z
                  *      Y/\Z
                  */
-                Top<E> c = b.getRightChild();
-                Top<E> x = b.getLeftChild();
+                Node<E> c = b.getRightChild();
+                Node<E> x = b.getLeftChild();
                 a.setRightChild(x);
                 b.setLeftChild(a);
                 up = b;
@@ -60,9 +58,9 @@ public class Zeepbelboom1<E extends Comparable<E>> extends ShrinkingBubbleTree<E
                  *   C/ \Z        W/\X Y/\Z
                  *  X/\Y
                  */
-                Top<E> c = b.getLeftChild();
-                Top<E> x = c.getLeftChild();
-                Top<E> y = c.getRightChild();
+                Node<E> c = b.getLeftChild();
+                Node<E> x = c.getLeftChild();
+                Node<E> y = c.getRightChild();
                 a.setRightChild(x);
                 b.setLeftChild(y);
                 c.setLeftChild(a);
@@ -70,7 +68,7 @@ public class Zeepbelboom1<E extends Comparable<E>> extends ShrinkingBubbleTree<E
                 up = c;
             }
         } else if (!(a.hasRight() && a.rightChildInSameBubble())){
-            Top<E> b = a.getLeftChild();
+            Node<E> b = a.getLeftChild();
             if (b.hasLeft() && b.leftChildInSameBubble()){
                 /*     P\           P\
                  *      A            B
@@ -78,7 +76,7 @@ public class Zeepbelboom1<E extends Comparable<E>> extends ShrinkingBubbleTree<E
                  *  C/ \Y        W/\X Y/\Z
                  * W/\X
                  */
-                Top<E> y = b.getRightChild();
+                Node<E> y = b.getRightChild();
                 a.setLeftChild(y);
                 b.setRightChild(a);
                 up = b;
@@ -89,9 +87,9 @@ public class Zeepbelboom1<E extends Comparable<E>> extends ShrinkingBubbleTree<E
                  *  W/ \C         W/\X Y/\Z
                  *    X/\Y
                  */
-                Top<E> c = b.getRightChild();
-                Top<E> x = c.getLeftChild();
-                Top<E> y = c.getRightChild();
+                Node<E> c = b.getRightChild();
+                Node<E> x = c.getLeftChild();
+                Node<E> y = c.getRightChild();
                 a.setLeftChild(y);
                 b.setRightChild(x);
                 c.setLeftChild(b);

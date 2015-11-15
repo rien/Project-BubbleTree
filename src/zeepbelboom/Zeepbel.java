@@ -1,8 +1,6 @@
 package zeepbelboom;
 
 
-import sun.reflect.generics.tree.Tree;
-
 import java.util.*;
 
 /**
@@ -12,7 +10,7 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
 
     private int size;
     private final int maxSize;
-    private Top<E> root;
+    private Node<E> root;
 
     public Zeepbel(Zeepbelboom<E> tree){
         this.maxSize = tree.getBubbleMaxSize();
@@ -20,24 +18,24 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     }
 
     /**
-     * Alternate constructor which accepts a Top to be set as roo. Automatically sets the bubble of this
+     * Alternate constructor which accepts a Node to be set as roo. Automatically sets the bubble of this
      * top to the newly made bubble.
      *
      * @param tree of which this bubble is a part of.
      * @param root which has to be the root of this bubble.
      */
-    public Zeepbel(Zeepbelboom<E> tree, Top<E> root){
+    public Zeepbel(Zeepbelboom<E> tree, Node<E> root){
         this(tree);
         this.root = root;
         root.setZeepbel(this);
     }
 
-    public Top<E> getRoot(){
+    public Node<E> getRoot(){
         return root;
     }
 
-    public void setRoot(Top<E> top){
-        this.root = top;
+    public void setRoot(Node<E> node){
+        this.root = node;
     }
 
     public E getWortelSleutel(){
@@ -100,13 +98,13 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
 
     public Zeepbel<E> getSiblingbubble(){
         Zeepbel<E> parentBubble = getRoot().getParent().getZeepbel();
-        Top<E> top = getRoot().getSibling();
-        boolean right = getRoot().compareTo(top.getItem()) < 0;
-        while (top.getZeepbel() == parentBubble){
-            top = right ? top.getRightChild() : top.getLeftChild();
+        Node<E> node = getRoot().getSibling();
+        boolean right = getRoot().compareTo(node.getItem()) < 0;
+        while (node.getZeepbel() == parentBubble){
+            node = right ? node.getRightChild() : node.getLeftChild();
         }
-        //Top zit nu in een andere zeepbel
-        return top.getZeepbel();
+        //Node zit nu in een andere zeepbel
+        return node.getZeepbel();
     }
 
     public Zeepbel<E> getParentBubble(){
@@ -129,8 +127,8 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
         return items.iterator();
     }
 
-    public Iterator<Top<E>> topIterator(){
-        ArrayList<Top<E>> toppen = new ArrayList<>(size);
+    public Iterator<Node<E>> topIterator(){
+        ArrayList<Node<E>> toppen = new ArrayList<>(size);
         root.traverseInorder(toppen::add, t->t.getZeepbel() == this);
         return toppen.iterator();
     }
@@ -158,11 +156,11 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
      */
     public void balanceBubble(){
         if (size > 2){
-            List<Top<E>> nodes = new ArrayList<>();
-            List<Top<E>> children = new ArrayList<>();
+            List<Node<E>> nodes = new ArrayList<>();
+            List<Node<E>> children = new ArrayList<>();
             getRoot().traverseAndAdd(nodes,children,t -> t.getZeepbel() == this);
             TreeBuilder<E> builder = new TreeBuilder<>(nodes);
-            Top<E> newRoot = builder.getRoot();
+            Node<E> newRoot = builder.getRoot();
             builder.attachChildren(children);
             newRoot.removeParent();
             setRoot(newRoot);
