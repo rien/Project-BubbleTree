@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  *
  * Abstracte superklasse voor zeepbelbomen.
  */
-public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection<E> {
+public abstract class Zeepbelboom<E extends Comparable<E>> extends  AbstractCollection<E> {
 
     protected int size;
     protected int bubbleMaxSize;
@@ -71,12 +71,14 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
      */
     public Iterator<Zeepbel<E>> zeepbelIterator() {
         List<Zeepbel<E>> list = new ArrayList<>();
-        rootBubble.getRoot().traverseInorder(t -> {
-            Zeepbel<E> zb = t.getZeepbel();
-            if (zb.getRoot() == t) {
-                list.add(zb);
-            }
-        }, t -> true);
+        if (!isEmpty()){
+            rootBubble.getRoot().traverseInorder(t -> {
+                Zeepbel<E> zb = t.getZeepbel();
+                if (zb.getRoot() == t) {
+                    list.add(zb);
+                }
+            }, t -> true);
+        }
         return list.iterator();
     }
 
@@ -169,10 +171,6 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
        return false;
     }
 
-
-
-
-
     /**
 
      * @return Een <tt>Iterator</tt> over alle elementen van de zeepbelboom.
@@ -180,117 +178,13 @@ public abstract class Zeepbelboom<E extends Comparable<E>> implements Collection
     @Override
     public Iterator<E> iterator() {
         ArrayList<E> items = new ArrayList<>(size);
-        rootBubble.getRoot().traverseInorder(t -> {
-            if(!t.isRemoved()) {
-                items.add(t.getItem());
-            }}, t -> true);
+        if (!isEmpty()){
+            rootBubble.getRoot().traverseInorder(t -> {
+                if(!t.isRemoved())
+                    items.add(t.getItem());
+                }, t -> true);
+        }
         return items.iterator();
-    }
-
-    /**
-     * @return een array met alle elementen van de zeepbelboom, in volgorde.
-     */
-    @Override
-    public Object[] toArray() {
-        Object[] a = new Object[size];
-        Iterator<E> it = iterator();
-        int i = 0;
-        while (it.hasNext()){
-            a[i] = it.next();
-        }
-        return a;
-    }
-
-    /**
-     * Plaatst alle elementen van de zeepbelboom in de opgegeven array wanneer deze groot genoeg is.
-     *
-     * @param a array waar alle elementen van de zeepbelboom in geplaatst moeten worden. Indien a groot genoeg is
-     *          wordt deze ook teruggegeven, als a te klein is wordt er een nieuwe array aangemaakt en teruggeven die
-     *          wel groot genoeg is.
-     * @return een array waar alle elementen van de zeepbelboom inzitten.
-     * @throws ArrayStoreException  als het type van de array niet compatibel is.
-     * @throws NullPointerException als de opgegeven array <tt>null</tt> is.
-     */
-    @Override
-    public <T> T[] toArray(T[] a) {
-        if (a.length < size){
-            a = castToType(new Object[size]);
-        }
-        int i = 0;
-        Iterator<E> it= iterator();
-        while (i < a.length){
-            a[i++] = it.hasNext() ? castToType(it.next()) : null;
-        }
-        return a;
-    }
-
-    /**
-     * Kijk of alle elementen van een collection ook te vinden zijn in deze zeepbelboom.
-     *
-     * @param c de collection die moet doorzocht worden.
-     * @return <tt>true</tt> als deze zeepbelboom alle elementen uit de opgegeven collectie bevat.
-     * @throws ClassCastException   als de type van één of meer elementen uit de collectie niet
-     *                              compatibel is met deze zeepbelboom.
-     * @throws NullPointerException als een element uit de collectie null is.
-     * @see #contains(Object)
-     */
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        for (Object o: c){
-            if (!contains(o)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Voeg alle elementen uit een collectie toe aan de zeepbelboom.
-     *
-     * @param c de collectie waarvan alle elementen moeten toegevoegd worden.
-     * @return <tt>true</tt> als de huidige zeepbelboom veranderd is door deze operatie.
-     * @throws ClassCastException   als de type van één of meer elementen uit de collectie niet
-     *                              compatibel is met deze zeepbelboom.
-     * @throws NullPointerException als een element uit de collectie null is.l
-     * @see #add(Object)
-     */
-    @Override
-    public boolean addAll(Collection<? extends E> c) {
-        boolean changed = false;
-        for (E e: c){
-            if (add(e)){
-                changed = true;
-            }
-        }
-        return changed;
-    }
-
-
-
-    /**
-     * Houd enkel de elementen in deze zeepbel over die ook te vinden zijn in de opgegeven colelctie.
-     *
-     * @param c collectie met elementen die moeten overgehouden worden.
-     * @return <tt>true</tt> als de huidige zeepbelboom veranderd is door deze operatie.
-     * @throws ClassCastException   als de type van één of meer elementen uit de collectie niet
-     *                              compatibel is met deze zeepbelboom.
-     * @throws NullPointerException als een element uit de collectie null is.
-     * @see #remove(Object)
-     * @see #contains(Object)
-     */
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        Iterator<E> it = iterator();
-        E item;
-        boolean changed = false;
-        while (it.hasNext()){
-            item = it.next();
-            if (!c.contains(item)){
-                remove(item);
-                changed = true;
-            }
-        }
-        return changed;
     }
 
     /**

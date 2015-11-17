@@ -123,15 +123,23 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     @Override
     public Iterator<E> iterator() {
         ArrayList<E> items = new ArrayList<>(size);
-        root.traverseInorder(t -> items.add(t.getItem()), t -> t.getZeepbel() == this);
+        if (!isEmpty()){
+            root.traverseInorder(
+                    t ->{
+                        if(!t.isRemoved()) items.add(t.getItem());
+                    },
+                    t -> t.getZeepbel() == this);
+        }
         return items.iterator();
     }
 
-    public Iterator<Node<E>> topIterator(){
-        ArrayList<Node<E>> toppen = new ArrayList<>(size);
-        root.traverseInorder(toppen::add, t->t.getZeepbel() == this);
-        return toppen.iterator();
-    }
+//    public Iterator<Node<E>> topIterator(){
+//        ArrayList<Node<E>> toppen = new ArrayList<>(size);
+//        if (!isEmpty()){
+//            root.traverseInorder(toppen::add, t->t.getZeepbel() == this);
+//        }
+//        return toppen.iterator();
+//    }
 
     /**
      * @return the size of the current bubble, for debugging purposes.

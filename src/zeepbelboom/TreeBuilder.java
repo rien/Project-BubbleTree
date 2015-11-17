@@ -39,10 +39,6 @@ public class TreeBuilder<E extends Comparable<E>> {
         return root;
     }
 
-    public Iterable<Node<E>> leaves(){
-        return leaves;
-    }
-
     public void attachChildren(List<Node<E>> children){
         assert children.size() == nodes.size() + 1;
         int i = 0;
