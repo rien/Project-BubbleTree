@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.*;
+import java.util.function.IntFunction;
 
 import static CustomAssert.AssertBool.assertFalse;
 import static CustomAssert.AssertBool.assertTrue;

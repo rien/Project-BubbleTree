@@ -19,7 +19,6 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
         Node<E> child = new Node<>(item);
         Zeepbel<E> zb = parent.getZeepbel();
         parent.setChild(child);
-        size++;
         if (zb.isFull()){
             new Zeepbel<>(this,child);
         } else {
@@ -28,21 +27,12 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
                 zb.balanceBubble();
             }
         }
+        size++;
     }
 
     @Override
     public boolean contains(Object o) {
-        return find(o,this::semiSplay,t->{/* Deze zeepbel is incompleet */},this::semiSplay);
-    }
-
-    @Override
-    protected boolean find(Object o, Consumer<Node<E>> found, Consumer<Node<E>> closest, Consumer<Node<E>> tombStone) {
-        return super.find(
-                o,
-                t->{found.accept(t);semiSplay(t);},
-                t->{closest.accept(t);semiSplay(t);},
-                tombStone
-        );
+        return find(o, this::semiSplay, t -> {/* Deze zeepbel is incompleet */}, this::semiSplay);
     }
 
     private void semiSplay(Node<E> node){
@@ -53,7 +43,7 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
         List<Node<E>> children = new ArrayList<>((bubbleMaxSize*3)+1);
 
         //Om vlug te kunnen bepalen of een node in een van de drie zeepbellen zit
-        Set<Zeepbel<E>> zb = new HashSet<>();
+        Set<Zeepbel<E>> bubbles = new HashSet<>();
 
         while (
                 bubble.isFull() &&
@@ -64,14 +54,14 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
             grandParentBubble = parentBubble.getParentBubble();
             Node<E> parent = grandParentBubble.getRoot().getParent();
 
-            zb.add(bubble);
-            zb.add(parentBubble);
-            zb.add(grandParentBubble);
+            bubbles.add(bubble);
+            bubbles.add(parentBubble);
+            bubbles.add(grandParentBubble);
 
             grandParentBubble.getRoot().traverseAndAdd(
                     nodes,
                     children,
-                    t -> zb.contains(t.getZeepbel())
+                    t -> bubbles.contains(t.getZeepbel())
             );
             assert nodes.size() == 3*bubbleMaxSize : "Wrong amount of nodes!";
             assert children.size() == 3*bubbleMaxSize + 1 : "Wrong amount of children!";
@@ -104,13 +94,13 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
             children.set(bubbleMaxSize,treeLeft.getRoot());
             children.set(2*bubbleMaxSize,treeRight.getRoot());
 
-            treeLeft.attachChildren(children.subList(bubbleMaxSize,2*bubbleMaxSize+1));
+            treeMid.attachChildren(children.subList(bubbleMaxSize,2*bubbleMaxSize+1));
 
             //Zet de attributen klaar voor de volgende iteratie
             bubble = treeMid.getRoot().getZeepbel();
             nodes.clear();
             children.clear();
-            zb.clear();
+            bubbles.clear();
         }
 
     }

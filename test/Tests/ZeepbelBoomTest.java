@@ -1,6 +1,7 @@
 package Tests;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,11 +23,10 @@ public abstract class ZeepbelBoomTest {
 
     protected final int testSize;
 
-    protected final Zeepbelboom<Integer> zeepbelboom;
+    protected Zeepbelboom<Integer> zeepbelboom;
 
-    public ZeepbelBoomTest(int testSize, Zeepbelboom<Integer> zeepbelboom){
-        this.testSize = testSize;
-        this.zeepbelboom = zeepbelboom;
+    @Before
+    public void prepare(){
         items = new ArrayList<>();
         for (int i = 0; i < testSize; i++) {
             items.add(i);
@@ -35,7 +35,12 @@ public abstract class ZeepbelBoomTest {
         zeepbelboom.addAll(items);
     }
 
-    protected final List<Integer> items;
+    public ZeepbelBoomTest(int testSize, Zeepbelboom<Integer> zeepbelboom){
+        this.testSize = testSize;
+        this.zeepbelboom = zeepbelboom;
+    }
+
+    protected List<Integer> items;
 
     @Test
     public void testAdd(){
