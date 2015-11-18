@@ -164,14 +164,18 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
      */
     public void balanceBubble(){
         if (size > 2){
+            Node<E> parent = root.getParent();
             List<Node<E>> nodes = new ArrayList<>();
             List<Node<E>> children = new ArrayList<>();
             getRoot().traverseAndAdd(nodes,children,t -> t.getZeepbel() == this);
             TreeBuilder<E> builder = new TreeBuilder<>(nodes);
             Node<E> newRoot = builder.getRoot();
             builder.attachChildren(children);
-            newRoot.removeParent();
             setRoot(newRoot);
+            newRoot.removeParent();
+            if (parent != null){
+                parent.setChild(newRoot);
+            }
        }
     }
 

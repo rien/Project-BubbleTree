@@ -292,6 +292,10 @@ public class Node<E extends Comparable<E>> implements Comparable<E> {
 
     @Override
     public String toString() {
-        return "Node: " + item.toString();
+        String str = "N: " + item.toString();
+        if (zeepbel != null && zeepbel.getRoot() == this){
+            str = "|" + str + "|";
+        }
+        return str;
     }
 }
