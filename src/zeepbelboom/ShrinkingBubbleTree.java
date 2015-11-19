@@ -226,6 +226,10 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
         return changed;
     }
 
+    @Override
+    public boolean supportsDeletion() {
+        return true;
+    }
 
     /**
      * Implementatie van remove() die niet werkt. Deze implementatie werkt met het effectief verwijderen van een top

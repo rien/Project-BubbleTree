@@ -197,9 +197,15 @@ public abstract class Zeepbelboom<E extends Comparable<E>> extends  AbstractColl
         rootBubble = null;
     }
 
+    public abstract boolean supportsDeletion();
+
     @Override
     public String toString(){
         return this.getClass().getSimpleName() + " with K=" + String.valueOf(getBubbleMaxSize());
+    }
+
+    public String shortName(){
+        return this.getClass().getSimpleName() + "_K" + String.valueOf(getBubbleMaxSize());
     }
 
     @SuppressWarnings("unchecked")

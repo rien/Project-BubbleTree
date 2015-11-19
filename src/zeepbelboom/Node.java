@@ -1,6 +1,8 @@
 package zeepbelboom;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -65,6 +67,11 @@ public class Node<E extends Comparable<E>> implements Comparable<E> {
         } else {
             setLeftChild(child);
         }
+    }
+
+    public void clearChildren(){
+        rightChild = null;
+        leftChild = null;
     }
 
     public boolean isRemoved() {
@@ -246,7 +253,7 @@ public class Node<E extends Comparable<E>> implements Comparable<E> {
      */
     public void traverseInorder(Consumer<Node<E>> consumer, Predicate<Node<E>> predicate){
         Node<E> t = this;
-        Stack<Node<E>> s = new Stack<>();
+        Deque<Node<E>> s = new ArrayDeque<>();
         //Stop alle linkerkinderen in de stack
         while (t != null && predicate.test(t)){
             s.push(t);

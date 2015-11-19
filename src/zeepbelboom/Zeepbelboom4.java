@@ -48,6 +48,7 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
     private void semiSplay(Node<E> node){
         Zeepbel<E> bubble = node.getZeepbel();
 
+
         if (bubble != rootBubble) {
             if (!bubble.isFull()) {
                 bubble = bubble.getParentBubble();
@@ -58,7 +59,7 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
             List<Node<E>> children = new ArrayList<>((bubbleMaxSize * 3) + 1);
 
             //Om vlug te kunnen bepalen of een node in een van de drie zeepbellen zit
-            Set<Zeepbel<E>> bubbles = new HashSet<>();
+            BubbleContainer bubbles = new BubbleContainer();
 
             while (
                     bubble != rootBubble &&
@@ -68,9 +69,7 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
                 grandParentBubble = parentBubble.getParentBubble();
                 Node<E> parent = grandParentBubble.getRoot().getParent();
 
-                bubbles.add(bubble);
-                bubbles.add(parentBubble);
-                bubbles.add(grandParentBubble);
+                bubbles.add(bubble, grandParentBubble, parentBubble);
 
                 grandParentBubble.getRoot().traverseAndAdd(
                         nodes,
@@ -111,14 +110,19 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
                 bubble = treeMid.getRoot().getZeepbel();
                 nodes.clear();
                 children.clear();
-                bubbles.clear();
             }
         }
     }
 
+
     /**
      * De volgende verwijdermethodes zijn niet gedefinieerd.
      */
+
+    @Override
+    public boolean supportsDeletion() {
+        return false;
+    }
 
     @Override
     public boolean remove(Object o) {
@@ -128,5 +132,23 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
     @Override
     public boolean removeAll(Collection<?> c) {
         throw new UnsupportedOperationException();
+    }
+
+
+    private class BubbleContainer{
+
+        private Zeepbel<E> zb1;
+        private Zeepbel<E> zb2;
+        private Zeepbel<E> zb3;
+
+        public void add(Zeepbel<E> zb1, Zeepbel<E> zb2, Zeepbel<E> zb3){
+            this.zb1 = zb1;
+            this.zb2 = zb2;
+            this.zb3 = zb3;
+        }
+
+        public boolean contains(Zeepbel<E> zb){
+            return zb == zb1 || zb == zb2 || zb == zb3;
+        }
     }
 }

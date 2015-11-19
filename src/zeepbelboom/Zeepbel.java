@@ -185,11 +185,6 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     }
 
     @Override
-    public int hashCode() {
-        return root.hashCode();
-    }
-
-    @Override
     public boolean equals(Object obj) {
         return obj == this;
     }

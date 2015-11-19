@@ -1,7 +1,6 @@
 package zeepbelboom;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Rien on 13/11/2015.
@@ -18,12 +17,14 @@ public class TreeBuilder<E extends Comparable<E>> {
     }
 
     private Node<E> build(){
-        root = listToTree(nodes, 0, nodes.size() - 1);
+        root = listToTree(nodes);
         leaves = new ArrayList<>();
         root.traverseInorder(
-                t->{if(!t.hasLeft() || !t.hasRight()){
+                t -> {
+                    if (!t.hasLeft() || !t.hasRight()) {
                         leaves.add(t);
-                }},
+                    }
+                },
                 t -> true);
         return root;
     }
@@ -31,7 +32,7 @@ public class TreeBuilder<E extends Comparable<E>> {
     public void toBubble(Zeepbel<E> zb){
         zb.clear();
         zb.setRoot(root);
-        nodes.forEach(t->t.setZeepbel(zb));
+        nodes.forEach(t -> t.setZeepbel(zb));
     }
 
     public Node<E> getRoot(){
@@ -53,19 +54,86 @@ public class TreeBuilder<E extends Comparable<E>> {
      * een zo goed mogelijk gebalanceerde binaire boom opsteld.
      *
      * @param list van toppen die in gesorteerde volorde zitten.
-     * @param start index vanaf waar de boom moet worden opgebouwd.
-     * @param end index tot waar de moet moet worden opgebouwd.
-     * @return de <tt>Node</tt> van de gebalanceerde binaire boom.
+     * @return de <tt>Node</tt> die de wortel is van de gebalanceerde binaire boom.
      */
-    private Node<E> listToTree(List<Node<E>> list, int start, int end){
-        if (end < start){
+    private Node<E> listToTree(List<Node<E>> list){
+        Node<E> root;
+        if (list.isEmpty()){
             return null;
+        } else if (list.size() == 1){
+            root = list.get(0);
+            root.setLeftChild(null);
+            root.setRightChild(null);
+            return root;
         } else {
-            int mid = start + ((end - start)/2);
-            Node<E> root = list.get(mid);
-            root.setLeftChild(listToTree(list, start, mid - 1));
-            root.setRightChild(listToTree(list, mid + 1, end));
+            int mid = (list.size()/2);
+            root = list.get(mid);
+            root.setLeftChild(listToTree(list.subList(0,mid)));
+            root.setRightChild(listToTree(list.subList(mid+1,list.size())));
             return root;
         }
     }
+
+    /**
+     * Iteratieve implementatie van de <tt>listToTree</tt> methode. Helaas blijkt uit testen dat
+     * deze trager is dan de recursieve implementatie.
+     * @param list van toppen die in gesorteerde volorde zitten.
+     * @return de <tt>Node</tt> die de wortel is van de gebalanceerde binaire boom.
+     */
+    private Node<E> listToTreeIterative(List<Node<E>> list){
+        Deque<Item> stack = new ArrayDeque<>();
+        int mid = list.size()/2;
+        Node<E> root = list.get(mid);
+        stack.push(new Item(root,list.subList(0,mid),true));
+        stack.push(new Item(root,list.subList(mid+1,list.size()),false));
+        Item item;
+        while (!stack.isEmpty()){
+            item = stack.pop();
+            if (item.list.isEmpty()){
+                item.connectChild(null);
+            } else if (item.list.size() == 1){
+                item.list.get(0).clearChildren();
+                item.connectChild(item.list.get(0));
+            } else {
+                mid = item.list.size()/2;
+                item.connectChild(item.list.get(mid));
+                stack.push(new Item(item.list.get(mid),item.list.subList(0,mid),true));
+                //Hergebruik van item
+                item.parent = item.list.get(mid);
+                item.list = item.list.subList(mid+1, item.list.size());
+                item.isLeft = false;
+                stack.push(item);
+            }
+        }
+
+        return root;
+    }
+
+
+    /**
+     * Containter die wordt gebruikt door de methode <tt>listToTreeIterative</tt>.
+     */
+    private class Item{
+
+        private List<Node<E>> list;
+        private Node<E> parent;
+        private boolean isLeft;
+
+
+        Item(Node<E> parent, List<Node<E>> list, boolean isLeft){
+            this.list = list;
+            this.parent = parent;
+            this.isLeft = isLeft;
+        }
+
+        private void connectChild(Node<E> child){
+            if (isLeft){
+                parent.setLeftChild(child);
+            } else {
+                parent.setRightChild(child);
+            }
+        }
+    }
+
+
 }

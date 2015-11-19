@@ -104,5 +104,10 @@ public class Zeepbelboom3<E extends Comparable<E>> extends ShrinkingBubbleTree<E
         return super.toString() + ", " + pushup + " and " + forceOverflow + ".";
     }
 
-
+    @Override
+    public String shortName() {
+        String pushup = maxPushUpEnabled ? "_maxPushUp" + String.valueOf(maxPushUp) : "";
+        String forceOverflow = forceParentOverflow ? "_parentOverflow" : "";
+        return super.shortName() + pushup + forceOverflow ;
+    }
 }
