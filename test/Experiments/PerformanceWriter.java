@@ -3,6 +3,7 @@ package Experiments;
 import java.io.BufferedWriter;
 import java.io.IOError;
 import java.io.PrintWriter;
+import java.util.IntSummaryStatistics;
 import java.util.List;
 
 /**
@@ -12,25 +13,34 @@ import java.util.List;
 public class PerformanceWriter {
 
     private PerformanceTest pt;
+    private int testSize;
 
     public static void main(String[] args) {
-        PerformanceWriter pw = new PerformanceWriter();
+        int size = 1000;
+        int k = 100;
+        if (args.length > 1){
+            size = Integer.parseInt(args[0],10);
+            k = Integer.parseInt(args[1],10);
+        }
+        PerformanceWriter pw = new PerformanceWriter(size,k);
         pw.run();
     }
 
-    PerformanceWriter(){
-        this.pt = new PerformanceTest();
+    PerformanceWriter(int size, int maxk){
+        this.testSize = size;
+        this.pt = new PerformanceTest(size,maxk);
     }
 
     public void run(){
         List<List<TestResult>> results = pt.testPerBubble();
         for (List<TestResult> result : results) {
-            write(result.get(0).getName() + ".csv", toCSV(result));
+            write(result.get(0).getName() + "_" + testSize + ".csv", toCSV(result));
         }
     }
 
+
     public String toCSV(List<TestResult> results){
-        String csv = PerformanceTest.TEST_SIZE + "### k, add, contains, remove### +\n";
+        String csv = testSize + "k, add, contains, remove\n";
         for (TestResult result : results) {
             csv += String.format("%d, %d, %d, %d%n",
                     result.getK(),

@@ -13,19 +13,12 @@ public class TreeBuilder<E extends Comparable<E>> {
 
     public TreeBuilder(List<Node<E>> nodes){
         this.nodes = nodes;
+        leaves = new ArrayList<>();
         build();
     }
 
     private Node<E> build(){
         root = listToTree(nodes);
-        leaves = new ArrayList<>();
-        root.traverseInorder(
-                t -> {
-                    if (!t.hasLeft() || !t.hasRight()) {
-                        leaves.add(t);
-                    }
-                },
-                t -> true);
         return root;
     }
 
@@ -64,14 +57,16 @@ public class TreeBuilder<E extends Comparable<E>> {
             root = list.get(0);
             root.setLeftChild(null);
             root.setRightChild(null);
-            return root;
         } else {
             int mid = (list.size()/2);
             root = list.get(mid);
             root.setLeftChild(listToTree(list.subList(0,mid)));
             root.setRightChild(listToTree(list.subList(mid+1,list.size())));
-            return root;
         }
+        if (root.hasNull()){
+            leaves.add(root);
+        }
+        return root;
     }
 
     /**

@@ -10,6 +10,7 @@
     \usepackage{graphicx}
     \usepackage{tikz}
     \usepackage{pgfplots}
+    \usepackage{pgfplotstable}
     \pgfplotsset{compat=1.10}
     \usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning}
     \tikzset
@@ -134,6 +135,43 @@
     \endgroup 
 \end{enumerate}
     \end{opgave}	
+    \begin{opgave}
+        Analyse van de verschillende gebalanceerde zeepbelbomen en hun complexiteit.
+        \begin{enumerate}[a.]
+            \item Voor toevoegen.
+
+                \normalfont
+                Het toevoegen van een item aan een gebalanceerde zeepbelboom gebeurt als volgt:
+
+                Eerst wordt het item opgezocht in de zeepbelboom.
+                Wanneer het item gevonden werd dan zit het item al in de zeepbelboom en moet er niets gebeuren.
+                In dit geval heeft deze bewerking dezelfde tijds- en geheugencomplexiteit als het opzoeken, nl. $\mathcal{O}(\log n)$ (dit bespreek ik in punt $b$).
+            \item Voor opzoeken.
+                
+                \normalfont
+                De drie gebalanceerde zeepbelbomen gebruiken alledrie dezelfde opzoekmethode, dus de complexiteit van deze bewerking is dezelfde.
+                Deze methode werkt zoals een normale binaire zoekboom: 
+                
+                De wortel wordt vergeleken met het gezochte item. Is het item in de wortel kleiner dan dalen we af naar het rechterkind van de wortel. 
+                Is het item in de wortel groter dan dalen we af naar het linkerkind van de wortel.
+                Komt de waarde van de wortel overeen met dat van het gezochte item dan hebben we het item gevonden en kunnen we terugkeren uit de functie.
+                We blijven op deze manier zoeken tot we het gezochte item gevonden hebben of tot we niet meer verder kunnnen afdalen in de zoekboom (als we null tegenkomen).
+                In dit geval zit het gezochte item niet in de zeepbelboom.
+
+                \begin{enumerate}
+                    \item Tijdscomplexiteit
+
+                In het slechtste geval zit het item dat wordt gezocht niet in de zeepbelboom en moeten we helemaal tot een blad van de boom afdalen.
+                In de vorige opgave heb ik beweze dat de maximale diepte (in toppen) gelijk is aan $d_t \le k \cdot \log_2{(\dfrac{n+k}{k})}$.
+                $k$ is hier een constante, dus in asymptotische notatie valt deze weg.
+                We komen dus uit dat het opzoeken van een element in een gebalanceerde zeepbelboom die $n$ items bevat een tijdscomplexiteit van $\mathcal{O}(\log n)$ heeft.
+            \item Geheugencomplexiteit
+
+                De implementatie van de zoekbewerking maakt gebruik van de {\tt find()} methode. Deze maakt gebruik van een {\tt while}-loop om in de boom af te dalen en maakt geen gebruik van andere datastructuren.
+                De geheugencomplexiteit om iets op te zoeken in een gebalanceerde binaire boom is dus $\Theta(1)$.
+        \end{enumerate}
+        \end{enumerate}
+    \end{opgave}
 
 
 
@@ -227,4 +265,7 @@
 
     
     
+    \newpage
+    \part*{Experimenten}
+    Nu volgen de resultaten van enkele testen die ik heb uitgevoerd op de zeepbelbomen.
     \end{document}

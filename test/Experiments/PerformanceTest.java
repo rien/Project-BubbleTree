@@ -17,28 +17,27 @@ import static CustomAssert.AssertBool.assertTrue;
 public class PerformanceTest {
 
     public static void main(String[] args) throws Exception{
-        PerformanceTest pt = new PerformanceTest();
-        //List<TestResult> tests = pt.testAll();
-        //tests.sort(TestResult.byTotalTime().reversed());
-        //tests.forEach(System.out::println);
-        System.out.println(pt.testAdd(new Zeepbelboom1<>(3)));
+        PerformanceTest pt = new PerformanceTest(10000,100);
+        List<TestResult> tests = pt.testAll();
+        tests.sort(TestResult.byTotalTime().reversed());
+        tests.forEach(System.out::println);
     }
 
-    public static final int TEST_SIZE = 1000000;
     private static final long SEED = 698697970;
-    private static final int MAX_K = 10;
-
+    private int maxK = 100;
 
     private Integer[] items;
     private List<IntFunction<Zeepbelboom<Integer>>> constructors;
 
-    public PerformanceTest(){
+    public PerformanceTest(int testSize, int maxK){
+        this.maxK = maxK;
         //Prepare items
         Random rng = new Random(SEED);
-        items = new Integer[TEST_SIZE];
+        items = new Integer[testSize];
         for (int i = 0; i < items.length; i++) {
             items[i] = rng.nextInt();
         }
+        System.out.print("Testing with testsize: " + testSize + " and max K:" + maxK + "  ");
         //Prepare constructors
         constructors = new ArrayList<>();
         constructors.add(Zeepbelboom1::new);
@@ -62,13 +61,14 @@ public class PerformanceTest {
         for (int i = 0; i < constructors.size(); i++) {
             testResults.add(new ArrayList<>());
         }
-        for (int k = 0; k < MAX_K; k+=5) {
+        for (int k = 2; k <= maxK; k += 3) {
             for (int j = 0; j < constructors.size(); j++){
-                int i = k < 2 ? 2 : k;
+                int n = k;
                 IntFunction<Zeepbelboom<Integer>> constructor = constructors.get(j);
                 testResults.get(j).add(testBoom(
-                        () -> constructor.apply(i)
+                        () -> constructor.apply(n)
                 ));
+                Runtime.getRuntime().gc();
             }
         }
 
@@ -76,14 +76,28 @@ public class PerformanceTest {
     }
 
     private TestResult testBoom(Supplier<Zeepbelboom<Integer>> constructor){
+        long add = 0, contains = 0, remove = 0;
         Zeepbelboom<Integer> boom = constructor.get();
-        System.out.println("Testing " + boom.toString());
+
+        //Opwarmen
+        testAdd(boom);
+        testContains(boom);
+        testRemove(boom);
+
+        System.out.print("\nTesting " + boom.toString() + " ");
+        for (int i = 0; i < 10; i++) {
+            System.out.print(".");
+            add += testAdd(boom);
+            contains += testContains(boom);
+            remove += testRemove(boom);
+            boom.clear();
+        }
         return new TestResult(
                 boom.shortName(),
                 boom.getBubbleMaxSize(),
-                testAdd(boom),
-                testContains(boom),
-                testRemove(boom)
+                add,
+                contains,
+                remove
         );
     }
 
@@ -92,6 +106,7 @@ public class PerformanceTest {
         //Add test
         Collections.addAll(boom, items);
         return System.currentTimeMillis() - tmpTime;
+
     }
 
     private long testContains(Zeepbelboom<Integer> boom){

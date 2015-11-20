@@ -100,6 +100,10 @@ public class Node<E extends Comparable<E>> implements Comparable<E> {
         return rightChild != null;
     }
 
+    public boolean hasNull(){
+        return leftChild == null || rightChild == null;
+    }
+
     public boolean leftChildInSameBubble(){
         return leftChild.getZeepbel() == this.getZeepbel();
     }
