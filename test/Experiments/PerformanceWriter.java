@@ -40,7 +40,7 @@ public class PerformanceWriter {
 
 
     public String toCSV(List<TestResult> results){
-        String csv = testSize + "k, add, contains, remove\n";
+        String csv = "k, add, contains, remove\n";
         for (TestResult result : results) {
             csv += String.format("%d, %d, %d, %d%n",
                     result.getK(),
