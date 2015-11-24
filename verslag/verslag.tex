@@ -1,10 +1,11 @@
-\documentclass[12pt]{article}
+\documentclass[12pt,hidelinks]{article}
 \author{Rien Maertens\\
     2\textsuperscript{de} Bachelor Informatica}
     \title{Project Zeepbelbomen}
     \usepackage[utf8]{inputenc}
     \usepackage[dutch]{babel}
     \usepackage{amsthm}
+    \usepackage{hyperref}
     \usepackage{enumerate}
     \usepackage{mathtools}
     \usepackage{graphicx}
@@ -15,13 +16,13 @@
     \usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning}
     \tikzset
     {
-    	tr/.style = {circle, draw=black, align=center, minimum size=1cm}
+        tr/.style = {circle, draw=black, align=center, minimum size=1cm}
     }
     \DeclarePairedDelimiter\floor{\lfloor}{\rfloor} 
 
     \newtheorem{opgave}{Opgave}
     \newtheorem{geval}{Geval}[subsection]
-
+    \newtheorem{stelling}{Stelling}
     \begin{document}
     \maketitle
     \part*{Theoretische Vragen}
@@ -34,12 +35,12 @@
             \begin{description}
                 \item[Geval 1] Zeepbel $\beta$ bevat een top zonder kinderen en is dus een bladzeepbel.
                     Het pad van de wortel van de boom naar $\beta$ gaat door $\alpha$.
-                    Dit pad bevat dus $n+1$ zeepbellen, wat in tegenstrijd is met het gegeven dat het pad van de wortel naar alle bladzeepbellen evenveel zeepbellen bevat.
+                    Dit pad bevat dus $n+1$ zeepbellen. Dit is tegenstrijdig met het gegeven dat het pad van de wortel naar alle bladzeepbellen evenveel zeepbellen bevat.
                     Het gestelde is dus vals. Het is onmogelijk voor een bladzeepbel om een kind te hebben in een andere zeepbel.
                 \item[Geval 2] Zeepbel $\beta$ is geen bladzeepbel, maar bevat wel een pad naar een top zonder kinderen.
                     Deze top is onderdeel van bladzeepbel $\gamma$.
                     Het pad van $\gamma$ naar de wortel van de zeepbelboom bevat $n+k$ zeepbellen, met $k$ het aantal zeepbellen in het pad tussen $\beta$ en $\gamma$.
-                    Dit is opnieuw in tegenstrijd met het gegeven dat het pad van de wortel naar alle bladzeepbellen hetzelfde aantal zeepbellen bevat.
+                    Dit is opnieuw tegenstrijdigi met het gegeven dat het pad van de wortel naar alle bladzeepbellen hetzelfde aantal zeepbellen bevat.
                     Ook in dit geval kan een bladzeepbel geen kinderen in andere zeepbellen hebben.
             \end{description}
         \end{proof}
@@ -49,90 +50,96 @@
         Wat is de maximale diepte van een $k$-zeepbelboom met $n$ sleutels?
         \begin{enumerate}[a.]
             \item Gemeten in zeepbellen. 
-            
-            
+
+
                 \begingroup 
                 \normalfont
                 Stel $d_z$ de diepte in zeepbellen van een zeepbelboom. $d_z$ bereikt een maximum wanneer iedere zeepbel maar één top omvat,
                 m.a.w. wanneer het pad van de wortel naar een blad evenveel zeepbellen als toppen bevat. 
                 De maximale diepte $d_z$ in zeepbellen van een $k$-zeepbelboom met $n$ sleutels is dus gelijk aan de maximale diepte in toppen van een complete binaire boom met $n$ toppen. Dit is dus:
-                $$d_z \le \floor{\log_2 n}$$
+                \begin{equation}
+                    d_z \le \floor{\log_2 n}
+                \end{equation}
             \endgroup
         \item Gemeten in toppen van de ten gronde liggende binaire boom.
 
 
             \begingroup
             \normalfont
-        Stel $d_t$ de diepte in toppen van een zeepbelboom. $d_t$ bereikt een maximum wanneer we één lang pad van zeepbellen maken waar elke top van een zeepbel maximum één kind in dezelfde zeepbel bevat. De andere zeepbellen die kinderen zijn van dit lange pad zijn terug zeepbellen met grootte één. Dit ziet er dan als volgt uit:
-        
+            Stel $d_t$ de diepte in toppen van een zeepbelboom. $d_t$ bereikt een maximum wanneer we één lang pad van zeepbellen maken waar elke top van een zeepbel maximum één kind in dezelfde zeepbel bevat. De andere zeepbellen die kinderen zijn van dit lange pad zijn terug zeepbellen met grootte één. Dit ziet er dan als volgt uit:
+
             \begin{figure}[h]
-            	\centering
-            	
-            	
-            	{
-					    \begin{tikzpicture}[->,>=stealth',
-					    level/.style={level distance = 2cm},
-					    level 1/.style={sibling distance=6cm},
-					    level 2/.style={sibling distance=4.5cm}, 
-					    level 3/.style={sibling distance=3cm}, 
-					    scale=0.6, transform shape]
-            		\node [tr, fill=green] {100}
-            		child {
-            			node [tr, fill=green] {90} 
-            			child {
-            				node [tr, fill=yellow] {75} 
-            				child {
-            					node [tr, fill=yellow] {50} 
-            					child{
-            						node [tr, fill=blue!50] {25}
-            						child{
-            							node [tr, fill=blue!50] {10}
-            						}
-            					}
-            					child{
-            						node [tr, fill=purple!30] {55}
-            					}
-            				}
-            				child {
-            					node [tr, fill=red!50] {80} 
-            				}
-            			}
-            			child {
-            				node [tr, fill=orange] {95}
-            				child{
-            					node [tr, fill=green!30] {94}
-            				}
-            				child{
-            					node [tr, fill=blue!30] {96}
-            				}
-            			}
-            		}
-            		child {
-            			node [tr, fill=purple!40] {110}
-            			child{
-            				node [tr, fill=yellow!50] {105}
-            			}
-            			child{
-            				node [tr, fill=gray!50] {120}
-            			}
-            		}
-            		;
-            		\end{tikzpicture}
-            	}
+                \centering
+
+
+                {
+                    \begin{tikzpicture}[->,>=stealth',
+                            level/.style={level distance = 2cm},
+                            level 1/.style={sibling distance=6cm},
+                            level 2/.style={sibling distance=4.5cm}, 
+                            level 3/.style={sibling distance=3cm}, 
+                        scale=0.6, transform shape]
+                        \node [tr, fill=green] {100}
+                        child {
+                            node [tr, fill=green] {90} 
+                            child {
+                                node [tr, fill=yellow] {75} 
+                                child {
+                                    node [tr, fill=yellow] {50} 
+                                    child{
+                                        node [tr, fill=blue!50] {25}
+                                        child{
+                                            node [tr, fill=blue!50] {10}
+                                        }
+                                    }
+                                    child{
+                                        node [tr, fill=purple!30] {55}
+                                    }
+                                }
+                                child {
+                                    node [tr, fill=red!50] {80} 
+                                }
+                            }
+                            child {
+                                node [tr, fill=orange] {95}
+                                child{
+                                    node [tr, fill=green!30] {94}
+                                }
+                                child{
+                                    node [tr, fill=blue!30] {96}
+                                }
+                            }
+                        }
+                        child {
+                            node [tr, fill=purple!40] {110}
+                            child{
+                                node [tr, fill=yellow!50] {105}
+                            }
+                            child{
+                                node [tr, fill=gray!50] {120}
+                            }
+                        }
+                        ;
+                    \end{tikzpicture}
+                }
             \end{figure}
-            
-            
-            
-            
+
+
+
+
             Het valt op dat wanneer we een niveau zeepbellen toevoegen, we het dubbele aantal toppen moeten toevoegen van de vorige zeepbelboom met een niveau lager. 
-            Voor $n$ het aantal toppen en $z$ het aantal niveaus in zeepbellen geldt: $$n \ge \sum\limits_{i=1}^z k2^{z-1} = k(2^z-1)$$ 
-            We lossen dit op naar $z$: $$z \le \log_2{(\dfrac{n+k}{k})}$$
+            Voor $n$ het aantal toppen en $z$ het aantal niveaus in zeepbellen geldt: 
+            $$n \ge \sum\limits_{i=1}^z k2^{z-1} = k(2^z-1)$$
+            We lossen dit op naar $z$: $$z \le \log_2{\left(\dfrac{n+k}{k}\right)}$$
             De maximale diepte $d_t$ van deze zeepbelboom in toppen is gelijk aan het aantal niveaus zeepbellen vermenigvuldigd met het maximale aantal toppen per zeepbel.
             Dus krijgen we dat $d_t=k\cdot z$.
             Wanneer voegen dit alles samen tot één formule:
-            $$d_t \le k \cdot \log_2{(\dfrac{n+k}{k})}$$
+            \begin{equation}
+                d_t \le k \cdot \log_2{\left(\dfrac{n+k}{k}\right)}
+                \label{topdiepte}
+            \end{equation}
             Waar $d_t$ gelijk is aan de maximale diepte in toppen.
-    \endgroup 
+        \endgroup 
 \end{enumerate}
     \end{opgave}	
     \begin{opgave}
@@ -145,13 +152,51 @@
 
                 Eerst wordt het item opgezocht in de zeepbelboom.
                 Wanneer het item gevonden werd dan zit het item al in de zeepbelboom en moet er niets gebeuren.
-                In dit geval heeft deze bewerking dezelfde tijds- en geheugencomplexiteit als het opzoeken, nl. $\mathcal{O}(\log n)$ (dit bespreek ik in punt $b$).
+                In dit geval heeft deze bewerking dezelfde tijds- en geheugencomplexiteit als het opzoeken, respectievelijk $\mathcal{O}(\log n)$ en $\Theta(1)$ (dit bespreek ik in punt $b$).
+
+                Als de opzoeking uitkomt op {\tt null} dan zit het toe te voegen item niet in de boom.
+                In dit geval wordt er een nieuwe top aangemaakt en bevestigd aan de top die het laatst werd bekeken bij de zoekopdracht.
+                De nieuwe top wordt ook toegevoegd aan de zeepbel waarin de ouder zit.
+                Indien de zeepbel door deze toevoeging teveel toppen bevat wordt deze gesplitst.
+                De manier waarop de zeepbel gesplitst wordt verschilt per implementatie van zeepbelboom:
+                \begin{itemize}
+                    \item \textbf{Zeepbelboom1} zal zijn zeepbellen splitsen door eerst te kijken of beide kinderen van de wortel in dezelfde zeepbel zitten.
+                        Is dit niet het geval dan wordt een rotatie met de bovenste drie zeepbellen uitgevoerd zodat dit wel zo is.
+                        Vervolgens wordt de zeepbel gesplitst zodat elk kind van de oude wortel de wortel wordt van een nieuwe zeepbel.
+                        De oude wortel wordt daarna toegevoegd aan de zeepbel van zijn ouder, die eventueel opnieuw wordt gesplitst indien deze nu ook overvol zit.
+                        Als de oude wortel ook de wortel van de zeebelboom is dan wordt een nieuwe zeepbel aangemaakt.
+
+                        Er wordt enkel binnen dezelfde zeepbel gekeken en omdat de groote van een zeepbel constant is, gebeurt het splitsen van een zeepbel in constante tijd.
+                        In het slechtste geval wordt iedere zeepbel vanaf de toegevoegde top tot aan de wortel gesplitst
+                        In opgave $2a$ hebben we bewezen \eqref{topdiepte}  dat het aantal zeepbellen van de wortel naar een blad maximaal $\floor{\log_2 n}$ is.
+
+                        We kunnen dus concluderen dat voor Zeepbelboom1 met $n$ toppen de toevoegbewerking $\mathcal{O}(n)$ tijd in beslag neemt en $\Theta(1)$ geheugen nodig heeft.
+
+                    \item \textbf{Zeepbelboom2} splitst door eerst de zeepbelboom zo goed mogelijk te balanceren. 
+                        Hiervoor worden eerst alle toppen in gesorteerde volgorde in een lijst gestoken en vervolgens opgebouwd tot een zo compleet mogelijke binaire boom. 
+                        Daarna wordt net zoals Zeepbelboom1 de wortel toegevoegd aan de zeepbel van zijn ouder en vormen de kinderen van deze wortel de wortels van de nieuwe zeepbellen.
+
+                        Net zoals Zeepbelboom1 wordt er enkel binnen dezelfde zeepbel gekeken, echter zal deze zeepbelboom er net iets langer over doen aangezien altijd alle toppen binnen de zeepbel wordt bekeken in plaats van enkel de bovenste drie. 
+                        We besluiten dus dat een top toevoegen aan Zeepbelboom2 $\mathcal{O}(n)$ tijd in beslag neemt en $\Theta(1)$ geheugen nodig heeft voor een boom van $n$ toppen.
+                    \item \textbf{Zeepbelboom3} balanceerd net zoals Zeepbelboom2 eerst de toppen in de te grote zeepbel, maar in plaats van enkel de wortel toe te voegen aan de bovenliggende zeepbel worden er meerdere toppen toegevoegd.
+                        Hoeveel toppen er toegevoegd worden kan worden aangepast. 
+                        Als deze zeepbelboom werd gemaakt met de normale constructor da zullen er zoveel mogelijk toppen worden toegevoegd aan de bovenliggende zeepbel tot deze zijn maximum capactiteit heeft bereikt (maar niet te vol zit).
+                        Met een tweede constructor kan er ingesteld worden dat er een maximum staat op het aantal omhoog te duwen toppen en kan dit maximum ook meegegeven worden.
+                        Er kan ook ingesteld worden dat er, indien mogelijk, net zoveel toppen aan de bovenliggende zeepbel worden toegevoegd tot deze moet splitsen.
+
+                        Hier geldt hetzelfde als de vorige twee zeepbelbomen: er wordt enkel in dezelfde zeepbel gekeken, wat in constante tijd gebeurt omdat de grootte van de zeepbel constant is.
+                        Een splitsing kan een kettingreactie veroorzaken die bovenliggende zeepbellen ook doet splitsen. Maar er zullen maximum $\mathcal{O}(\log n)$ van deze splitsingen geberuren.
+                        De toevoegbewerking van Zeepbelboom3 zal dus ook $\mathcal{O}(\log n)$ tijd en $\Theta(1)$ geheugen nodig hebben voor een boom waar reeds $n$ elementen in zaten
+                        opgeslagen.
+                \end{itemize}
+
+
             \item Voor opzoeken.
-                
+
                 \normalfont
                 De drie gebalanceerde zeepbelbomen gebruiken alledrie dezelfde opzoekmethode, dus de complexiteit van deze bewerking is dezelfde.
                 Deze methode werkt zoals een normale binaire zoekboom: 
-                
+
                 De wortel wordt vergeleken met het gezochte item. Is het item in de wortel kleiner dan dalen we af naar het rechterkind van de wortel. 
                 Is het item in de wortel groter dan dalen we af naar het linkerkind van de wortel.
                 Komt de waarde van de wortel overeen met dat van het gezochte item dan hebben we het item gevonden en kunnen we terugkeren uit de functie.
@@ -161,18 +206,56 @@
                 \begin{enumerate}
                     \item Tijdscomplexiteit
 
-                In het slechtste geval zit het item dat wordt gezocht niet in de zeepbelboom en moeten we helemaal tot een blad van de boom afdalen.
-                In de vorige opgave heb ik beweze dat de maximale diepte (in toppen) gelijk is aan $d_t \le k \cdot \log_2{(\dfrac{n+k}{k})}$.
-                $k$ is hier een constante, dus in asymptotische notatie valt deze weg.
-                We komen dus uit dat het opzoeken van een element in een gebalanceerde zeepbelboom die $n$ items bevat een tijdscomplexiteit van $\mathcal{O}(\log n)$ heeft.
-            \item Geheugencomplexiteit
+                        In het slechtste geval zit het item dat wordt gezocht niet in de zeepbelboom en moeten we helemaal tot een blad van de boom afdalen.
+                        In \eqref{topdiepte} heb ik de maximale diepte in toppen berekend.
+                        In die formule is $k$ is een constante dus valt die in asymptotische notatie weg.
+                        We kunnen dus besluiten dat het opzoeken van een element in een gebalanceerde zeepbelboom die $n$ items bevat een tijdscomplexiteit van $\mathcal{O}(\log n)$ heeft.
+                    \item Geheugencomplexiteit
 
-                De implementatie van de zoekbewerking maakt gebruik van de {\tt find()} methode. Deze maakt gebruik van een {\tt while}-loop om in de boom af te dalen en maakt geen gebruik van andere datastructuren.
-                De geheugencomplexiteit om iets op te zoeken in een gebalanceerde binaire boom is dus $\Theta(1)$.
-        \end{enumerate}
+                        De implementatie van de zoekbewerking maakt gebruik van de {\tt find()} methode. Deze maakt gebruik van een {\tt while}-loop om in de boom af te dalen en maakt geen gebruik van andere datastructuren.
+                        De geheugencomplexiteit om iets op te zoeken in een gebalanceerde binaire boom is dus $\Theta(1)$.
+                \end{enumerate}
         \end{enumerate}
     \end{opgave}
-
+    \begin{opgave}
+        Bepaal voor semi-splay zeepbelbomen de slechtste-geval complexiteit en de geamortiseerde complexiteit.
+        \begin{stelling}Het langste pad van de wortel naar een blad in een semi-splay zeepbelboom is naar boven begrens door $\mathcal{O}(\log(n)$ \label{stelling1}
+            \begin{proof}Het slechtste geval doet zich voor wanneer alle zeepbellen op één lijn staan.
+                De lengte van het pad van de wortel naar de top die zich het verst van de wortel bevind is dan gelijk aan het aantal zeepbellen vermenigvuldigd met de maximale diepte van een zeepbel.
+                \\
+                \\
+                Het aantal zeepbellen $z$ in een zeepbelboom met $n$ toppen en maximaal $k$ toppen per zeepbel is gelijk aan $\floor{n/k}$.
+                Aangezien een complete zeepbel altijd gebalanceerd is heeft deze diepte $\log_2{(k)}$. 
+                Het langst mogelijke pad van de wortel naar een blad is $\floor{n/k}\cdot\log_2{(k)} = \mathcal{O}(n)$ toppen lang.
+                \\
+                \\
+                In asymptotische notatie wordt dit $\mathcal{O}(\log(n)$. Dit is precies wat we zochten.
+            \end{proof}
+        \end{stelling}
+        \begin{stelling} Een semi-splay bewerking gebeurt in constante tijd. \label{semisplay}
+            \begin{proof}
+                Wanneer een splaybewerking wordt uitgevoerd worden alle toppen uit de drie geselecteerde zeepbellen in inorde overlopen en in een lijst gestopt.
+                Bij het inorde itereren worden er $3\cdot k$ toppen overlopen, me $k$ de maximale grootte van een zeepbel.
+                Vervolgens wordt deze lijst opgedeeld in drie lijsten van lengte $k$ en worden van deze lijsten drie complete gebalanceerde zeepbellen gemaakt.
+                Deze drie zeepbellen worden daarna aan elkaar bevestigd en terug in de zeepbelboom geplaatst.
+                \\
+                \\
+                Omdat er altijd binnen de gegeven drie zeepbelle wordt gekeken zal een semisplay bewering altijd $\Theta(k)$ operaties op toppen nodig hebben.
+                Maar omdat de $k$ in een zeepbelboom constant is kunnen we zeggen dat een splaybewerking in constante tijd of $\Theta(1)$ tijd verloopt.
+            \end{proof}
+        \end{stelling}
+        \begin{enumerate}[a.]
+            \item Voor toevoegen.
+            \item Voor opzoeken.
+                \normalfont
+                \begin{itemize}
+                    \item \textbf{Slechtste-geval}
+                        Het slechtste geval doet zich voor wanneer het gezochte item zich het verst van de wortel bevind. In stelling \ref{stelling1} hebben we bewezen dat dit langste pad
+                        naar boven begrensd wordt door $\mathcal{O}(n)$. Wanneer dit geval is moeten alle toppen over dit pad overlopen worden om het gezochte item te vinden.
+                        Nadat het item werd gevonden moet er nog gesplayd worden tot aan de wortel.
+                \end{itemize}
+        \end{enumerate}
+    \end{opgave}
 
 
     \part*{Implementatie}
@@ -263,8 +346,8 @@
     maar helaas zitten er nog wat bugs in de code en had ik geen tijd meer om deze te
     debuggen. Dus heb ik een werkende implementatie met grafstenen gemaakt.
 
-    
-    
+
+
     \newpage
     \part*{Experimenten}
     Nu volgen de resultaten van enkele testen die ik heb uitgevoerd op de zeepbelbomen.

@@ -2,5 +2,5 @@ set title "Zeepbelboom 1"
 set xlabel "Grootte zeepbellen"
 set ylabel "Tijd (ms)"
 set term png
-set output "zeepbelboom1.png"
-plot[0:100][0:1500] "data/Zeepbelboom2_K2_1000000.csv" using 1:2 with lines
+set output "zeepbelboom2.png"
+plot[0:500][0:100000] "Zeepbelboom4_K2_100000.csv" using 1:2 with lines

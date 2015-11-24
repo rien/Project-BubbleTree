@@ -25,12 +25,15 @@ import java.util.Queue;
 public class Zeepbelboom3<E extends Comparable<E>> extends ShrinkingBubbleTree<E> {
 
 
-    private  int maxPushUp = 5;
-    private  boolean maxPushUpEnabled = false;
-    private  boolean forceParentOverflow = false;
+    private  int maxPushUp;
+    private  boolean maxPushUpEnabled;
+    private  boolean forceParentOverflow;
 
     public Zeepbelboom3(int k) {
         super(k);
+        maxPushUp = 5;
+        maxPushUpEnabled = false;
+        forceParentOverflow = false;
     }
 
     public Zeepbelboom3(int k, boolean maxPushUpEnabled, int maxPushUp, boolean forceParentOverflow){
