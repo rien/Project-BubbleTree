@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * @author Rien Maertens
  *
- * TODO Description
+ * Superklasse voor de gabalanceerde zeepbelbomen.
  */
 public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepbelboom<E> {
 
@@ -284,7 +284,7 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
 //                Node<E> top  = siblingZeepbel.getRoot().findClosestChild();
 //                toRemove.swapItems(top);
 //                toRemove = top;
-//                //toRemove zit nu in een zeepbel met  > 1 items en kan dus verwijder worden.
+//                //toRemove zit nu in een zeepbel met  > 1 items en kan dus verwijderd worden.
 //                removeLeaf(toRemove);
 //            } else if (toRemove.getZeepbel().size() > 1){
 //                //We kunnen twee zeepbellen met 1 item mergen

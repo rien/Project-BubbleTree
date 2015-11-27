@@ -9,6 +9,8 @@ import java.util.function.Predicate;
 
 /**
  * @author Rien Maertens
+ *
+ * De toppen van een zeepbelboom.
  */
 public class Node<E extends Comparable<E>> implements Comparable<E> {
 
@@ -135,6 +137,9 @@ public class Node<E extends Comparable<E>> implements Comparable<E> {
 //        zeepbel.topsRemoved(1);
 //    }
 
+    /**
+     * @return de andere top met dezelfde ouder.
+     */
     public Node<E> getSibling(){
         if (parent.leftChild == this){
             return parent.rightChild;
@@ -146,6 +151,7 @@ public class Node<E extends Comparable<E>> implements Comparable<E> {
     }
 
     /**
+     * @deprecated
      * @return de top met de dichtste waarde bij de huidige top.
      */
     public Node<E> findClosestChild(){
@@ -284,6 +290,13 @@ public class Node<E extends Comparable<E>> implements Comparable<E> {
 
     }
 
+    /**
+     * Overloop alle kinderen van deze top en voeg te toe aan de juiste collection.
+     *
+     * @param nodes kinderen van deze top die voldoen aan de voorwaarde.
+     * @param children kinderen van de toppen uit <tt>nodes</tt> die niet meer voldoen aan de voorwaarde.
+     * @param predicate voorwaarde waaraan een top moet voldoen om aan <tt>nodes</tt> toe gevoegd te worden.
+     */
     public void traverseAndAdd(Collection<Node<E>> nodes, Collection<Node<E>> children, Predicate<Node<E>> predicate){
         traverseInorder(
                 t->{

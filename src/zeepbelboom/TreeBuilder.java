@@ -3,7 +3,9 @@ package zeepbelboom;
 import java.util.*;
 
 /**
- * Created by Rien on 13/11/2015.
+ * @author Rien Maertens
+ *
+ * Klasse die een gebalanceerde binaire boom maakt van een gesorteerde lijst van Nodes.
  */
 public class TreeBuilder<E extends Comparable<E>> {
 
@@ -22,6 +24,9 @@ public class TreeBuilder<E extends Comparable<E>> {
         return root;
     }
 
+    /**
+     * Clear de gegeven zeepbel en voeg alle toppen uit deze builder toe aan de gegeven zeepbel.
+     */
     public void toBubble(Zeepbel<E> zb){
         zb.clear();
         zb.setRoot(root);
@@ -33,6 +38,9 @@ public class TreeBuilder<E extends Comparable<E>> {
         return root;
     }
 
+    /**
+     * @param children lijst van toppen die als kinderen moet toegevoegd worden van de opgebouwde boom.
+     */
     public void attachChildren(List<Node<E>> children){
         assert children.size() == nodes.size() + 1;
         int i = 0;
@@ -70,7 +78,7 @@ public class TreeBuilder<E extends Comparable<E>> {
     }
 
     /**
-     * Iteratieve implementatie van de <tt>listToTree</tt> methode. Helaas blijkt uit testen dat
+     * Iteratieve implementatie van de <tt>listToTree</tt> methode. Uit testen blijkt dat
      * deze trager is dan de recursieve implementatie.
      * @param list van toppen die in gesorteerde volorde zitten.
      * @return de <tt>Node</tt> die de wortel is van de gebalanceerde binaire boom.

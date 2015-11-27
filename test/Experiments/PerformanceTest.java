@@ -16,14 +16,6 @@ import static CustomAssert.AssertBool.assertTrue;
  */
 public class PerformanceTest {
 
-    public static void main(String[] args) throws Exception{
-        PerformanceTest pt = new PerformanceTest();
-        List<TestResult> tests = pt.testBubbles(1000,100);
-        tests.sort(TestResult.byTotalTime().reversed());
-
-        tests.forEach(System.out::println);
-    }
-
     private static final long SEED = 698697970;
     private List<IntFunction<Zeepbelboom<Integer>>> constructors;
 
@@ -50,13 +42,6 @@ public class PerformanceTest {
         return items;
     }
 
-    public List<TestResult> testBubbles(int testSize, int maxK){
-        List<TestResult> testResults = new ArrayList<>();
-        List<List<TestResult>> nested = testPerBubble(testSize,maxK);
-        nested.forEach(testResults::addAll);
-        return testResults;
-    }
-
     public List<List<TestResult>> testPerN(int maxSize, int k){
         List<List<TestResult>> testResults = new ArrayList<>();
         for (int i = 0; i < constructors.size(); i++) {
@@ -75,7 +60,7 @@ public class PerformanceTest {
         return testResults;
     }
 
-    public List<List<TestResult>> testPerBubble(int testSize, int maxK){
+    public List<List<TestResult>> testPerK(int testSize, int maxK){
         Integer[] items = generateItems(testSize);
         List<List<TestResult>> testResults = new ArrayList<>();
         for (int i = 0; i < constructors.size(); i++) {

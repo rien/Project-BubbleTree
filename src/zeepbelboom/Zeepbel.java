@@ -18,11 +18,11 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     }
 
     /**
-     * Alternate constructor which accepts a Node to be set as roo. Automatically sets the bubble of this
-     * top to the newly made bubble.
+     * Alternatieve constructor waaraan een top kan meegegeven worden die onmiddelijk
+     * als wortel kan gezet worden.
      *
-     * @param tree of which this bubble is a part of.
-     * @param root which has to be the root of this bubble.
+     * @param tree zeepbelboom waar deze zeepbel in zit.
+     * @param root wortel van deze zeepbel.
      */
     public Zeepbel(Zeepbelboom<E> tree, Node<E> root){
         this(tree);
@@ -47,23 +47,21 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
     }
 
     /**
-     * @return het aatal toppen in deze zeepbel.
+     * @return het aantal toppen in deze zeepbel.
      */
     public int size() {
         return size;
     }
 
     /**
-     * Returns <tt>true</tt> if this collection contains no elements.
-     *
-     * @return <tt>true</tt> if this collection contains no elements
+     * @return <tt>true</tt> als de zeepbel leeg is.
      */
     public boolean isEmpty() {
         return size == 0;
     }
 
     /**
-     * @return true if you are not allowed to add another item to this bubble.
+     * @return <tt>true</tt> als de zeepbel vol zit.
      */
     public boolean isFull(){
         return size >= maxSize;
@@ -71,7 +69,6 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
 
     /**
      * Methode die aan de zeepbel verteld dat er zojuist een top is toegevoegd.
-     *
      */
     public void topAdded(){
         assert size <= maxSize : "Bubble is too big!";
@@ -95,7 +92,10 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
         assert size > 0;
     }
 
-
+    /**
+     * @deprecated
+     * @return een tweeling van deze zeepbel
+     */
     public Zeepbel<E> getSiblingbubble(){
         Zeepbel<E> parentBubble = getRoot().getParent().getZeepbel();
         Node<E> node = getRoot().getSibling();
@@ -142,7 +142,7 @@ public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{
 //    }
 
     /**
-     * @return the size of the current bubble, for debugging purposes.
+     * @return de huidige grootte van de zeepbel. Handig om te debuggen.
      */
     public int checkBubbleSize(){
         ArrayList<E> items = new ArrayList<>(size);

@@ -28,7 +28,7 @@ public class PerformanceWriter {
     }
 
     public void run(){
-        List<List<TestResult>> results = pt.testPerBubble(defaultSize, maxK);
+        List<List<TestResult>> results = pt.testPerK(defaultSize, maxK);
         for (List<TestResult> result : results) {
             write(result.get(result.size()-1).getName() + "_Ktest.dat", toDAT(result));
         }
