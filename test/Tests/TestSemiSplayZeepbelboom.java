@@ -24,7 +24,7 @@ public class TestSemiSplayZeepbelboom extends AbstractZeepbelBoomTest {
                 {10,(Supplier<Zeepbelboom<Integer>>)() ->  new Zeepbelboom4<>(5)},
                 {100000,(Supplier<Zeepbelboom<Integer>>)() ->  new Zeepbelboom4<>(2)},
                 {100000,(Supplier<Zeepbelboom<Integer>>)() ->  new Zeepbelboom4<>(5)},
-                {100000,(Supplier<Zeepbelboom<Integer>>)() ->  new Zeepbelboom4<>(20)},
+                {100000,(Supplier<Zeepbelboom<Integer>>)() ->  new Zeepbelboom4<>(2000)},
         });
     }
 

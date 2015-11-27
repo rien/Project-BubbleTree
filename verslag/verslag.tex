@@ -5,10 +5,13 @@
     \usepackage[utf8]{inputenc}
     \usepackage[dutch]{babel}
     \usepackage{amsthm}
+    %\usepackage[a4paper]{geometry}
+    %\geometry{tmargin=2.5cm, bmargin=2.5cm, lmargin=2.5cm, rmargin=2.5cm}
     \usepackage{hyperref}
     \usepackage{enumerate}
     \usepackage{mathtools}
     \usepackage{graphicx}
+    \usepackage{float}
     \usepackage{tikz}
     \usepackage{pgfplots}
     \usepackage{pgfplotstable}
@@ -23,9 +26,10 @@
     \newtheorem{opgave}{Opgave}
     \newtheorem{geval}{Geval}[subsection]
     \newtheorem{stelling}{Stelling}
+    \newtheorem{deelresultaat}{Deelresultaat}
     \begin{document}
     \maketitle
-    \part*{Theoretische Vragen}
+    \part{Theoretische Vragen}
     \begin{opgave}
         Geen top in een bladzeepbel heeft een kind in een andere zeepbel.
         \begin{proof}
@@ -68,7 +72,7 @@
             \normalfont
             Stel $d_t$ de diepte in toppen van een zeepbelboom. $d_t$ bereikt een maximum wanneer we één lang pad van zeepbellen maken waar elke top van een zeepbel maximum één kind in dezelfde zeepbel bevat. De andere zeepbellen die kinderen zijn van dit lange pad zijn terug zeepbellen met grootte één. Dit ziet er dan als volgt uit:
 
-            \begin{figure}[h]
+            \begin{figure}[H]
                 \centering
 
 
@@ -152,7 +156,7 @@
 
                 Eerst wordt het item opgezocht in de zeepbelboom.
                 Wanneer het item gevonden werd dan zit het item al in de zeepbelboom en moet er niets gebeuren.
-                In dit geval heeft deze bewerking dezelfde tijds- en geheugencomplexiteit als het opzoeken, respectievelijk $\mathcal{O}(\log n)$ en $\Theta(1)$ (dit bespreek ik in punt $b$).
+                In dit geval heeft deze bewerking dezelfde tijds- en geheugencomplexiteit als het opzoeken, respectievelijk $O(\log n)$ en $\Theta(1)$ (dit bespreek ik in punt \ref{opzoeken}).
 
                 Als de opzoeking uitkomt op {\tt null} dan zit het toe te voegen item niet in de boom.
                 In dit geval wordt er een nieuwe top aangemaakt en bevestigd aan de top die het laatst werd bekeken bij de zoekopdracht.
@@ -168,16 +172,16 @@
 
                         Er wordt enkel binnen dezelfde zeepbel gekeken en omdat de groote van een zeepbel constant is, gebeurt het splitsen van een zeepbel in constante tijd.
                         In het slechtste geval wordt iedere zeepbel vanaf de toegevoegde top tot aan de wortel gesplitst
-                        In opgave $2a$ hebben we bewezen \eqref{topdiepte}  dat het aantal zeepbellen van de wortel naar een blad maximaal $\floor{\log_2 n}$ is.
+                        In opgave $2a$ \eqref{topdiepte} hebben we bewezen dat het aantal zeepbellen van de wortel naar een blad maximaal $\floor{\log_2 n}$ is.
 
-                        We kunnen dus concluderen dat voor Zeepbelboom1 met $n$ toppen de toevoegbewerking $\mathcal{O}(n)$ tijd in beslag neemt en $\Theta(1)$ geheugen nodig heeft.
+                        We kunnen dus concluderen dat voor Zeepbelboom1 met $n$ toppen de toevoegbewerking kost $O(\log n)$ heeft.
 
                     \item \textbf{Zeepbelboom2} splitst door eerst de zeepbelboom zo goed mogelijk te balanceren. 
                         Hiervoor worden eerst alle toppen in gesorteerde volgorde in een lijst gestoken en vervolgens opgebouwd tot een zo compleet mogelijke binaire boom. 
                         Daarna wordt net zoals Zeepbelboom1 de wortel toegevoegd aan de zeepbel van zijn ouder en vormen de kinderen van deze wortel de wortels van de nieuwe zeepbellen.
 
                         Net zoals Zeepbelboom1 wordt er enkel binnen dezelfde zeepbel gekeken, echter zal deze zeepbelboom er net iets langer over doen aangezien altijd alle toppen binnen de zeepbel wordt bekeken in plaats van enkel de bovenste drie. 
-                        We besluiten dus dat een top toevoegen aan Zeepbelboom2 $\mathcal{O}(n)$ tijd in beslag neemt en $\Theta(1)$ geheugen nodig heeft voor een boom van $n$ toppen.
+                        We besluiten dus dat de kost om een een top toe te voegen aan Zeepbelboom2 $O(\log n)$ is voor een boom van $n$ toppen.
                     \item \textbf{Zeepbelboom3} balanceerd net zoals Zeepbelboom2 eerst de toppen in de te grote zeepbel, maar in plaats van enkel de wortel toe te voegen aan de bovenliggende zeepbel worden er meerdere toppen toegevoegd.
                         Hoeveel toppen er toegevoegd worden kan worden aangepast. 
                         Als deze zeepbelboom werd gemaakt met de normale constructor da zullen er zoveel mogelijk toppen worden toegevoegd aan de bovenliggende zeepbel tot deze zijn maximum capactiteit heeft bereikt (maar niet te vol zit).
@@ -185,13 +189,13 @@
                         Er kan ook ingesteld worden dat er, indien mogelijk, net zoveel toppen aan de bovenliggende zeepbel worden toegevoegd tot deze moet splitsen.
 
                         Hier geldt hetzelfde als de vorige twee zeepbelbomen: er wordt enkel in dezelfde zeepbel gekeken, wat in constante tijd gebeurt omdat de grootte van de zeepbel constant is.
-                        Een splitsing kan een kettingreactie veroorzaken die bovenliggende zeepbellen ook doet splitsen. Maar er zullen maximum $\mathcal{O}(\log n)$ van deze splitsingen geberuren.
-                        De toevoegbewerking van Zeepbelboom3 zal dus ook $\mathcal{O}(\log n)$ tijd en $\Theta(1)$ geheugen nodig hebben voor een boom waar reeds $n$ elementen in zaten
+                        Een splitsing kan een kettingreactie veroorzaken die bovenliggende zeepbellen ook doet splitsen. Maar er zullen maximum $O(\log n)$ van deze splitsingen gebeuren.
+                        De toevoegbewerking van Zeepbelboom3 zal dus ook kost $O(\log n)$ hebben voor een boom waar reeds $n$ elementen in zaten
                         opgeslagen.
                 \end{itemize}
 
 
-            \item Voor opzoeken.
+            \item Voor opzoeken. \label{opzoeken}
 
                 \normalfont
                 De drie gebalanceerde zeepbelbomen gebruiken alledrie dezelfde opzoekmethode, dus de complexiteit van deze bewerking is dezelfde.
@@ -203,36 +207,30 @@
                 We blijven op deze manier zoeken tot we het gezochte item gevonden hebben of tot we niet meer verder kunnnen afdalen in de zoekboom (als we null tegenkomen).
                 In dit geval zit het gezochte item niet in de zeepbelboom.
 
-                \begin{enumerate}
-                    \item Tijdscomplexiteit
-
-                        In het slechtste geval zit het item dat wordt gezocht niet in de zeepbelboom en moeten we helemaal tot een blad van de boom afdalen.
-                        In \eqref{topdiepte} heb ik de maximale diepte in toppen berekend.
-                        In die formule is $k$ is een constante dus valt die in asymptotische notatie weg.
-                        We kunnen dus besluiten dat het opzoeken van een element in een gebalanceerde zeepbelboom die $n$ items bevat een tijdscomplexiteit van $\mathcal{O}(\log n)$ heeft.
-                    \item Geheugencomplexiteit
-
-                        De implementatie van de zoekbewerking maakt gebruik van de {\tt find()} methode. Deze maakt gebruik van een {\tt while}-loop om in de boom af te dalen en maakt geen gebruik van andere datastructuren.
-                        De geheugencomplexiteit om iets op te zoeken in een gebalanceerde binaire boom is dus $\Theta(1)$.
-                \end{enumerate}
+                In het slechtste geval zit het item dat wordt gezocht niet in de zeepbelboom en moeten we helemaal tot een blad van de boom afdalen.
+                In \eqref{topdiepte} heb ik de maximale diepte in toppen berekend.
+                In die formule is $k$ is een constante dus valt die in asymptotische notatie weg.
+                We kunnen dus besluiten dat het opzoeken van een element in een gebalanceerde zeepbelboom die $n$ items bevat een kost van $O(\log n)$ heeft.
         \end{enumerate}
     \end{opgave}
     \begin{opgave}
         Bepaal voor semi-splay zeepbelbomen de slechtste-geval complexiteit en de geamortiseerde complexiteit.
-        \begin{stelling}Het langste pad van de wortel naar een blad in een semi-splay zeepbelboom is naar boven begrens door $\mathcal{O}(\log(n)$ \label{stelling1}
+        \\ \\ \normalfont
+        We introduceren eerst een paar stellingen die we zullen gebruiken in de antwoorden van deze opgave.
+        \begin{stelling}Het langste pad van de wortel naar een blad in een semi-splay zeepbelboom is naar boven begrens door $O(\log(n))$ \label{stelling1}
             \begin{proof}Het slechtste geval doet zich voor wanneer alle zeepbellen op één lijn staan.
                 De lengte van het pad van de wortel naar de top die zich het verst van de wortel bevind is dan gelijk aan het aantal zeepbellen vermenigvuldigd met de maximale diepte van een zeepbel.
                 \\
                 \\
                 Het aantal zeepbellen $z$ in een zeepbelboom met $n$ toppen en maximaal $k$ toppen per zeepbel is gelijk aan $\floor{n/k}$.
                 Aangezien een complete zeepbel altijd gebalanceerd is heeft deze diepte $\log_2{(k)}$. 
-                Het langst mogelijke pad van de wortel naar een blad is $\floor{n/k}\cdot\log_2{(k)} = \mathcal{O}(n)$ toppen lang.
+                Het langst mogelijke pad van de wortel naar een blad is $\floor{n/k}\cdot\log_2{(k)} = O(n)$ toppen lang.
                 \\
                 \\
-                In asymptotische notatie wordt dit $\mathcal{O}(\log(n)$. Dit is precies wat we zochten.
+                In asymptotische notatie wordt dit $O(\log(n)$. Dit is precies wat we zochten.
             \end{proof}
         \end{stelling}
-        \begin{stelling} Een semi-splay bewerking gebeurt in constante tijd. \label{semisplay}
+        \begin{stelling} Een semi-splay bewerking gebeurt in constante tijd. \label{stelling2}
             \begin{proof}
                 Wanneer een splaybewerking wordt uitgevoerd worden alle toppen uit de drie geselecteerde zeepbellen in inorde overlopen en in een lijst gestopt.
                 Bij het inorde itereren worden er $3\cdot k$ toppen overlopen, me $k$ de maximale grootte van een zeepbel.
@@ -244,21 +242,62 @@
                 Maar omdat de $k$ in een zeepbelboom constant is kunnen we zeggen dat een splaybewerking in constante tijd of $\Theta(1)$ tijd verloopt.
             \end{proof}
         \end{stelling}
-        \begin{enumerate}[a.]
-            \item Voor toevoegen.
-            \item Voor opzoeken.
-                \normalfont
+        \begin{description}
+            \item[Slechtste geval]
+                \hfill
                 \begin{itemize}
-                    \item \textbf{Slechtste-geval}
-                        Het slechtste geval doet zich voor wanneer het gezochte item zich het verst van de wortel bevind. In stelling \ref{stelling1} hebben we bewezen dat dit langste pad
-                        naar boven begrensd wordt door $\mathcal{O}(n)$. Wanneer dit geval is moeten alle toppen over dit pad overlopen worden om het gezochte item te vinden.
-                        Nadat het item werd gevonden moet er nog gesplayd worden tot aan de wortel.
+                    \item \textbf{Voor toevoegen}\\
+                        Het slechtste geval doet zich voor wanneer het toe te voegen item moet toegevoegd worden als kind van de top die zich het verst van de wortel bevind. 
+                        Wanneer dit geval is moeten alle toppen over dit pad overlopen worden om de plaats van de toe te voegen top te vinden.
+                        Nadat de plaats werd gevonden wordt het nieuwe item toegevoegd, wat een bewerking van constante tijd is.
+                        Als de zeepbel waaraan de nieuwe top is toegevoegd vol zit moet deze gebalanceerd worden. Dit gebeurt ook in constante tijd.
+                        Vervolgens wordt er vanuit deze zeepbel tot aan de wortel gesplayed.
+                        \\
+                        \\
+                        Uit stelling \ref{stelling1} volgt dat dit langste pad naar boven begrensd wordt door $O(n)$ en uit stelling \ref{stelling2} volgt dat een splaybewerking in constante tijd gebeurt.
+                        We kunnen dus besluiten dat een toevoegbewerking op een boom waar reeds $n$ toppen in zitten in het slechtste geval $O(n)$ kost.
+                    \item \textbf{Voor opzoeken}\\
+                        Een opzoekbewerking is erg gelijkend op een toevoegbewerking. 
+                        Het enige verschil is dat bij een zoekbewerking geen top wordt toegevoegd.
+                        In het slechtste geval verloopt een opzoekbewerking op een boom van $n$ toppen in $O(n)$ tijd.
                 \end{itemize}
-        \end{enumerate}
+            \item[Geamortiseerde complexiteit]
+                \hfill
+                \begin{stelling}
+                    Een reeks van $n > 1$ bewerkingen op een initieel lege semi-splay boom heeft een geamortiseerde complexiteit van $O(n \log n)$, dus is de gemiddelde kost $O(\log n)$ per bewerking.
+                    \begin{proof}
+                        Ik bewijs dit met behulp van de potentiaalmethode. Voor een lege boom definiëren wij $\Phi(T)=0$.
+                        Stel dat $T$ niet leeg is. 
+                        Voor een zeepbel $z$ in een semi-splay boom $T$ met een willekeurige $k$-waarde definieren we $A_T(z)$ als het aantal zeepbellen in de deelboom bestaande uit
+                        $z$ en al zijn nakomelingen in $T$. Bovendien defineër $L_T(z) = \log(A_T(z))$.
+                        De potentiaal van een semi-splay zeepbelboom definiëren wij als:
+                        \begin{equation}
+                            \Phi(T) = \sum _{z\in T}{L_T(z)}
+                        \end{equation}
+                        De potentiaal wordt gewijzigd in twee gvallen:
+                        \begin{enumerate}[1.]
+                            \item Als er een zeepbel wordt toegevoegd (nog zonder de boom te herbalanceren)
+                            \item Als tijdens het semi-splayen als gevolg van een toevoeg- of opzoekbewerking er deelbomen vervangen worden
+                        \end{enumerate}
+                        \begin{deelresultaat}
+                            Als een nieuwe zeepbel aan de zeepbelboom $T$ wordt toegevoegd en het resultaat is de boom $T'$ dan geldt $$\Phi(T')-\Phi(T')\le\log(|T'|)$$.
+                        \end{deelresultaat}
+
+                        \begin{center}
+                            \begin{tabular}{ l | l | p{5cm} }
+                                & echte kost & gewijzigde kost \\ \hline
+                                top toevoegen & kekeke & $\Phi(U MA)$ \\ \hline
+                                top opzoeken & lololo &  $\Phi(U PA)$
+                            \end{tabular}
+                        \end{center}
+                    \end{proof}
+                \end{stelling}
+        \end{description}
     \end{opgave}
 
 
-    \part*{Implementatie}
+
+    \part{Implementatie}
     Hieronder volgt er een korte uitleg over de interne structuur en algoritmes die
     ik heb gebruikt voor de implementaties van de zeepbelbomen.
     \section{Binaire boom}
@@ -349,6 +388,91 @@
 
 
     \newpage
-    \part*{Experimenten}
+    \part{Experimenten}
     Nu volgen de resultaten van enkele testen die ik heb uitgevoerd op de zeepbelbomen.
+    \section*{Opzet}
+    Mijn testresultaten heb ik verkregen door gebruik te maken van de volgende klassen:
+    \begin{description}
+        \item[\tt TestResult]: klasse die de tijden van de verschillende testen voor een zeepbelboom bijhoud.
+            In deze klasse zijn ook een aantal comparators gedefiniëerd zodat kan gesorteerd worden op naam, tijd om iets toe te voegen \ldots
+        \item[\tt PerformanceTest]: hier gebeuren de echte testen. 
+            Er wordt eerst een lijst van $n$ integers aangemaakt die alle getallen van 1 tot $n$ bevat (willekeurig door elkaar geschud).
+            Vervolgens wordt iedere bewerking---toevoegen, opzoeken en verwijderen indien geïmplementeerd--- tien keer na elkaar uitgevoerd op deze lijst van getallen.
+            Om de resultaten zo stabiel mogelijk te houden wordt iedere reeks voorafgegaan door eenzelfde bewerking die niet wordt gemeten.
+            Ook wordt iedere keer er een nieuwe boom wordt gebruikt de garbagecollection manueel opgeropen.
+            \\
+            Bij de methode {\tt testAll()} wordt voor iedere zeepbelboom uitgevoerd, voor alle $k$-waarden van 2 tot {\tt maxK} in stappen van 3.
+            Het resultaat van deze methode is een lijst van lijsten van testresultaten ({\tt TestResult}).
+        \item[\tt PerformanceWriter]: deze klasse gaat de output van de {\tt testAll()}-methode van {\tt PerformanceTest} oproepen en de resultaten uitschrijven naar bestanden per zeepbelboom.
+    \end{description}
+    Om de meetresultaten zo stabiel mogelijk te houden heb ik het gehele project gecompileerd in een {\tt jar}-bestand met de {\tt PerformanceWriter.main()} als methode die moet uitgevoerd worden.
+    Dit gecompileerde bestand heb ik vervolgens een paar uur laten draaien op een linux-machine. 
+    Ook heb ik het programma gelimiteerd tot het gebruiken van 50\% van een processorkern.
+    \\
+    Als argumenten voor de experimenten heb ik als testgrootte 10000000 en als {\tt maxK}  500 meegegeven.
+    \section*{Resultaten}
+    De resultaten van de meetresultaten door de voorgaande tests kun je in de volgende grafiekjes zien:
+    \subsection*{Gebalanceerde zeepbelbomen}
+    \begin{figure}[H]\begin{tikzpicture}
+            \begin{axis}[title=Add, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=2000, legend pos=north east, scaled ticks=false, width=13cm, /pgf/number format/.cd, use comma]
+                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom1_K2_100000.csv};
+                \addlegendentry{Zeepbelboom1}
+                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom2_K2_100000.csv};
+                \addlegendentry{Zeepbelboom2}
+                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom3_K2_100000.csv};
+                \addlegendentry{Zeepbelboom3}
+            \end{axis}
+        \end{tikzpicture}\caption{Add op gebalanceerde zeepbelbomen.}
+    \end{figure}
+    \begin{figure}[H]\begin{tikzpicture}
+            \begin{axis}[title=Contains, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=2000, legend pos=north east, scaled ticks=false, width=13cm, /pgf/number format/.cd, use comma]
+                \addplot +[mark=none] table [x=k, y=contains]{testresults/Zeepbelboom1_K2_100000.csv};
+                \addlegendentry{Zeepbelboom1}
+                \addplot +[mark=none] table [x=k, y=contains]{testresults/Zeepbelboom2_K2_100000.csv};
+                \addlegendentry{Zeepbelboom2}
+                \addplot +[mark=none] table [x=k, y=contains]{testresults/Zeepbelboom3_K2_100000.csv};
+                \addlegendentry{Zeepbelboom3}
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Contains op gebalanceerde zeepbelbomen.}
+    \end{figure}
+    \begin{figure}[H]\begin{tikzpicture}
+            \begin{axis}[title=Remove, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=2000, legend pos=north east, scaled ticks=false, width=13cm, /pgf/number format/.cd, use comma]
+                \addplot +[mark=none] table [x=k, y=remove]{testresults/Zeepbelboom1_K2_100000.csv};
+                \addlegendentry{Zeepbelboom1}
+                \addplot +[mark=none] table [x=k, y=remove]{testresults/Zeepbelboom2_K2_100000.csv};
+                \addlegendentry{Zeepbelboom2}
+                \addplot +[mark=none] table [x=k, y=remove]{testresults/Zeepbelboom3_K2_100000.csv};
+                \addlegendentry{Zeepbelboom3}
+            \end{axis}
+        \end{tikzpicture}\caption{Remove op gebalanceerde zeepbelbomen.}
+    \end{figure}
+
+    \subsection*{Zeepbelboom3}
+    \begin{figure}[H]\begin{tikzpicture}
+            \begin{axis}[title=Zeepbelboom3, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=1600, legend pos=north east, scaled ticks=false, width=13cm, /pgf/number format/.cd, use comma]
+                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom3_K2_parentOverflow_100000.csv};
+                \addlegendentry{PO}
+                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom3_K2_maxPushUp5_100000.csv};
+                \addlegendentry{max5}
+                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom3_K2_maxPushUp5_parentOverflow_100000.csv};
+                \addlegendentry{max5 PO}
+            \end{axis}
+        \end{tikzpicture}
+        \caption{De verschillende configuraties van Zeepbelboom3.}
+    \end{figure}
+    \section*{Semi-splay zeepbelbomen}
+    \begin{figure}[H]\begin{tikzpicture}
+            \begin{axis}[title=Semi-splay zeepbelboom, xlabel=$k$-waarde, ylabel=Tijd (ms), legend pos=north east, scaled ticks=false, width=13cm, /pgf/number format/.cd, use comma]
+                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom4_K2_100000.csv};
+                \addlegendentry{add}
+                \addplot +[mark=none] table [x=k, y=contains]{testresults/Zeepbelboom4_K2_100000.csv};
+                \addlegendentry{contains}
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Semi-splay zeepbelboom}
+    \end{figure}
+
+    \section*{Besluit}
+
     \end{document}

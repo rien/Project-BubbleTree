@@ -17,27 +17,17 @@ import static CustomAssert.AssertBool.assertTrue;
 public class PerformanceTest {
 
     public static void main(String[] args) throws Exception{
-        PerformanceTest pt = new PerformanceTest(10000,100);
-        List<TestResult> tests = pt.testAll();
+        PerformanceTest pt = new PerformanceTest();
+        List<TestResult> tests = pt.testBubbles(1000,100);
         tests.sort(TestResult.byTotalTime().reversed());
+
         tests.forEach(System.out::println);
     }
 
     private static final long SEED = 698697970;
-    private int maxK = 100;
-
-    private Integer[] items;
     private List<IntFunction<Zeepbelboom<Integer>>> constructors;
 
-    public PerformanceTest(int testSize, int maxK){
-        this.maxK = maxK;
-        //Prepare items
-        Random rng = new Random(SEED);
-        items = new Integer[testSize];
-        for (int i = 0; i < items.length; i++) {
-            items[i] = rng.nextInt();
-        }
-        System.out.print("Testing with testsize: " + testSize + " and max K:" + maxK + "  ");
+    public PerformanceTest(){
         //Prepare constructors
         constructors = new ArrayList<>();
         constructors.add(Zeepbelboom1::new);
@@ -49,14 +39,44 @@ public class PerformanceTest {
         constructors.add(Zeepbelboom4::new);
     }
 
-    public List<TestResult> testAll(){
+    private Integer[] generateItems(int size){
+        Integer[] items;
+        Random rng = new Random(SEED);
+        items = new Integer[size];
+        for (int i = 0; i < items.length; i++) {
+            items[i] = rng.nextInt();
+        }
+        Collections.shuffle(Arrays.asList(items), rng);
+        return items;
+    }
+
+    public List<TestResult> testBubbles(int testSize, int maxK){
         List<TestResult> testResults = new ArrayList<>();
-        List<List<TestResult>> nested = testPerBubble();
+        List<List<TestResult>> nested = testPerBubble(testSize,maxK);
         nested.forEach(testResults::addAll);
         return testResults;
     }
 
-    public List<List<TestResult>> testPerBubble(){
+    public List<List<TestResult>> testPerN(int maxSize, int k){
+        List<List<TestResult>> testResults = new ArrayList<>();
+        for (int i = 0; i < constructors.size(); i++) {
+            testResults.add(new ArrayList<>());
+        }
+        for (int n = 10000; n <= maxSize; n += 10000) {
+            for (int j = 0; j < constructors.size(); j++){
+                IntFunction<Zeepbelboom<Integer>> constructor = constructors.get(j);
+                testResults.get(j).add(testBoom(
+                        () -> constructor.apply(k),
+                        generateItems(n)
+                ));
+                Runtime.getRuntime().gc();
+            }
+        }
+        return testResults;
+    }
+
+    public List<List<TestResult>> testPerBubble(int testSize, int maxK){
+        Integer[] items = generateItems(testSize);
         List<List<TestResult>> testResults = new ArrayList<>();
         for (int i = 0; i < constructors.size(); i++) {
             testResults.add(new ArrayList<>());
@@ -66,7 +86,8 @@ public class PerformanceTest {
                 int n = k;
                 IntFunction<Zeepbelboom<Integer>> constructor = constructors.get(j);
                 testResults.get(j).add(testBoom(
-                        () -> constructor.apply(n)
+                        () -> constructor.apply(n),
+                        items
                 ));
                 Runtime.getRuntime().gc();
             }
@@ -75,41 +96,45 @@ public class PerformanceTest {
         return testResults;
     }
 
-    private TestResult testBoom(Supplier<Zeepbelboom<Integer>> constructor){
+    private TestResult testBoom(Supplier<Zeepbelboom<Integer>> constructor, Integer[] items){
         long add = 0, contains = 0, remove = 0;
         Zeepbelboom<Integer> boom = constructor.get();
 
         //Opwarmen
-        testAdd(boom);
-        testContains(boom);
-        testRemove(boom);
+        testAdd(boom,items);
+        testContains(boom,items);
+        testRemove(boom,items);
+        boom.clear();
 
-        System.out.print("\nTesting " + boom.toString() + " ");
+        System.out.print("\nTesting " + boom.toString() + " Size: " + items.length);
         for (int i = 0; i < 10; i++) {
             System.out.print(".");
-            add += testAdd(boom);
-            contains += testContains(boom);
-            remove += testRemove(boom);
+            add += testAdd(boom,items);
+            contains += testContains(boom,items);
+            remove += testRemove(boom,items);
             boom.clear();
         }
         return new TestResult(
                 boom.shortName(),
                 boom.getBubbleMaxSize(),
+                items.length,
                 add,
                 contains,
                 remove
         );
     }
 
-    private long testAdd(Zeepbelboom<Integer> boom){
+    private long testAdd(Zeepbelboom<Integer> boom, Integer[] items){
         long tmpTime = System.currentTimeMillis();
         //Add test
-        Collections.addAll(boom, items);
+        for (Integer item : items){
+            boom.add(item);
+        }
         return System.currentTimeMillis() - tmpTime;
 
     }
 
-    private long testContains(Zeepbelboom<Integer> boom){
+    private long testContains(Zeepbelboom<Integer> boom, Integer[] items){
         //Contains test: How fast does the contains method work?
         long tmpTime = System.currentTimeMillis();
         for (Integer item : items) {
@@ -118,7 +143,7 @@ public class PerformanceTest {
         return System.currentTimeMillis() - tmpTime;
     }
 
-    private long testRemove(Zeepbelboom<Integer> boom){
+    private long testRemove(Zeepbelboom<Integer> boom, Integer[] items){
         //Remove items
         long tmpTime = System.currentTimeMillis();
         if (boom.supportsDeletion()){
@@ -128,18 +153,4 @@ public class PerformanceTest {
         }
         return System.currentTimeMillis() - tmpTime;
     }
-
-    private static int twoPower(int n){
-        int result = 1;
-        for (int i = 1; i <= n; i++) {
-            result *= 2;
-            if (result < 0){
-                throw new ArithmeticException("overflow");
-            }
-        }
-        return result;
-    }
-
-
-
 }

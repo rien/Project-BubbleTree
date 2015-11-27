@@ -10,13 +10,15 @@ public class TestResult {
 
     private String name;
     private int k;
+    private int size;
     private long addTime;
     private long containsTime;
     private long removeTime;
 
-    public TestResult(String name,int k, long addTime, long containsTime, long removeTime) {
+    public TestResult(String name,int k,int size, long addTime, long containsTime, long removeTime) {
         this.name = name;
         this.k = k;
+        this.size = size;
         this.addTime = addTime;
         this.containsTime = containsTime;
         this.removeTime = removeTime;
@@ -28,6 +30,10 @@ public class TestResult {
 
     public int getK() {
         return k;
+    }
+
+    public int getSize() {
+        return size;
     }
 
     public long getContainsTime() {

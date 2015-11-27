@@ -76,7 +76,7 @@ public class TestShrinkingZeepbelBoom extends AbstractZeepbelBoomTest {
             heights.add(height);
         }
         for (int i = 0; i < heights.size() - 1; i++) {
-            assertEquals("Het aantal zeepbellen tussen de bladzeepbellen en de wortel s niet gelijk!",heights.get(i), heights.get(i+1));
+            assertEquals("Het aantal zeepbellen tussen de bladzeepbellen en de wortel is niet gelijk!",heights.get(i), heights.get(i+1));
         }
     }
 
