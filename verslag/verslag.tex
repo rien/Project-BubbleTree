@@ -2,6 +2,7 @@
 \author{Rien Maertens\\
     2\textsuperscript{de} Bachelor Informatica}
     \title{Project Zeepbelbomen}
+    \usepackage[document]{ragged2e}
     \usepackage[utf8]{inputenc}
     \usepackage[dutch]{babel}
     \usepackage{amsthm}
@@ -15,6 +16,8 @@
     \usepackage{tikz}
     \usepackage{pgfplots}
     \usepackage{pgfplotstable}
+    \usepackage{perpage} %the perpage package
+    \MakePerPage{footnote} %the perpage package command
     \pgfplotsset{compat=1.10}
     \usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning}
     \tikzset
@@ -27,8 +30,10 @@
     \newtheorem{geval}{Geval}[subsection]
     \newtheorem{stelling}{Stelling}
     \newtheorem{deelresultaat}{Deelresultaat}
+    \hyphenpenalty=10000
     \begin{document}
     \maketitle
+    \newpage
     \part{Theoretische Vragen}
     \begin{opgave}
         Geen top in een bladzeepbel heeft een kind in een andere zeepbel.
@@ -49,7 +54,6 @@
             \end{description}
         \end{proof}
     \end{opgave}
-    \newpage
     \begin{opgave}
         Wat is de maximale diepte van een $k$-zeepbelboom met $n$ sleutels?
         \begin{enumerate}[a.]
@@ -215,17 +219,15 @@
     \end{opgave}
     \begin{opgave}
         Bepaal voor semi-splay zeepbelbomen de slechtste-geval complexiteit en de geamortiseerde complexiteit.
-        \\ \\ \normalfont
-        We introduceren eerst een paar stellingen die we zullen gebruiken in de antwoorden van deze opgave.
+        \\ \vspace{0.5em} \normalfont 
+        We introduceren eerst een paar stellingen die we zullen gebruiken in de antwoorden van deze opgave:
         \begin{stelling}Het langste pad van de wortel naar een blad in een semi-splay zeepbelboom is naar boven begrens door $O(\log(n))$ \label{stelling1}
             \begin{proof}Het slechtste geval doet zich voor wanneer alle zeepbellen op één lijn staan.
                 De lengte van het pad van de wortel naar de top die zich het verst van de wortel bevind is dan gelijk aan het aantal zeepbellen vermenigvuldigd met de maximale diepte van een zeepbel.
                 \\
-                \\
                 Het aantal zeepbellen $z$ in een zeepbelboom met $n$ toppen en maximaal $k$ toppen per zeepbel is gelijk aan $\floor{n/k}$.
                 Aangezien een complete zeepbel altijd gebalanceerd is heeft deze diepte $\log_2{(k)}$. 
                 Het langst mogelijke pad van de wortel naar een blad is $\floor{n/k}\cdot\log_2{(k)} = O(n)$ toppen lang.
-                \\
                 \\
                 In asymptotische notatie wordt dit $O(\log(n)$. Dit is precies wat we zochten.
             \end{proof}
@@ -236,7 +238,6 @@
                 Bij het inorde itereren worden er $3\cdot k$ toppen overlopen, me $k$ de maximale grootte van een zeepbel.
                 Vervolgens wordt deze lijst opgedeeld in drie lijsten van lengte $k$ en worden van deze lijsten drie complete gebalanceerde zeepbellen gemaakt.
                 Deze drie zeepbellen worden daarna aan elkaar bevestigd en terug in de zeepbelboom geplaatst.
-                \\
                 \\
                 Omdat er altijd binnen de gegeven drie zeepbelle wordt gekeken zal een semisplay bewering altijd $\Theta(k)$ operaties op toppen nodig hebben.
                 Maar omdat de $k$ in een zeepbelboom constant is kunnen we zeggen dat een splaybewerking in constante tijd of $\Theta(1)$ tijd verloopt.
@@ -252,7 +253,6 @@
                         Nadat de plaats werd gevonden wordt het nieuwe item toegevoegd, wat een bewerking van constante tijd is.
                         Als de zeepbel waaraan de nieuwe top is toegevoegd vol zit moet deze gebalanceerd worden. Dit gebeurt ook in constante tijd.
                         Vervolgens wordt er vanuit deze zeepbel tot aan de wortel gesplayed.
-                        \\
                         \\
                         Uit stelling \ref{stelling1} volgt dat dit langste pad naar boven begrensd wordt door $O(n)$ en uit stelling \ref{stelling2} volgt dat een splaybewerking in constante tijd gebeurt.
                         We kunnen dus besluiten dat een toevoegbewerking op een boom waar reeds $n$ toppen in zitten in het slechtste geval $O(n)$ kost.
@@ -294,9 +294,7 @@
                 \end{stelling}
         \end{description}
     \end{opgave}
-
-
-
+    \newpage
     \part{Implementatie}
     Hieronder volgt er een korte uitleg over de interne structuur en algoritmes die
     ik heb gebruikt voor de implementaties van de zeepbelbomen.
@@ -385,6 +383,33 @@
     aantal omhoog te duwen toppen en er kan ingesteld worden dat er geprobeerd wordt
     om net genoeg toppen toe te voegen aan de bovenliggende zeepbel dat die verplicht
     wordt om te splitsen.  
+    \section{Semi-splay zeepbelboom}
+    \subsection{Zeepbelboom4}
+    Deze zeepbelboom is een implementatie van de semi-splay zeepbelboom. 
+    Bij elke toevoeg- en opzoekbewerking wordt er gesplayed op zeepbelniveau vanaf de zeepbel van de top die het werd toegevoegd op opgezocht tot aan de wortelzeepbel.
+    Ik geef wat meer uitleg bij de volgende methodes:
+    \begin{description}
+        \item[\tt addToParent()] voegt een nieuwe top toe aan een top die reeds in de boom zit.
+            De nieuwe top wordt toegevoegd aan de zeepbel van de ouder als hier nog plaats in is. 
+            Als deze zeepbel door deze toevoeging volledig gevuld is wordt ze gebalanceerd. 
+            Is de zeepbel van de ouder al volledig gevuld dan wordt een nieuwe zeepbel aangemaakt met de nieuwe top als wortel.
+        \item[\tt find()] doet hetzelfde als de gelijknamige methode van de superklasse, met dat verschil dat na iedere opzoeking en toevoeging er gesplayt wordt.
+        \item[\tt semiSplay()] splayt de zeepbellen vanaf de zeepbel van de meegegeven top.
+            Dit splayen gebeurt als volgt:
+            \begin{enumerate}
+                \item Eerst worden de drie zeepbellen geselecteerd die moeten worden gesplayed. Eerst wordt de zeepbel geselecteerd waartoe de meegeven top behoort.
+                    Is deze zeepbel niet compleet dan wordt zijn ouderzeepbel in de plaats genomen.
+                    Vervolgens worden ook de ouderzeepbel van de laatst geselecteerde zeepbel en zijn ouderzeepbel geselecteerd.
+                \item Vervolgens worden de toppen van deze zeepbellen in een lijst gestoken door ze in inorde te overlopen.
+                    Ook worden de kindertoppen van deze geselecteerde toppen bijgehouden zodat ze later terug kunnen toegevoegd worden.
+                \item Deze lijst wordt vervolgens in drie gedeeld en van deze deellijsten worden er nieuwe zeepbellen gemaakt met de {\tt TreeBuilder}.
+                \item Daarna worden deze drie bomen en de kindertoppen uit stap 1 aan elkaar bevestigd.
+                \item Als laatste stap wordt de bovenste van deze nieuwe drie zeepbellen geslecteerd om te splayen zodat de volgende iteratie kan beginnen.
+            \end{enumerate}
+            Deze bewerking herhaalt zich tot de wortelzeepbel of een kindzeepbel van de wortelzeepbel wordt bereikt.
+            
+    \end{description}
+    \newpage
     \part{Experimenten}
     Nu volgen de resultaten van enkele testen die ik heb uitgevoerd op de zeepbelbomen.
     \section*{Opzet}
@@ -411,66 +436,106 @@
     \section*{Resultaten}
     De resultaten van de meetresultaten door de voorgaande tests kun je in de volgende grafiekjes zien:
     \subsection*{Gebalanceerde zeepbelbomen}
-    \begin{figure}[H]\begin{tikzpicture}
-            \begin{axis}[title=Add, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=2000, legend pos=north east, scaled ticks=false, width=13cm, /pgf/number format/.cd, use comma]
-                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom1_K2_100000.csv};
+    \begin{figure}[H]
+        \begin{tikzpicture}
+            \begin{axis}[title=Add, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=800, legend pos=north east, scaled ticks=false, width=13cm, height=7cm, /pgf/number format/.cd, use comma]
+                \addplot +[mark=*] table [x=k, y=add]{testresults/Zeepbelboom1_K500_Ktest.dat};
                 \addlegendentry{Zeepbelboom1}
-                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom2_K2_100000.csv};
+                \addplot +[mark=*] table [x=k, y=add]{testresults/Zeepbelboom2_K500_Ktest.dat};
                 \addlegendentry{Zeepbelboom2}
-                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom3_K2_100000.csv};
+                \addplot +[mark=*] table [x=k, y=add]{testresults/Zeepbelboom3_K500_Ktest.dat};
                 \addlegendentry{Zeepbelboom3}
             \end{axis}
-        \end{tikzpicture}\caption{Add op gebalanceerde zeepbelbomen.}
+        \end{tikzpicture}\caption{Toevoegen van $100.000$ items aan een gebalanceerde zeepbelboom. }
+        \label{figAdd}
     \end{figure}
-    \begin{figure}[H]\begin{tikzpicture}
-            \begin{axis}[title=Contains, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=2000, legend pos=north east, scaled ticks=false, width=13cm, /pgf/number format/.cd, use comma]
-                \addplot +[mark=none] table [x=k, y=contains]{testresults/Zeepbelboom1_K2_100000.csv};
+
+    \begin{figure}[H]
+        \begin{tikzpicture}
+            \begin{axis}[title=Contains, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=600, legend pos=north east, scaled ticks=false, width=13cm, height=7cm, /pgf/number format/.cd, use comma]
+                \addplot +[mark=*] table [x=k, y=contains]{testresults/Zeepbelboom1_K500_Ktest.dat};
                 \addlegendentry{Zeepbelboom1}
-                \addplot +[mark=none] table [x=k, y=contains]{testresults/Zeepbelboom2_K2_100000.csv};
+                \addplot +[mark=*] table [x=k, y=contains]{testresults/Zeepbelboom2_K500_Ktest.dat};
                 \addlegendentry{Zeepbelboom2}
-                \addplot +[mark=none] table [x=k, y=contains]{testresults/Zeepbelboom3_K2_100000.csv};
+                \addplot +[mark=*] table [x=k, y=contains]{testresults/Zeepbelboom3_K500_Ktest.dat};
                 \addlegendentry{Zeepbelboom3}
             \end{axis}
         \end{tikzpicture}
-        \caption{Contains op gebalanceerde zeepbelbomen.}
+        \caption{Opzoekactie in een gebalanceerde zeepbelboom met $100.000$ items.}
+        \label{figCont}
     \end{figure}
-    \begin{figure}[H]\begin{tikzpicture}
-            \begin{axis}[title=Remove, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=2000, legend pos=north east, scaled ticks=false, width=13cm, /pgf/number format/.cd, use comma]
-                \addplot +[mark=none] table [x=k, y=remove]{testresults/Zeepbelboom1_K2_100000.csv};
+    \begin{figure}[H]
+        \begin{tikzpicture}
+            \begin{axis}[title=Remove, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=600, legend pos=north east, scaled ticks=false, width=13cm, height=7cm, /pgf/number format/.cd, use comma]
+                \addplot +[mark=*] table [x=k, y=remove]{testresults/Zeepbelboom1_K500_Ktest.dat};
                 \addlegendentry{Zeepbelboom1}
-                \addplot +[mark=none] table [x=k, y=remove]{testresults/Zeepbelboom2_K2_100000.csv};
+                \addplot +[mark=*] table [x=k, y=remove]{testresults/Zeepbelboom2_K500_Ktest.dat};
                 \addlegendentry{Zeepbelboom2}
-                \addplot +[mark=none] table [x=k, y=remove]{testresults/Zeepbelboom3_K2_100000.csv};
+                \addplot +[mark=*] table [x=k, y=remove]{testresults/Zeepbelboom3_K500_Ktest.dat};
                 \addlegendentry{Zeepbelboom3}
             \end{axis}
-        \end{tikzpicture}\caption{Remove op gebalanceerde zeepbelbomen.}
+        \end{tikzpicture}\caption{$100.000$ elementen verwijderen uit een gebalanceerde zeepbelboom.}
+        \label{figRem}
     \end{figure}
+    \paragraph{Toevoegen}
+    Voor de toevoegbewerking merken we in figuur \ref{figAdd} dat de Zeepbelboom1 de beste tijden heeft.
+    Dit komt doordat er veel minder toppen van plaats worden veranderd in de ondeliggende boom.
+    De tweede en derde implementatie duren meestal langer omdat bij iedere splitsing de gehele zeepbel wordt gebalanceerd.
+    Zeepbelboom3 presteert dan weer beter dan de tweede omdat door meerdere toppen toe te voegen aan de ouderzeepbel, er meer plaats is in de nieuwe zeepbellen.
+    Hierdoor zullen er minder splitsingsacties moeten gebeuren en is de toevoegbewerking dus sneller.
+    \paragraph{Opzoeken}
+    Op figuur \ref{figCont} zien we dat Zeepbelboom1 nu de slechtste tijden heeft.
+    Omdat er hier zo weinig mogelijk wijzigingen gedaan worden is deze boom intern minder gebalanceerd dan de andere twee implementaties.
+    Het kan dus langer duren om in Zeepbelboom1 een opzoeking te doen dan bij Zeepbelboom2 en Zeepbelboom3.
+    Zeepbelboom2 presteert beter dan zeepbelboom3 want deze zeepbelboom zal minder zeepbellen bevatten, waardoor de boom in het algemeen ook gebalanceerder is.
+    \paragraph{Verwijderen}
+    De verwijderactie in mijn gebalanceerde zeepbelbomen komt eigenlijk neer op een simpele opzoekactie gevolgd door eventueel een booleanse waarde die moet veranderd worden.
+    Daarom kunnen we op figuur \ref{figRem} zien dat de tijden van de verwijderbewerking overeen komen met die van de opzoeking.
+    
 
     \subsection*{Zeepbelboom3}
     \begin{figure}[H]\begin{tikzpicture}
-            \begin{axis}[title=Zeepbelboom3, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=1600, legend pos=north east, scaled ticks=false, width=13cm, /pgf/number format/.cd, use comma]
-                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom3_K2_parentOverflow_100000.csv};
-                \addlegendentry{PO}
-                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom3_K2_maxPushUp5_100000.csv};
-                \addlegendentry{max5}
-                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom3_K2_maxPushUp5_parentOverflow_100000.csv};
-                \addlegendentry{max5 PO}
+            \begin{axis}[title=Zeepbelboom3, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=700,  legend pos=north east, scaled ticks=false, width=13cm, height=7cm, /pgf/number format/.cd, use comma]
+                \addplot +[mark=*] table [x=k, y=add]{testresults/Zeepbelboom3_K500_parentOverflow_Ktest.dat};
+                \addlegendentry{Parent overflow}
+                \addplot +[mark=*] table [x=k, y=add]{testresults/Zeepbelboom3_K500_maxPushUp5_Ktest.dat};
+                \addlegendentry{Max.5}
+                \addplot +[mark=*] table [x=k, y=add]{testresults/Zeepbelboom3_K500_maxPushUp5_parentOverflow_Ktest.dat};
+                \addlegendentry{Max. 5 en p.o.}
+                \addplot +[mark=*] table [x=k, y=add]{testresults/Zeepbelboom3_K500_Ktest.dat};
+                \addlegendentry{Normaal}
             \end{axis}
         \end{tikzpicture}
         \caption{De verschillende configuraties van Zeepbelboom3.}
+        \label{figZB3}
     \end{figure}
+    op figuur \ref{figZB3} kunnen we zien dat het verschil tussen een boom met parent overflow\footnote{Indien mogelijk worden er zodanig veel toppen toegevoegd aan de ouderzeepbel dat deze verplicht is zich ook te splitsen.} (afgekort p.o.) aan en uit niet significant is. We kunnen wel een verschil zien tussen de zeepbelboom waar een maximum staat op het aantal toppen
+    die toegevoegd mag worden aan de ouderzeepbel.
+    Bij een lage $k$-waarde presteerd deze iets slechter omdat er door één splitsingsactie terug minder nieuwe zeepbellen bijkomen waardoor er vlugger gesplitst zal moeten worden.
+    Wanneer deze $k$ groter wordt is dit maximum beter. Er is namelijk een punt waarop er teveel nieuwe zeepbellen worden aangemaakt en deze splitsingsactie trager zal verlopen.
     \section*{Semi-splay zeepbelbomen}
-    \begin{figure}[H]\begin{tikzpicture}
-            \begin{axis}[title=Semi-splay zeepbelboom, xlabel=$k$-waarde, ylabel=Tijd (ms), legend pos=north east, scaled ticks=false, width=13cm, /pgf/number format/.cd, use comma]
-                \addplot +[mark=none] table [x=k, y=add]{testresults/Zeepbelboom4_K2_100000.csv};
+    \begin{figure}[H]
+        \begin{tikzpicture}
+            \begin{axis}[title=Semi-splay zeepbelboom, xlabel=$k$-waarde, ylabel=Tijd (ms), legend pos=north east, scaled ticks=false, width=13cm, height=7cm, /pgf/number format/.cd, use comma]
+                \addplot +[mark=*] table [x=k, y=add]{testresults/Zeepbelboom4_K500_Ktest.dat};
                 \addlegendentry{add}
-                \addplot +[mark=none] table [x=k, y=contains]{testresults/Zeepbelboom4_K2_100000.csv};
+                \addplot +[mark=*] table [x=k, y=contains]{testresults/Zeepbelboom4_K500_Ktest.dat};
                 \addlegendentry{contains}
             \end{axis}
         \end{tikzpicture}
         \caption{Semi-splay zeepbelboom}
+        \label{figSemi}
     \end{figure}
-
+    Ik was enorm verbaasd toen ik figuur \ref{figSemi} zag. 
+    Zoals verwacht is een grotere $k$-waarde trager voor het toevoegen en opzoeken, er moeten telkens meer bewerkingen op toppen uitgevoerd worden per splaybewerking.
+    Waardoor iedere splaybewerking meer tijd zal innemen hoe groter de $k$-waarde is.
+    \\
+    Maar bij een $k$ van 150 (en eigenlijk al vanaf 100) doet er zich iets vreemd voor: de toevoeg- en opzoekbewerking verloopt enorm veel vlugger en stijgt ook minder snel in functie van $k$.
+    Bij het bespreken van deze merkwaardige resultaten met medeleerlingen hebben ze mij verteld dat hun Zeepbelboom4 ongeveer hetzelfde gedrag vertoond, alleen is het bij mij wel erg extreem.
+    Ik heb helaas geen tijd meer om dit fenomeen te onderzoeken, maar waarschijnlijk zit er ergens een fout in mijn code.
     \section*{Besluit}
-
+    Zeepbelbomen zijn een manier om binaire bomen min of meer gebalanceerd te houden. Zeepbelboom1 presteerd het beste wanneer er veel toevoegingen gebeuren.
+    Als er meer opzoekingen gebeuren is het beter om Zeepbelboom2 te gebruiken.
+    Zeepbelboom3 is een middenweg, maar ik kan aanbevelen om een maximum mee te geven wanneer een grote $k$-waarde wordt gebruikt.
+    Ten slotte kan ik u afraden om de semi-splay zeepbelboom te gebruiken. Het is namelijk enorm traag, zelfs voor een kleine $k$. Daarnaast vertrouw ik mijn eigen implementatie ook niet genoeg.
     \end{document}
