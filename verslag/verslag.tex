@@ -12,6 +12,7 @@
     \usepackage{enumerate}
     \usepackage{mathtools}
     \usepackage{graphicx}
+    \usepackage{pbox}
     \usepackage{float}
     \usepackage{tikz}
     \usepackage{pgfplots}
@@ -19,10 +20,42 @@
     \usepackage{perpage} %the perpage package
     \MakePerPage{footnote} %the perpage package command
     \pgfplotsset{compat=1.10}
-    \usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning}
+    \usetikzlibrary{calc,shapes.geometric,arrows,fit,matrix,positioning}
+
+	\newcommand{\convexpath}[2]{
+	[   
+		create hullnodes/.code={
+			\global\edef\namelist{#1}
+			\foreach [count=\counter] \nodename in \namelist {
+				\global\edef\numberofnodes{\counter}
+				\node at (\nodename) [draw=none,name=hullnode\counter] {};
+			}
+			\node at (hullnode\numberofnodes) [name=hullnode0,draw=none] {};
+			\pgfmathtruncatemacro\lastnumber{\numberofnodes+1}
+			\node at (hullnode1) [name=hullnode\lastnumber,draw=none] {};
+		},
+		create hullnodes
+	]
+	($(hullnode1)!#2!-90:(hullnode0)$)
+	\foreach [
+		evaluate=\currentnode as \previousnode using \currentnode-1,
+		evaluate=\currentnode as \nextnode using \currentnode+1
+		] \currentnode in {1,...,\numberofnodes} {
+	-- ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode)$)
+	  let \p1 = ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode) - (hullnode\currentnode)$),
+		\n1 = {atan2(\y1,\x1)},
+		\p2 = ($(hullnode\currentnode)!#2!90:(hullnode\nextnode) - (hullnode\currentnode)$),
+		\n2 = {atan2(\y2,\x2)},
+		\n{delta} = {-Mod(\n1-\n2,360)}
+	  in 
+		{arc [start angle=\n1, delta angle=\n{delta}, radius=#2]}
+	}
+	-- cycle
+	}
     \tikzset
     {
-        tr/.style = {circle, draw=black, align=center, minimum size=1cm}
+        tr/.style = {circle, draw=black, align=center, minimum size=1cm, anchor=center},
+        sub/.style  = {regular polygon, regular polygon sides=3, draw=black, align=center, minimum size=1cm, anchor=north}
     }
     \DeclarePairedDelimiter\floor{\lfloor}{\rfloor} 
 
@@ -31,6 +64,7 @@
     \newtheorem{stelling}{Stelling}
     \newtheorem{deelresultaat}{Deelresultaat}
     \hyphenpenalty=10000
+    \newcommand{\newln}{~\\\vspace{0.5em}}
     \begin{document}
     \maketitle
     \newpage
@@ -87,49 +121,55 @@
                             level 2/.style={sibling distance=4.5cm}, 
                             level 3/.style={sibling distance=3cm}, 
                         scale=0.6, transform shape]
-                        \node [tr, fill=green] {100}
+                        \node [tr, fill=green] (100) {100}
                         child {
-                            node [tr, fill=green] {90} 
+                            node [tr, fill=green](90) {90} 
                             child {
-                                node [tr, fill=yellow] {75} 
+                                node [tr, fill=yellow] (75) {75} 
                                 child {
-                                    node [tr, fill=yellow] {50} 
+                                    node [tr, fill=yellow] (50) {50} 
                                     child{
-                                        node [tr, fill=blue!50] {25}
+                                        node [tr, fill=blue!50] (25) {25}
                                         child{
-                                            node [tr, fill=blue!50] {10}
+                                            node [tr, fill=blue!50] (10) {10}
                                         }
                                     }
                                     child{
-                                        node [tr, fill=purple!30] {55}
+                                        node [tr, fill=purple!30] (55) {55}
                                     }
                                 }
                                 child {
-                                    node [tr, fill=red!50] {80} 
+                                    node [tr, fill=red!50] (80) {80} 
                                 }
                             }
                             child {
-                                node [tr, fill=orange] {95}
+                                node [tr, fill=orange] (95) {95}
                                 child{
-                                    node [tr, fill=green!30] {94}
+                                    node [tr, fill=green!30] (94) {94}
                                 }
                                 child{
-                                    node [tr, fill=blue!30] {96}
+                                    node [tr, fill=blue!30] (96) {96}
                                 }
                             }
                         }
                         child {
-                            node [tr, fill=purple!40] {110}
+                            node [tr, fill=purple!40] (110) {110}
                             child{
-                                node [tr, fill=yellow!50] {105}
+                                node [tr, fill=yellow!50] (105) {105}
                             }
                             child{
-                                node [tr, fill=gray!50] {120}
+                                node [tr, fill=gray!50] (120) {120}
                             }
                         }
                         ;
+					\draw[black] \convexpath{100,90}{1cm};
+					\draw[black] \convexpath{50,75}{1cm};
+					\draw[black] \convexpath{25,10}{1cm};
+					
                     \end{tikzpicture}
                 }
+                \caption{Toppen met een zwarte lijn rond zitten in dezelfde zeepbel.
+                Toppen zonder lijn rond zitten als enige top in de zeepbel.}
             \end{figure}
 
 
@@ -199,7 +239,8 @@
                 \end{itemize}
 
 
-            \item Voor opzoeken. \label{opzoeken}
+            \item Voor opzoeken. 
+                \label{opzoeken}
 
                 \normalfont
                 De drie gebalanceerde zeepbelbomen gebruiken alledrie dezelfde opzoekmethode, dus de complexiteit van deze bewerking is dezelfde.
@@ -219,7 +260,7 @@
     \end{opgave}
     \begin{opgave}
         Bepaal voor semi-splay zeepbelbomen de slechtste-geval complexiteit en de geamortiseerde complexiteit.
-        \\ \vspace{0.5em} \normalfont 
+        \newln \normalfont 
         We introduceren eerst een paar stellingen die we zullen gebruiken in de antwoorden van deze opgave:
         \begin{stelling}Het langste pad van de wortel naar een blad in een semi-splay zeepbelboom is naar boven begrens door $O(\log(n))$ \label{stelling1}
             \begin{proof}Het slechtste geval doet zich voor wanneer alle zeepbellen op één lijn staan.
@@ -269,27 +310,221 @@
                         Ik bewijs dit met behulp van de potentiaalmethode. Voor een lege boom definiëren wij $\Phi(T)=0$.
                         Stel dat $T$ niet leeg is. 
                         Voor een zeepbel $z$ in een semi-splay boom $T$ met een willekeurige $k$-waarde definieren we $A_T(z)$ als het aantal zeepbellen in de deelboom bestaande uit
-                        $z$ en al zijn nakomelingen in $T$. Bovendien defineër $L_T(z) = \log(A_T(z))$.
+                        $z$ en al zijn nakomelingen in $T$. Bovendien defineër $L_T(z) = \log(A_T(z))$ en $Z(T)$ als het totale aantal zeepbellen in $T$.
                         De potentiaal van een semi-splay zeepbelboom definiëren wij als:
                         \begin{equation}
-                            \Phi(T) = \sum _{z\in T}{L_T(z)}
+                            \Phi(T) = \log(k)\cdot\sum _{z\in T}{L_T(z)}
                         \end{equation}
+                        Met $k$ de maximale grootte van een zeepbel.
+                        \newln
                         De potentiaal wordt gewijzigd in twee gvallen:
                         \begin{enumerate}[1.]
                             \item Als er een zeepbel wordt toegevoegd (nog zonder de boom te herbalanceren)
                             \item Als tijdens het semi-splayen als gevolg van een toevoeg- of opzoekbewerking er deelbomen vervangen worden
                         \end{enumerate}
                         \begin{deelresultaat}
-                            Als een nieuwe zeepbel aan de zeepbelboom $T$ wordt toegevoegd en het resultaat is de boom $T'$ dan geldt $$\Phi(T')-\Phi(T')\le\log(|T'|)$$.
+                            Als een nieuw item aan de zeepbelboom $T$ wordt toegevoegd en het resultaat is de boom $T'$ dan geldt: $$\Phi(T')-\Phi(T)\le\log(k)\cdot\log(|T'|)$$
+                            \normalfont
+                            Ik heb het hier enkel over het toevoegen zelf en niet de splaybewerking die nog moet volgen.
+                            \newln
+                            Als $T$ leeg was dan klopt dit duidelijk. Stel nu dat $T$ niet leeg is.
+                            \newln
+                            Stel dat de zeepbellen op het pad van de wortel naar de nieuwe top $z_1,\ldots,z_k$ zijn, waarbij $z_k$ de zeepbel is die de nieuwe top bevat.
+                            We hebben hier twee gevallen:
+                            \begin{itemize}
+                                \item De nieuwe top werd toegevoegd aan een nieuwe zeepbel:
+                                    \begin{align*}
+                                    \Phi(T') &= \Phi(T)-\log(k)\cdot(\sum_{i=1}^{k-1}{L_T(z_i)}+\sum_{i=1}^{k}{L_{T'}(z_i)}) \\
+                                    &= \Phi(T)+\log(k)\cdot L_{T'}(z_1)+\log(k)\cdot(\sum_{i=1}^{k-1}{(L_{T'}(z_{i+1})-L_T(z_i))})
+                                    \end{align*}
+                                    Voor $i \ge 1$ geldt $A_T(z_i) \ge A_T(z_{i+1})+1$ en $A_T(z_{i+1})+1 = A_{T'}(z_{i+1})$.
+                                    Dus $L_T(z_i) \ge L_{T'}(z_{i+1})$. Hieruit volgt dat $L_{T'}(z_{i+1})-L_T(z_i) \le 0$. 
+                                    Uiteindelijk bekomen we:
+                                    \begin{align*}
+                                        \Phi(T') &\le \Phi(T) +\log(k)\cdot L_{T'}(z_1) \\
+                                    &\le \Phi(T) +\log(k)\cdot \log(Z(T'))
+                                \end{align*}
+                                Want de wortelzeepbel heeft namelijk evenveel opvolgers (zichzelf meegeteld) als er zeepbellen in de boom zitten.
+                                Een zeepbelboom bevat ook minstens evenveel toppen als zeepbellen dus $B(T) \le |T|$ en ook
+                                $\log(B(T)) \le \log(|T|)$. We concluderen:
+                                \begin{align*}
+                                \Phi(T') &\le \Phi(T) + \log(k)\cdot \log(|T'|)\\
+                                \Phi(T')-\Phi(T) &\le\log(k)\cdot \log(|T'|)
+                                \end{align*}
+
+                                \item De nieuwe top werd toegevoegd aan een reeds bestaande zeepbel:
+                                    \newln
+                                    In dit geval is $\Phi(T) = \Phi(T')$ en dus uiteraard $\Phi(T)-\Phi(T') = 0  \le\log(k)\cdot \log(|T'|)$. Want op zeepbelniveau veranderd er namelijk niets.
+                                    
+                            \end{itemize}
                         \end{deelresultaat}
+                        \begin{deelresultaat}
+                            Stel dat een deelboom in een boom $T$ op een semi-splay manier wordt vervangen en het resultaat is $T'$. We noemen de laagste zeepbel in de deelboom van $T$ die word vervangen $z_l$ en de nieuwe wortel van de nieuwe deelboom van $T'$ wordt $z_w$. Dan geldt:
+                            \normalfont
+                            $$\Phi(T') - \Phi(T) \le\log(k)\cdot( 2L_{T'}(z_w)-2L_T(z_l)-2)$$
+                            
+
+                        \begin{figure}[H]
+                            \centering
+                            \begin{tikzpicture}[->,>=stealth', level/.style={sibling distance = 5cm/#1, level distance = 1.5cm}, scale=1,transform shape]
+                                \node[sub]{a}
+                                child{
+                                    node[tr, draw=white]{\ldots}
+                                }
+                                child{
+                                    node[sub]{b}
+                                    child{
+                                        node[tr, draw=white]{\ldots}
+                                    }
+                                    child{
+                                        node[sub]{c}
+                                        child{
+                                            node[tr, draw=white]{\ldots}
+                                        }
+                                        child{
+                                            node[tr, draw=white]{\ldots}
+                                        }
+                                        child{
+                                            node[tr, draw=white]{\ldots}
+                                        }
+                                    }
+                                    child{
+                                        node[tr, draw=white]{\ldots}
+                                    }
+                                }
+                                child{
+                                    node[tr, draw=white]{\ldots}
+                                };
+                            \end{tikzpicture}
+                            \caption{Positie van de zeepbellen voor de splay. De eventuele aanwezigheid van (meerdere) kindzeepbellen wordt aangeduid met ``\ldots''}
+                            \label{semiVoor}
+                        \end{figure}
+                        \begin{figure}[H]
+                            \centering
+                            \begin{tikzpicture}[->,>=stealth', level/.style={sibling distance = 5cm/#1, level distance = 1.5cm}, scale=1,transform shape]
+                                \node[sub]{b'}
+                                child{
+                                    node[sub]{a'}
+                                child{
+                                    node[tr, draw=white]{\ldots}
+                                }
+                                child{
+                                    node[tr, draw=white]{\ldots}
+                                }
+                                }
+                                child{
+                                    node[tr, draw=white]{\ldots}
+                                }
+                                child{
+                                    node[sub]{c'}
+                                child{
+                                    node[tr, draw=white]{\ldots}
+                                }
+                                child{
+                                    node[tr, draw=white]{\ldots}
+                                }
+                                };
+                            \end{tikzpicture}
+                            \caption{Positie van de zeepbellen na de splay.}
+                            \label{semiNa}
+                        \end{figure}
+                        \newln
+                        Bij het semi-splayen beschouwen we drie zeepbellen: de zeepbel waarop de splay actie wordt uitgevoerd, zijn ouder en zijn grootouder. 
+                        We noemen deze respectievelijk $a$, $b$ en $c$.
+                        Na het semi-splayen bekomen we drie nieuwe zeepbellen.
+                        Deze komen echter niet meer overeen de zeepbellen van voor de splay want de interne toppen worden tussen deze drie zeepbellen uitgewiseld.
+                        We noemen deze drie nieuwe zeepbellen $a'$, $b'$ en $c'$.
+                        \newln
+                        We zien op figuur \ref{semiVoor} en figuur \ref{semiNa} dat $c = z_l$ en $b' = z_w$.
+                        Op zeepbelniveau is een zeepbelboom ook geen binaire boom: een complete zeepbel van grote $k$ heeft $k+1$ kindzeepbellen.
+                        Mijn semi-splay algoritme zal wel $a'$ en $c'$ bevestigen als meest linkse en meest rechtste kindzeepbel van $b'$.
+                        Wij hebben dus:
+                        $$\Phi(T') = \Phi(T) + \log(k)\cdot ((L_{T'}(a')+L_{T'}(b')+L_{T'}(c')) - (L_T(a)+L_T(b)+L_T(c)))$$
+                        We zien onmiddelijk dat $A_{T'}(b')=A_T(a)$ en dus ook $L_{T'}(b')=L_T(a)$. We krijgen vervolgens:
+                        $$\Phi(T') = \Phi(T) + \log(k)\cdot((L_{T'}(a')+L_{T'}(c')) - (L_T(b)+L_T(c)))$$
+                        Omdat $c$ een kind is van $b$ geldt $A_T(c) < A_T(b)$ en $L_T(c) < L_T(b)$.
+                        Dus:
+                        $$\Phi(T') \le \Phi(T) +\log(k)\cdot((L_{T'}(a')+L_{T'}(c')) - 2L_T(c))$$
+                        Omdat $a'$ en $c'$ kinderen zijn van $b'$ kunnen we ook afleiden dat $A_{T'}(a')+A_{T'}(c') \le A_{T'}(b')$. Uit de rekenkunde\footnote{Cursusnota's AD2 pagina 49 opmerking 9.} volgt dan dat $\log(A_{T'}(a'))+\log(A_{T'}(c')) \le 2\log(A_{T'}(b'))-2$ 
+                        dus $L_{T'}(a')+L_{T'}(c') \le 2L_{T'}(b')-2$.
+                        Waaruit volgt dat:
+                        \begin{align*}
+                            \Phi(T') &\le \Phi(T) +\log(k)\cdot( 2L_{T'}(b')-2L_T(c) - 2)\\
+                            &\le \Phi(T) +\log(k)\cdot( 2L_{T'}(z_w)-2L_T(z_l)-2) \\
+                            \Phi(T') - \Phi(T) &\le\log(k)\cdot( 2L_{T'}(z_w)-2L_T(z_l)-2)
+                        \end{align*}
+                        en dit is precies wat we zochten. 
+                        
+                        \end{deelresultaat}
+                        \begin{deelresultaat}
+                        Als tijdens een toevoegbewerking of een opzoekbewerking in een boom $T$ langs een pad met $2s+1$ zeepbellen deelbomen vervangen worden en het resultaat is $T'$ dan geldt:
+                        \normalfont
+                        $$\Phi(T')-\Phi(T) \le \log(k)\cdot(2\log|T'| - 2s)$$
+                        We vervangen $s$ keer een deelboom. 
+                        Stel dat de boom na het $i$-de vervangen de boom $T_i$ is, dus $T_0=T$ en $T_s=T'$.
+                        Bovendien zij $z_{l,i}$ de laagste top van de deelboom die in stap $i$ word vervangen en $z_{w,i}$ de wortel van de nieuwe deelboom die in stap $i$ onstaat. Dan is
+                        \begin{align*}
+                            \Phi(T') &= \Phi(T) + \log(k)\cdot\sum_{i=1}^{s}{(\Phi(T_i)-\Phi(T_{i-1}))}\\                                
+                            &\le \Phi(T) + \log(k)\cdot\sum_{i=1}^{s}{(2L_{T_i}(z_{w,i})-2L_{T_{i-1}}(z_{l,i})-2)}
+                        \end{align*}
+                        De zeepbel die de nieuwe wortel van een net geplaatste deelboom is,
+                        is de laagste zeelbel in de volgende stap.
+                        Dus $z_{w,i}=z_{l,i+1}$. Substitueren we dit dan krijgen we:
+                        \begin{align*}
+                            \Phi(T') &\le \Phi(T) + \log(k)\cdot(2L_{T_s}(z_{w,s})+\sum_{i=1}^{s-1}{(2L_{T_i}(z_{w,i})-2L_{T_i}(z_{l,i+1}))} - 2s)\\
+                            &\le \Phi(T)+\log(k)\cdot (2L_{T_s}(z_{w,s}) - 2s )\\
+                            &\le \Phi(T) + \log(k)\cdot( 2\log(|T'|)-2s)
+                        \end{align*}
+                        \end{deelresultaat}
+                        We hebben nu voor alle deelbewerkingen die de potentiaal wijzigen een bovengrens aangetoond voor het verschil van de potentiaal vóór en na de deelbewerking.
+                        Als een top wordt toegevoegd wordt de potentiaal eventueel gewijzigd door het toevoegen van een zeepbel en door het splayen.
+                        Bij het opzoeken wordt de potentiaal enkel gewijzigd door het splayen.
+                        We kunnen nu onze tabel opstellen met $T'$ de boom na de bewerking en $T$ de boom vóór de bewerking.
+                        De toevoegbewerking splitsen we nog eens op: we noteren $\tilde{T}$ als de boom die we verkrijgen na de toevoeging nog vóór de splaybewerking.
+                        \newln
+                        Als het aantal zeepbellen van het pad dat wordt doorlopen $l$ is, dan worden ofwel langs een pad met $2s+1 = l$ zeepbellen ofwel langs een pad met $2s+1=l-1$ zeepbellen deelbomen vervangen. Hierbij is $2s$ zoals in deelresultaat 3. Er geldt in elk geval $l \le 2s + 2$.
+                        \newln
+                        We kunnen de echte kost echter niet beschrijven als het aantal bezochte zeepbellen. 
+                        We weten wel dat $t \le l\cdot\log(k)$.
+                        Hier is $l$ het aantal zeepbellen op een pad, $k$ de maximale grootte van een zeepbel en $t$ het aantal bezochte toppen. 
+                        (Het is nu ook duidelijk waarom $\log(k)$ in de potentiaal zit)
+
 
                         \begin{center}
-                            \begin{tabular}{ l | l | p{5cm} }
+                            \begin{tabular}{ l | m{3cm} | p{6cm} }
                                 & echte kost & gewijzigde kost \\ \hline
-                                top toevoegen & kekeke & $\Phi(U MA)$ \\ \hline
-                                top opzoeken & lololo &  $\Phi(U PA)$
+                                top opzoeken & aantal bezochte toppen: $t \le l\cdot\log(k)$ & 
+                                \pbox{20cm}{
+                                    \newln
+                                    $= t+\Phi(T')-\Phi(T)$\\
+                                    $= l\cdot \log(k) + \Phi(T')-\Phi(T)$\\
+                                    Deelresultaat 3:\\
+                                    $\le l\cdot\log(k)  + \log(k)\cdot(2\log|T'|-2s)$\\
+                                    Want $l \le 2s+2$:\\
+                                    $\le 2\log(k)\log(|T'|)+2$
+                                    \newln
+                                } \\ \hline
+                                top toevoegen & aantal bezochte toppen: $t \le l\cdot\log(k)$ &
+                                \pbox{20cm}{
+                                    \newln
+                                    $=t+\Phi(T')-\Phi(T)$\\
+                                    $=t+\Phi(T')-\Phi(\tilde{T})+\Phi(\tilde{T})-\Phi(T)$\\
+                                    Deelresultaat 1:\\
+                                    $\le t+\Phi(T')-\Phi(\tilde{T}) + \log(k)\cdot\log(|\tilde{T}|)$\\ 
+                                    Deelresultaat 3:\\
+                                    $\le t+\log(k)\cdot(2\log|T'|-2s)+ \log(k)\cdot\log(|\tilde{T}|)$\\
+                                    Want $t\le l\cdot\log(k)$ en $l\le2s+2$:\\
+                                    $\le2\cdot\log(k)\log(|T'|)+2+\log(k)\cdot\log(|\tilde{T}|)$\\
+                                    Want $|\tilde{T}|=|T'|$:\\
+                                    $\le 3\log(k)\log(|T'|) + 2$
+                                    \newln
+                                }
                             \end{tabular}
                         \end{center}
+                        Omdat voor een initieel lege boom na $n$ stappen altijd geldt dat $|T| \le n$, volgt hieruit het gestelde.
+                        De gewijzigde kost per bewerking is namelijk altijd $O(\log n)$ en de potentiaal is op het einde altijd ten minste even groot als in het begin.
+                        \newln
+                        We hebben zojuist dus bewezen dat een reeks van $n > 1$ bewerkingen op een initieel lege semi-splay zeepbelboom een geamortiseerde tijdscomplexiteit van $O(n \log n)$ heeft. De gemiddelde kost per bewerking is dus $O(\log n)$.\newln
                     \end{proof}
                 \end{stelling}
         \end{description}
