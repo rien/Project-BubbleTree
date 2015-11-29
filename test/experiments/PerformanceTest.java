@@ -1,4 +1,4 @@
-package Experiments;
+package experiments;
 
 import zeepbelboom.*;
 
@@ -6,13 +6,13 @@ import java.util.*;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
-import static CustomAssert.AssertBool.assertTrue;
+import static customassert.AssertBool.assertTrue;
 
 /**
- * @author Rien Maertens
  *
  * Test die voor iedere zeepbelboom de basisbewerkingen gaat uitvoeren op een groot aantal
  * willekeurige elementen. Deze test wordt ook meerdere keer herhaald voor verschillende k-waardes.
+ * @author Rien Maertens
  */
 public class PerformanceTest {
 

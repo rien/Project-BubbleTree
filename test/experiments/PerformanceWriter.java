@@ -1,11 +1,11 @@
-package Experiments;
+package experiments;
 
 import java.io.PrintWriter;
 import java.util.List;
 
 /**
+ * Klasse die de output van <tt>PerformanceTest</tt> uitschrijft naar een bestand.
  * @author Rien Maertens
- *         TODO: Description
  */
 public class PerformanceWriter {
 

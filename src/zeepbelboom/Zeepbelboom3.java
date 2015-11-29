@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Queue;
 
 /**
- *
- * @author Rien Maertens
- *
  * Implementatie van een zeebelboom die bij het splitsen gaat proberen zoveel mogelijk
  * toppen omhoog te duwen.
  *
@@ -20,7 +17,7 @@ import java.util.Queue;
  *                          Aantal omhoog te duwen toppen staat.
  * - forceParentOverflow:   Wanneer dit <tt>true</tt> is wordt de ouder (indien mogelijk) geforceerd om te splisen.
  *                          Als dit <tt>false</tt> is wordt de ouder volledig vol gestopt zodat die net niet splitst.
- *
+ * @author Rien Maertens
  */
 public class Zeepbelboom3<E extends Comparable<E>> extends ShrinkingBubbleTree<E> {
 

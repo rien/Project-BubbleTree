@@ -4,9 +4,8 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * @author Rien Maertens
- *
  * Abstracte superklasse voor zeepbelbomen.
+ * @author Rien Maertens
  */
 public abstract class Zeepbelboom<E extends Comparable<E>> extends  AbstractCollection<E> {
 

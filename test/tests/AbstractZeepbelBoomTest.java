@@ -1,4 +1,4 @@
-package Tests;
+package tests;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,12 +8,13 @@ import zeepbelboom.*;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static CustomAssert.AssertBool.assertFalse;
-import static CustomAssert.AssertBool.assertTrue;
+import static customassert.AssertBool.assertFalse;
+import static customassert.AssertBool.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by Rien on 14/11/2015.
+ * Supperklasse voor alle testen op een zeepbelboom.
+ * @author Rien Maertens
  */
 
 public abstract class AbstractZeepbelBoomTest {

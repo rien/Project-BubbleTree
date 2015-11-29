@@ -4,6 +4,7 @@ package zeepbelboom;
 import java.util.*;
 
 /**
+ * Klasse die een zeepbel voorstelt.
  * @author Rien Maertens
  */
 public class Zeepbel<E extends Comparable<E>> implements Iterable<E>{

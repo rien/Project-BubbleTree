@@ -1,10 +1,9 @@
 package zeepbelboom;
 
 /**
- * @author Rien Maertens
- *
  * Implementatie van een zeepbelboom die overvolle zeepbellen gaat verkleinen door ze eerst zo goed
  * mogelijk te balanceren om vervolgens de zeepbel in twee te splitsen en de wortel omhoog te duwen.
+ * @author Rien Maertens
  */
 public class Zeepbelboom2<E extends Comparable<E>> extends ShrinkingBubbleTree<E> {
 

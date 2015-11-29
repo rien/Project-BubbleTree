@@ -3,9 +3,8 @@ package zeepbelboom;
 import java.util.*;
 
 /**
- * @author Rien Maertens
- *
  * Superklasse voor de gabalanceerde zeepbelbomen.
+ * @author Rien Maertens
  */
 public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepbelboom<E> {
 
@@ -153,11 +152,18 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
      */
     @Override
     public boolean remove(Object o) {
-        return find(o, this::removeTop,t->{},t->{});
+        return find(o, this::removeNode,t->{},t->{});
     }
 
 
-    public void removeTop(Node<E> node){
+    /**
+     * Verwijderd een top uit de zeepbelboom.
+     * Meestal gebeurt dit in constante tijd maar wanneer een zeepbelboom voor de helft uit grafstenen bestaat
+     * wordt deze in lineaire tijd opgebouwd door rebuildTree().
+     *
+     * @param node te verwijderen top
+     */
+    public void removeNode(Node<E> node){
         node.remove();
         size--;
         if (size == 0){
@@ -167,7 +173,10 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
         }
     }
 
-
+    /**
+     * Bouwt de huidige zeepbelboom in lineaire tijd opnieuw op (als we de grootte van de zeepbelboom als inputgrootte
+     * beschouwen). De nieuwe zeepbelboom bevat geen verwijderde toppen meer.
+     */
     private void rebuildTree(){
         //Rebuild tree
         List<E> items = new ArrayList<>();
@@ -249,7 +258,7 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
 //     */
 //    @Override
 //    public boolean remove(Object o) {
-//        return find(o, this::removeTop, t->{});
+//        return find(o, this::removeNode, t->{});
 //    }
 //
 //    /**
@@ -257,7 +266,7 @@ public abstract class ShrinkingBubbleTree<E extends Comparable<E>> extends Zeepb
 //     *
 //     * @param toRemove uit de zeepbelboom die moet verwijderd worden.
 //     */
-//    private void removeTop(Node<E> toRemove){
+//    private void removeNode(Node<E> toRemove){
 //        if (toRemove.hasRight() && toRemove.hasLeft()){
 //            //We zitten met een interne top, dus wisselen deze van plaats met de kleinste top uit de rechterdeelboom.
 //            Node<E> closest = toRemove.findClosestChild();

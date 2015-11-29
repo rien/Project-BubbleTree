@@ -1,10 +1,10 @@
-package Experiments;
+package experiments;
 
 import java.util.Comparator;
 
 /**
+ * Klasse die de resultaten van een test bijhoudt.
  * @author Rien Maertens
- *         TODO: Description
  */
 public class TestResult {
 

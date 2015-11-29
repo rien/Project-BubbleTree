@@ -1,17 +1,16 @@
 package zeepbelboom;
 
 /**
+ * * Implementatie van zeepbelboom die probeert de onderliggende boom zo intact mogelijk te houden bij het toevoegen.
  *
- * @author Rien Maertens
- *
- * Implementatie van zeepbelboom die probeert de onderliggende boom zo intact mogelijk te houden bij het toevoegen.
- *
- * Algoritme voor toeveogen:
+ * Algoritme voor toevoegen:
  * - Voeg item toe aan de boom zoals normaal in een binaire boom en voeg de top toe aan de zeepbel van de parent
  * - Als de zeepbel te vol zit:
  *      - Als de root maar één kind (in dezelfde zeepbel) bevat: roteer de eerste 3
  *      - Duw de root omhoog en maak van de linker- en rechterdeelboom een nieuwe zeepbel.
  *      - Pas de bovenliggende zeepbel aan, indien nodig
+ * @author Rien Maertens
+ *
  */
 public class Zeepbelboom1<E extends Comparable<E>> extends ShrinkingBubbleTree<E> {
 
