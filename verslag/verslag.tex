@@ -67,6 +67,8 @@
     \newcommand{\newln}{~\\\vspace{0.5em}}
     \begin{document}
     \maketitle
+    %\newpage
+    %\tableofcontents
     \newpage
     \part{Theoretische Vragen}
     \begin{opgave}
@@ -83,7 +85,7 @@
                 \item[Geval 2] Zeepbel $\beta$ is geen bladzeepbel, maar bevat wel een pad naar een top zonder kinderen.
                     Deze top is onderdeel van bladzeepbel $\gamma$.
                     Het pad van $\gamma$ naar de wortel van de zeepbelboom bevat $n+k$ zeepbellen, met $k$ het aantal zeepbellen in het pad tussen $\beta$ en $\gamma$.
-                    Dit is opnieuw tegenstrijdigi met het gegeven dat het pad van de wortel naar alle bladzeepbellen hetzelfde aantal zeepbellen bevat.
+                    Dit is opnieuw tegenstrijdig met het gegeven dat het pad van de wortel naar alle bladzeepbellen hetzelfde aantal zeepbellen bevat.
                     Ook in dit geval kan een bladzeepbel geen kinderen in andere zeepbellen hebben.
             \end{description}
         \end{proof}
@@ -181,7 +183,7 @@
             We lossen dit op naar $z$: $$z \le \log_2{\left(\dfrac{n+k}{k}\right)}$$
             De maximale diepte $d_t$ van deze zeepbelboom in toppen is gelijk aan het aantal niveaus zeepbellen vermenigvuldigd met het maximale aantal toppen per zeepbel.
             Dus krijgen we dat $d_t=k\cdot z$.
-            Wanneer voegen dit alles samen tot één formule:
+            We voegen dit alles samen tot één formule:
             \begin{equation}
                 d_t \le k \cdot \log_2{\left(\dfrac{n+k}{k}\right)}
                 \label{topdiepte}
@@ -200,7 +202,7 @@
 
                 Eerst wordt het item opgezocht in de zeepbelboom.
                 Wanneer het item gevonden werd dan zit het item al in de zeepbelboom en moet er niets gebeuren.
-                In dit geval heeft deze bewerking dezelfde tijds- en geheugencomplexiteit als het opzoeken, respectievelijk $O(\log n)$ en $\Theta(1)$ (dit bespreek ik in punt \ref{opzoeken}).
+                In dit geval heeft deze bewerking dezelfde tijdscomplexiteit als het opzoeken, namelijk $O(\log n)$ (dit bespreek ik in punt \ref{opzoeken}).
 
                 Als de opzoeking uitkomt op {\tt null} dan zit het toe te voegen item niet in de boom.
                 In dit geval wordt er een nieuwe top aangemaakt en bevestigd aan de top die het laatst werd bekeken bij de zoekopdracht.
@@ -213,25 +215,26 @@
                         Vervolgens wordt de zeepbel gesplitst zodat elk kind van de oude wortel de wortel wordt van een nieuwe zeepbel.
                         De oude wortel wordt daarna toegevoegd aan de zeepbel van zijn ouder, die eventueel opnieuw wordt gesplitst indien deze nu ook overvol zit.
                         Als de oude wortel ook de wortel van de zeebelboom is dan wordt een nieuwe zeepbel aangemaakt.
-
-                        Er wordt enkel binnen dezelfde zeepbel gekeken en omdat de groote van een zeepbel constant is, gebeurt het splitsen van een zeepbel in constante tijd.
+                        \newln
+                        Er wordt enkel binnen dezelfde zeepbel gekeken en omdat de grootte van een zeepbel constant is, gebeurt het splitsen van een zeepbel in constante tijd.
                         In het slechtste geval wordt iedere zeepbel vanaf de toegevoegde top tot aan de wortel gesplitst
                         In opgave $2a$ \eqref{topdiepte} hebben we bewezen dat het aantal zeepbellen van de wortel naar een blad maximaal $\floor{\log_2 n}$ is.
-
+                        \newln
                         We kunnen dus concluderen dat voor Zeepbelboom1 met $n$ toppen de toevoegbewerking kost $O(\log n)$ heeft.
 
                     \item \textbf{Zeepbelboom2} splitst door eerst de zeepbelboom zo goed mogelijk te balanceren. 
                         Hiervoor worden eerst alle toppen in gesorteerde volgorde in een lijst gestoken en vervolgens opgebouwd tot een zo compleet mogelijke binaire boom. 
                         Daarna wordt net zoals Zeepbelboom1 de wortel toegevoegd aan de zeepbel van zijn ouder en vormen de kinderen van deze wortel de wortels van de nieuwe zeepbellen.
-
+                        \newln
                         Net zoals Zeepbelboom1 wordt er enkel binnen dezelfde zeepbel gekeken, echter zal deze zeepbelboom er net iets langer over doen aangezien altijd alle toppen binnen de zeepbel wordt bekeken in plaats van enkel de bovenste drie. 
                         We besluiten dus dat de kost om een een top toe te voegen aan Zeepbelboom2 $O(\log n)$ is voor een boom van $n$ toppen.
-                    \item \textbf{Zeepbelboom3} balanceerd net zoals Zeepbelboom2 eerst de toppen in de te grote zeepbel, maar in plaats van enkel de wortel toe te voegen aan de bovenliggende zeepbel worden er meerdere toppen toegevoegd.
+                    \item \textbf{Zeepbelboom3} balanceert net zoals Zeepbelboom2 eerst de toppen in de te grote zeepbel, maar in plaats van enkel de wortel toe te voegen aan de bovenliggende zeepbel worden er meerdere toppen toegevoegd.
                         Hoeveel toppen er toegevoegd worden kan worden aangepast. 
-                        Als deze zeepbelboom werd gemaakt met de normale constructor da zullen er zoveel mogelijk toppen worden toegevoegd aan de bovenliggende zeepbel tot deze zijn maximum capactiteit heeft bereikt (maar niet te vol zit).
+                        Als deze zeepbelboom werd gemaakt met de normale constructor dan zullen er zoveel mogelijk toppen worden toegevoegd aan de bovenliggende zeepbel tot deze zijn maximum capaciteit heeft bereikt (maar niet te vol zit).
+                        \newln
                         Met een tweede constructor kan er ingesteld worden dat er een maximum staat op het aantal omhoog te duwen toppen en kan dit maximum ook meegegeven worden.
                         Er kan ook ingesteld worden dat er, indien mogelijk, net zoveel toppen aan de bovenliggende zeepbel worden toegevoegd tot deze moet splitsen.
-
+                        \newln
                         Hier geldt hetzelfde als de vorige twee zeepbelbomen: er wordt enkel in dezelfde zeepbel gekeken, wat in constante tijd gebeurt omdat de grootte van de zeepbel constant is.
                         Een splitsing kan een kettingreactie veroorzaken die bovenliggende zeepbellen ook doet splitsen. Maar er zullen maximum $O(\log n)$ van deze splitsingen gebeuren.
                         De toevoegbewerking van Zeepbelboom3 zal dus ook kost $O(\log n)$ hebben voor een boom waar reeds $n$ elementen in zaten
@@ -247,9 +250,9 @@
                 Deze methode werkt zoals een normale binaire zoekboom: 
 
                 De wortel wordt vergeleken met het gezochte item. Is het item in de wortel kleiner dan dalen we af naar het rechterkind van de wortel. 
-                Is het item in de wortel groter dan dalen we af naar het linkerkind van de wortel.
+                Is het item in de wortel groter dan dalen we af naar het linker kind van de wortel.
                 Komt de waarde van de wortel overeen met dat van het gezochte item dan hebben we het item gevonden en kunnen we terugkeren uit de functie.
-                We blijven op deze manier zoeken tot we het gezochte item gevonden hebben of tot we niet meer verder kunnnen afdalen in de zoekboom (als we null tegenkomen).
+                We blijven op deze manier zoeken tot we het gezochte item gevonden hebben of tot we niet meer verder kunnen afdalen in de zoekboom (als we null tegenkomen).
                 In dit geval zit het gezochte item niet in de zeepbelboom.
 
                 In het slechtste geval zit het item dat wordt gezocht niet in de zeepbelboom en moeten we helemaal tot een blad van de boom afdalen.
@@ -265,7 +268,7 @@
         \begin{stelling}Het langste pad van de wortel naar een blad in een semi-splay zeepbelboom is naar boven begrens door $O(\log(n))$ \label{stelling1}
             \begin{proof}Het slechtste geval doet zich voor wanneer alle zeepbellen op één lijn staan.
                 De lengte van het pad van de wortel naar de top die zich het verst van de wortel bevind is dan gelijk aan het aantal zeepbellen vermenigvuldigd met de maximale diepte van een zeepbel.
-                \\
+                \newln
                 Het aantal zeepbellen $z$ in een zeepbelboom met $n$ toppen en maximaal $k$ toppen per zeepbel is gelijk aan $\floor{n/k}$.
                 Aangezien een complete zeepbel altijd gebalanceerd is heeft deze diepte $\log_2{(k)}$. 
                 Het langst mogelijke pad van de wortel naar een blad is $\floor{n/k}\cdot\log_2{(k)} = O(n)$ toppen lang.
@@ -276,11 +279,11 @@
         \begin{stelling} Een semi-splay bewerking gebeurt in constante tijd. \label{stelling2}
             \begin{proof}
                 Wanneer een splaybewerking wordt uitgevoerd worden alle toppen uit de drie geselecteerde zeepbellen in inorde overlopen en in een lijst gestopt.
-                Bij het inorde itereren worden er $3\cdot k$ toppen overlopen, me $k$ de maximale grootte van een zeepbel.
+                Bij het inorde itereren worden er $3\cdot k$ toppen overlopen, met $k$ de maximale grootte van een zeepbel.
                 Vervolgens wordt deze lijst opgedeeld in drie lijsten van lengte $k$ en worden van deze lijsten drie complete gebalanceerde zeepbellen gemaakt.
                 Deze drie zeepbellen worden daarna aan elkaar bevestigd en terug in de zeepbelboom geplaatst.
-                \\
-                Omdat er altijd binnen de gegeven drie zeepbelle wordt gekeken zal een semisplay bewering altijd $\Theta(k)$ operaties op toppen nodig hebben.
+                \newln
+                Omdat er altijd binnen de gegeven drie zeepbellen wordt gekeken zal een semi-splay bewering altijd $\Theta(k)$ operaties op toppen nodig hebben.
                 Maar omdat de $k$ in een zeepbelboom constant is kunnen we zeggen dat een splaybewerking in constante tijd of $\Theta(1)$ tijd verloopt.
             \end{proof}
         \end{stelling}
@@ -293,8 +296,8 @@
                         Wanneer dit geval is moeten alle toppen over dit pad overlopen worden om de plaats van de toe te voegen top te vinden.
                         Nadat de plaats werd gevonden wordt het nieuwe item toegevoegd, wat een bewerking van constante tijd is.
                         Als de zeepbel waaraan de nieuwe top is toegevoegd vol zit moet deze gebalanceerd worden. Dit gebeurt ook in constante tijd.
-                        Vervolgens wordt er vanuit deze zeepbel tot aan de wortel gesplayed.
-                        \\
+                        Vervolgens wordt er vanuit deze zeepbel tot aan de wortel gesplayd.
+                        \newln
                         Uit stelling \ref{stelling1} volgt dat dit langste pad naar boven begrensd wordt door $O(n)$ en uit stelling \ref{stelling2} volgt dat een splaybewerking in constante tijd gebeurt.
                         We kunnen dus besluiten dat een toevoegbewerking op een boom waar reeds $n$ toppen in zitten in het slechtste geval $O(n)$ kost.
                     \item \textbf{Voor opzoeken}\\
@@ -310,18 +313,20 @@
                         Ik bewijs dit met behulp van de potentiaalmethode. Voor een lege boom definiëren wij $\Phi(T)=0$.
                         Stel dat $T$ niet leeg is. 
                         Voor een zeepbel $z$ in een semi-splay boom $T$ met een willekeurige $k$-waarde definieren we $A_T(z)$ als het aantal zeepbellen in de deelboom bestaande uit
-                        $z$ en al zijn nakomelingen in $T$. Bovendien defineër $L_T(z) = \log(A_T(z))$ en $Z(T)$ als het totale aantal zeepbellen in $T$.
+                        $z$ en al zijn nakomelingen in $T$. Bovendien definieer $L_T(z) = \log(A_T(z))$ en $Z(T)$ als het totale aantal zeepbellen in $T$.
                         De potentiaal van een semi-splay zeepbelboom definiëren wij als:
                         \begin{equation}
                             \Phi(T) = \log(k)\cdot\sum _{z\in T}{L_T(z)}
                         \end{equation}
                         Met $k$ de maximale grootte van een zeepbel.
                         \newln
-                        De potentiaal wordt gewijzigd in twee gvallen:
+                        De potentiaal wordt gewijzigd in twee gevallen:
                         \begin{enumerate}[1.]
                             \item Als er een zeepbel wordt toegevoegd (nog zonder de boom te herbalanceren)
                             \item Als tijdens het semi-splayen als gevolg van een toevoeg- of opzoekbewerking er deelbomen vervangen worden
                         \end{enumerate}
+                        We bekijken de wijziging in potentiaal nu per geval in de volgende deelresultaten:
+                        \newpage
                         \begin{deelresultaat}
                             Als een nieuw item aan de zeepbelboom $T$ wordt toegevoegd en het resultaat is de boom $T'$ dan geldt: $$\Phi(T')-\Phi(T)\le\log(k)\cdot\log(|T'|)$$
                             \normalfont
@@ -345,8 +350,8 @@
                                     &\le \Phi(T) +\log(k)\cdot \log(Z(T'))
                                 \end{align*}
                                 Want de wortelzeepbel heeft namelijk evenveel opvolgers (zichzelf meegeteld) als er zeepbellen in de boom zitten.
-                                Een zeepbelboom bevat ook minstens evenveel toppen als zeepbellen dus $B(T) \le |T|$ en ook
-                                $\log(B(T)) \le \log(|T|)$. We concluderen:
+                                Een zeepbelboom bevat ook minstens evenveel toppen als zeepbellen dus $Z(T) \le |T|$ en ook
+                                $\log(Z(T)) \le \log(|T|)$. We concluderen:
                                 \begin{align*}
                                 \Phi(T') &\le \Phi(T) + \log(k)\cdot \log(|T'|)\\
                                 \Phi(T')-\Phi(T) &\le\log(k)\cdot \log(|T'|)
@@ -354,7 +359,8 @@
 
                                 \item De nieuwe top werd toegevoegd aan een reeds bestaande zeepbel:
                                     \newln
-                                    In dit geval is $\Phi(T) = \Phi(T')$ en dus uiteraard $\Phi(T)-\Phi(T') = 0  \le\log(k)\cdot \log(|T'|)$. Want op zeepbelniveau veranderd er namelijk niets.
+                                    Op zeepbelniveau veranderd er niets.
+                                    In dit geval is $\Phi(T) = \Phi(T')$ en dus uiteraard $\Phi(T)-\Phi(T') = 0  \le\log(k)\cdot \log(|T'|)$.
                                     
                             \end{itemize}
                         \end{deelresultaat}
@@ -362,8 +368,6 @@
                             Stel dat een deelboom in een boom $T$ op een semi-splay manier wordt vervangen en het resultaat is $T'$. We noemen de laagste zeepbel in de deelboom van $T$ die word vervangen $z_l$ en de nieuwe wortel van de nieuwe deelboom van $T'$ wordt $z_w$. Dan geldt:
                             \normalfont
                             $$\Phi(T') - \Phi(T) \le\log(k)\cdot( 2L_{T'}(z_w)-2L_T(z_l)-2)$$
-                            
-
                         \begin{figure}[H]
                             \centering
                             \begin{tikzpicture}[->,>=stealth', level/.style={sibling distance = 5cm/#1, level distance = 1.5cm}, scale=1,transform shape]
@@ -396,7 +400,7 @@
                                     node[tr, draw=white]{\ldots}
                                 };
                             \end{tikzpicture}
-                            \caption{Positie van de zeepbellen voor de splay. De eventuele aanwezigheid van (meerdere) kindzeepbellen wordt aangeduid met ``\ldots''}
+                            \caption{Positie van de zeepbellen voor de splaybewerking. De eventuele aanwezigheid van (meerdere) kindzeepbellen wordt aangeduid met ``\ldots''}
                             \label{semiVoor}
                         \end{figure}
                         \begin{figure}[H]
@@ -425,22 +429,22 @@
                                 }
                                 };
                             \end{tikzpicture}
-                            \caption{Positie van de zeepbellen na de splay.}
+                            \caption{Positie van de zeepbellen na de splaybewerking.}
                             \label{semiNa}
                         \end{figure}
                         \newln
                         Bij het semi-splayen beschouwen we drie zeepbellen: de zeepbel waarop de splay actie wordt uitgevoerd, zijn ouder en zijn grootouder. 
                         We noemen deze respectievelijk $a$, $b$ en $c$.
                         Na het semi-splayen bekomen we drie nieuwe zeepbellen.
-                        Deze komen echter niet meer overeen de zeepbellen van voor de splay want de interne toppen worden tussen deze drie zeepbellen uitgewiseld.
+                        Deze komen echter niet meer overeen de zeepbellen van voor de splay want de interne toppen worden tussen deze drie zeepbellen uitgewisseld.
                         We noemen deze drie nieuwe zeepbellen $a'$, $b'$ en $c'$.
                         \newln
                         We zien op figuur \ref{semiVoor} en figuur \ref{semiNa} dat $c = z_l$ en $b' = z_w$.
                         Op zeepbelniveau is een zeepbelboom ook geen binaire boom: een complete zeepbel van grote $k$ heeft $k+1$ kindzeepbellen.
-                        Mijn semi-splay algoritme zal wel $a'$ en $c'$ bevestigen als meest linkse en meest rechtste kindzeepbel van $b'$.
+                        Mijn semi-splay algoritme zal wel $a'$ en $c'$ bevestigen als meest linkse en meest rechtse kindzeepbel van $b'$.
                         Wij hebben dus:
                         $$\Phi(T') = \Phi(T) + \log(k)\cdot ((L_{T'}(a')+L_{T'}(b')+L_{T'}(c')) - (L_T(a)+L_T(b)+L_T(c)))$$
-                        We zien onmiddelijk dat $A_{T'}(b')=A_T(a)$ en dus ook $L_{T'}(b')=L_T(a)$. We krijgen vervolgens:
+                        We zien onmiddellijk dat $A_{T'}(b')=A_T(a)$ en dus ook $L_{T'}(b')=L_T(a)$. We krijgen vervolgens:
                         $$\Phi(T') = \Phi(T) + \log(k)\cdot((L_{T'}(a')+L_{T'}(c')) - (L_T(b)+L_T(c)))$$
                         Omdat $c$ een kind is van $b$ geldt $A_T(c) < A_T(b)$ en $L_T(c) < L_T(b)$.
                         Dus:
@@ -462,13 +466,13 @@
                         $$\Phi(T')-\Phi(T) \le \log(k)\cdot(2\log|T'| - 2s)$$
                         We vervangen $s$ keer een deelboom. 
                         Stel dat de boom na het $i$-de vervangen de boom $T_i$ is, dus $T_0=T$ en $T_s=T'$.
-                        Bovendien zij $z_{l,i}$ de laagste top van de deelboom die in stap $i$ word vervangen en $z_{w,i}$ de wortel van de nieuwe deelboom die in stap $i$ onstaat. Dan is
+                        Bovendien zij $z_{l,i}$ de laagste top van de deelboom die in stap $i$ word vervangen en $z_{w,i}$ de wortel van de nieuwe deelboom die in stap $i$ ontstaat. Dan is
                         \begin{align*}
                             \Phi(T') &= \Phi(T) + \log(k)\cdot\sum_{i=1}^{s}{(\Phi(T_i)-\Phi(T_{i-1}))}\\                                
                             &\le \Phi(T) + \log(k)\cdot\sum_{i=1}^{s}{(2L_{T_i}(z_{w,i})-2L_{T_{i-1}}(z_{l,i})-2)}
                         \end{align*}
                         De zeepbel die de nieuwe wortel van een net geplaatste deelboom is,
-                        is de laagste zeelbel in de volgende stap.
+                        is de laagste zeepbel in de volgende stap.
                         Dus $z_{w,i}=z_{l,i+1}$. Substitueren we dit dan krijgen we:
                         \begin{align*}
                             \Phi(T') &\le \Phi(T) + \log(k)\cdot(2L_{T_s}(z_{w,s})+\sum_{i=1}^{s-1}{(2L_{T_i}(z_{w,i})-2L_{T_i}(z_{l,i+1}))} - 2s)\\
@@ -540,7 +544,7 @@
     naar de ouder van een top enkel ingesteld worden wanneer deze top als kind wordt
     aangeduid van een andere top met de methodes {\tt setRightChild()} en {\tt setLeftChild()}. Omdat de wortel van de binaire boom natuurlijk geen
     ouder heeft is er ook een methode die deze verwijzing op {\tt null} zet.
-    Een top bevat ook een booleaanse waarde {\tt removed} die functioneert als
+    Een top bevat ook een booleanse waarde {\tt removed} die functioneert als
     grafsteen. Daarnaast bevat iedere top ook een verwijzing naar de zeepbel waartoe die 
     top behoort. De volgende functies hebben wat extra uitleg nodig:\\
         \begin{description}
@@ -560,34 +564,34 @@
     In de abstracte klasse Zeepbelboom zit de gemeenschappelijke functionaliteit die
     alle zeepbelboom-implementaties delen. Ik geef wat uitleg over de belangrijkste functies:
     \begin{description}
-        \item[\tt find()] vind een item in de zeepbelboom. Meer uitleg kunt u terugviinden in de javadoc-header. Deze methode wordt door alle basisbewerkingen gebruikt.
+        \item[\tt find()] vind een item in de zeepbelboom. Meer uitleg kunt u terugvinden in de javadoc-header. Deze methode wordt door alle basisbewerkingen gebruikt.
         \item[\tt add()] voegt een item toe aan de zeepbelboom. Wanneer een item nog niet in de boom zat wordt deze door de abstracte methode {\tt addToParent} toegevoegd aan de boom.
             Die methode is abstract {\tt ShrinkingBubbleTree} en {\tt Zeepbelboom4} anders omgaan met volle zeepbellen.
-        \item[\tt contains()] geeft {\tt true} terug wanneer een item in de zeepbelboom zit. Het resultaat is {\tt false} wanneer het gezochte item zich niet in de boom bevind of verwijderd is doormiddel van een grafsteen.
+        \item[\tt contains()] geeft {\tt true} terug wanneer een item in de zeepbelboom zit. Het resultaat is {\tt false} wanneer het gezochte item zich niet in de boom bevind of verwijderd is door middel van een grafsteen.
         \item[\tt iterator()] geeft een iterator terug over alle items in de zeepbelboom (die niet verwijderd zijn). Deze maakt gebruik van de {\tt traverseInorder}-methode uit {\tt Node}.
         \item[\tt zeepbelIterator()] iterator over de zeepbellen. Deze methode werkt zoals de {\tt iterator()} methode, maar enkel de wortels van zeepbellen worden bekeken
             en vervolgens worden deze zeepbellen toegevoegd aan de iterator.
     \end{description}
     \subsection{ShrinkingBubbleTree}
     De abstracte superklasse voor de gebalanceerde zeepbelbomen. Deze heeft de abstracte methode {\tt shrinkBubble} die per implementatie verschilt.
-    Deze methode wordt opgeropen wanneer er zeepbel te vol zit door een toevoegbewerking en moet gesplitst worden.
+    Deze methode wordt opgeroepen wanneer er zeepbel te vol zit door een toevoegbewerking en moet gesplitst worden.
     De verschillende implementaties maken gebruik van enkele hulpmethodes die in deze klasse gedefinieerd zijn de uitleg van deze hulpmethodes kunt u in de javadoc-headers vinden.
     Verder zijn ook nog deze functies aanwezig:
     \begin{description}
         \item[\tt addToParent()] voegt een item toe aan een gegeven top en de zeepbel van deze top.
             Wanneer deze zeepbel overvol zit wordt de zeepbel gesplitst m.b.v. {\tt shrinkBubble()}.
-        \item[\tt remove()] Helaas heb ik een beetje moeten valsspelen en maak ik gebruik van grafstenen om een top te verwijderen uit de boom.
+        \item[\tt remove()] Helaas heb ik een beetje moeten vals spelen en maak ik gebruik van grafstenen om een top te verwijderen uit de boom.
             Wanneer de boom voor de helft bestaat uit verwijderde toppen wordt de boom opnieuw opnieuw opgebouwd door {\tt rebuildTree}.
             Omdat een top niet echt verwijderd wordt is het mogelijk dat er zeepbellen helemaal gevuld zijn, maar dat hun iterator leeg is.
             \\
             Ik heb geprobeerd een echte implementatie te maken, maar ik kwam vast te zitten bij het debuggen. Deze code kun je nog altijd terugvinden in
             commentaar onderaan in deze klasse.
-        \item[\tt removeAll()] In plaats van achter iedere verwijdermethode te controleren of de boom opnieuw opgebouwd moet worden gaat deze bulkoperatie
-            eerst de gevraagde elementen verwijderen en pas achteraf kijken of de boom moet opnieuw opgebouwd worden. Dit gebeurt omdat deze opbouwoperatie
+        \item[\tt removeAll()] In plaats van achter iedere verwijdermethode te controleren of de boom opnieuw opgebouwd moet worden gaat deze bulk operatie
+            eerst de gevraagde elementen verwijderen en pas achteraf kijken of de boom moet opnieuw opgebouwd worden. Dit gebeurt omdat deze opbouw operatie
             tamelijk duur is.
         \item[\tt rebuildTree()] bouwt de zeepbelboom opnieuw op door eerst alle toppen die niet verwijderd zijn in een lijst te stoppen. Ze worden op een \textit{breadth-first} manier
-            in deze lijst getoken zodat wanneer ze opnieuw toegevoegd worden de boom min of meer dezelfde balancering heeft. Moest ze gesorteerd in een lijst zitten dan zou de boom
-            zwaar naar rechts overhellen wanneer opniew in die volgorde zouden worden toegevoegd.
+            in deze lijst gestoken zodat wanneer ze opnieuw toegevoegd worden de boom min of meer dezelfde balancering heeft. Moest ze gesorteerd in een lijst zitten dan zou de boom
+            zwaar naar rechts overhellen wanneer opnieuw in die volgorde zouden worden toegevoegd.
     \end{description}
     \subsection{TreeBuilder}
     Hulpklasse die wordt gebruikt om van een gesorteerde lijst van toppen een zo goed mogelijk gebalanceerde binaire boom te maken.
@@ -621,56 +625,57 @@
     \section{Semi-splay zeepbelboom}
     \subsection{Zeepbelboom4}
     Deze zeepbelboom is een implementatie van de semi-splay zeepbelboom. 
-    Bij elke toevoeg- en opzoekbewerking wordt er gesplayed op zeepbelniveau vanaf de zeepbel van de top die het werd toegevoegd op opgezocht tot aan de wortelzeepbel.
+    Bij elke toevoeg- en opzoekbewerking wordt er gesplayd op zeepbelniveau vanaf de zeepbel van de top die het werd toegevoegd op opgezocht tot aan de wortelzeepbel.
     Ik geef wat meer uitleg bij de volgende methodes:
     \begin{description}
         \item[\tt addToParent()] voegt een nieuwe top toe aan een top die reeds in de boom zit.
             De nieuwe top wordt toegevoegd aan de zeepbel van de ouder als hier nog plaats in is. 
             Als deze zeepbel door deze toevoeging volledig gevuld is wordt ze gebalanceerd. 
             Is de zeepbel van de ouder al volledig gevuld dan wordt een nieuwe zeepbel aangemaakt met de nieuwe top als wortel.
-        \item[\tt find()] doet hetzelfde als de gelijknamige methode van de superklasse, met dat verschil dat na iedere opzoeking en toevoeging er gesplayt wordt.
+        \item[\tt find()] doet hetzelfde als de gelijknamige methode van de superklasse, met dat verschil dat na iedere opzoeking en toevoeging er gesplayd wordt.
         \item[\tt semiSplay()] splayt de zeepbellen vanaf de zeepbel van de meegegeven top.
             Dit splayen gebeurt als volgt:
             \begin{enumerate}
-                \item Eerst worden de drie zeepbellen geselecteerd die moeten worden gesplayed. Eerst wordt de zeepbel geselecteerd waartoe de meegeven top behoort.
+                \item Eerst worden de drie zeepbellen geselecteerd die moeten worden gesplayd. Eerst wordt de zeepbel geselecteerd waartoe de meegeven top behoort.
                     Is deze zeepbel niet compleet dan wordt zijn ouderzeepbel in de plaats genomen.
                     Vervolgens worden ook de ouderzeepbel van de laatst geselecteerde zeepbel en zijn ouderzeepbel geselecteerd.
                 \item Vervolgens worden de toppen van deze zeepbellen in een lijst gestoken door ze in inorde te overlopen.
                     Ook worden de kindertoppen van deze geselecteerde toppen bijgehouden zodat ze later terug kunnen toegevoegd worden.
                 \item Deze lijst wordt vervolgens in drie gedeeld en van deze deellijsten worden er nieuwe zeepbellen gemaakt met de {\tt TreeBuilder}.
                 \item Daarna worden deze drie bomen en de kindertoppen uit stap 1 aan elkaar bevestigd.
-                \item Als laatste stap wordt de bovenste van deze nieuwe drie zeepbellen geslecteerd om te splayen zodat de volgende iteratie kan beginnen.
+                \item Als laatste stap wordt de bovenste van deze nieuwe drie zeepbellen geselecteerd om te splayen zodat de volgende iteratie kan beginnen.
             \end{enumerate}
             Deze bewerking herhaalt zich tot de wortelzeepbel of een kindzeepbel van de wortelzeepbel wordt bereikt.
             
     \end{description}
     \newpage
+    \setcounter{section}{0}
     \part{Experimenten}
     Nu volgen de resultaten van enkele testen die ik heb uitgevoerd op de zeepbelbomen.
-    \section*{Opzet}
+    \section{Opzet}
     Mijn testresultaten heb ik verkregen door gebruik te maken van de volgende klassen:
     \begin{description}
         \item[\tt TestResult]: klasse die de tijden en parameters van de verschillende testen voor een zeepbelboom bijhoud.
-            In deze klasse zijn ook een aantal comparators gedefiniëerd zodat kan gesorteerd worden op naam, tijd om iets toe te voegen \ldots
-        \item[\tt PerformanceTest]: hier gebeuren de echte testen. 
+            In deze klasse zijn ook een aantal comparators gedefinieerd zodat kan gesorteerd worden op naam, tijd om iets toe te voegen \ldots
+        \item [\tt PerformanceTest]: hier gebeuren de echte testen. 
             Deze klasse heeft twee methodes die verschillende benchmarks uitvoeren:
             \begin{itemize}
-                \item {\tt testPerK} gaat alle zeepbelboomimplementaties testen met een verschilende $k$-waarde en een inputgrootte die gelijk blijft.
+                \item {\tt testPerK} gaat alle zeepbelboom implementaties testen met een verschillende $k$-waarde en een inputgrootte die gelijk blijft.
                 \item {\tt testPerN} test de zeepbelbomen met een vaste $k$-waarde, maar met een stijgende inputgrootte.
             \end{itemize}
             Algemeen lopen deze testen als volgt: Eerst wordt de input aangemaakt door een array van integers te maken en door elkaar te shuffelen.
             Vervolgens wordt iedere bewerking---toevoegen, opzoeken en verwijderen indien geïmplementeerd--- tien keer na elkaar uitgevoerd op deze lijst van getallen.
             Om de resultaten zo stabiel mogelijk te houden wordt iedere reeks voorafgegaan door eenzelfde bewerking die niet wordt gemeten.
-            Ook wordt iedere keer er een nieuwe boom wordt gebruikt de garbagecollection manueel opgeropen.
+            Ook wordt iedere keer er een nieuwe boom wordt gebruikt de garbagecollection manueel opgeroepen.
         \item[\tt PerformanceWriter]: deze klasse bevat de {\tt main()} methode voor de experimenten. Zowel {\tt testPerK} als {\tt testPerN} worden uitgevoerd en de resultaten hiervan worden uitgeschreven naar bestanden.
     \end{description}
     Om de meetresultaten zo stabiel mogelijk te houden heb ik het gehele project gecompileerd in een {\tt jar}-bestand.
     Dit gecompileerde bestand heb ik vervolgens een paar uur laten draaien op een linux-machine.
-    Doormiddel van de kernel-parameter {\tt isolcpus} heb ik één processorkern gereserveerd zodat ik met {\tt taskset} de experimenten heb kunnen uitvoeren op enkel deze processorkern zonder dat andere processen konden interferen.
+    Door middel van de kernel-parameter {\tt isolcpus} heb ik één processorkern gereserveerd zodat ik met {\tt taskset} de experimenten heb kunnen uitvoeren op enkel deze processorkern zonder dat andere processen konden interfereren.
 
-    \section*{Resultaten}
-    De resultaten van de meetresultaten door de voorgaande tests kun je in de volgende grafiekjes zien:
-    \subsection*{Gebalanceerde zeepbelbomen}
+    \section{Resultaten}
+    De resultaten van de meetresultaten door de voorgaande tests kun je in de onderstaande grafieken zien.
+    \subsection{Gebalanceerde zeepbelbomen}
     \begin{figure}[H]
         \begin{tikzpicture}
             \begin{axis}[title=Add, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=800, legend pos=north east, scaled ticks=false, width=13cm, height=7cm, /pgf/number format/.cd, use comma]
@@ -714,21 +719,21 @@
     \end{figure}
     \paragraph{Toevoegen}
     Voor de toevoegbewerking merken we in figuur \ref{figAdd} dat de Zeepbelboom1 de beste tijden heeft.
-    Dit komt doordat er veel minder toppen van plaats worden veranderd in de ondeliggende boom.
+    Dit komt doordat er veel minder toppen van plaats worden veranderd in de onderliggende boom.
     De tweede en derde implementatie duren meestal langer omdat bij iedere splitsing de gehele zeepbel wordt gebalanceerd.
     Zeepbelboom3 presteert dan weer beter dan de tweede omdat door meerdere toppen toe te voegen aan de ouderzeepbel, er meer plaats is in de nieuwe zeepbellen.
-    Hierdoor zullen er minder splitsingsacties moeten gebeuren en is de toevoegbewerking dus sneller.
+    Hierdoor zullen er minder splitsingen moeten gebeuren en is de toevoegbewerking dus sneller.
     \paragraph{Opzoeken}
     Op figuur \ref{figCont} zien we dat Zeepbelboom1 nu de slechtste tijden heeft.
     Omdat er hier zo weinig mogelijk wijzigingen gedaan worden is deze boom intern minder gebalanceerd dan de andere twee implementaties.
     Het kan dus langer duren om in Zeepbelboom1 een opzoeking te doen dan bij Zeepbelboom2 en Zeepbelboom3.
-    Zeepbelboom2 presteert beter dan zeepbelboom3 want deze zeepbelboom zal minder zeepbellen bevatten, waardoor de boom in het algemeen ook gebalanceerder is.
+    Zeepbelboom2 presteert beter dan zeepbelboom3 want deze zeepbelboom zal minder zeepbellen bevatten, waardoor de boom in het algemeen ook meer gebalanceerd is.
     \paragraph{Verwijderen}
-    De verwijderactie in mijn gebalanceerde zeepbelbomen komt eigenlijk neer op een simpele opzoekactie gevolgd door eventueel een booleanse waarde die moet veranderd worden.
-    Daarom kunnen we op figuur \ref{figRem} zien dat de tijden van de verwijderbewerking overeen komen met die van de opzoeking.
+    De verwijder actie in mijn gebalanceerde zeepbelbomen komt eigenlijk neer op een simpele opzoek actie gevolgd door eventueel een booleanse waarde die moet veranderd worden.
+    Daarom kunnen we op figuur \ref{figRem} zien dat de tijden van de verwijder bewerking overeen komen met die van de opzoeking.
     
 
-    \subsection*{Zeepbelboom3}
+    \subsection{Zeepbelboom3}
     \begin{figure}[H]\begin{tikzpicture}
             \begin{axis}[title=Zeepbelboom3, xlabel=$k$-waarde, ylabel=Tijd (ms), ymax=700,  legend pos=north east, scaled ticks=false, width=13cm, height=7cm, /pgf/number format/.cd, use comma]
                 \addplot +[mark=*] table [x=k, y=add]{testresults/Zeepbelboom3_K500_parentOverflow_Ktest.dat};
@@ -746,9 +751,9 @@
     \end{figure}
     op figuur \ref{figZB3} kunnen we zien dat het verschil tussen een boom met parent overflow\footnote{Indien mogelijk worden er zodanig veel toppen toegevoegd aan de ouderzeepbel dat deze verplicht is zich ook te splitsen.} (afgekort p.o.) aan en uit niet significant is. We kunnen wel een verschil zien tussen de zeepbelboom waar een maximum staat op het aantal toppen
     die toegevoegd mag worden aan de ouderzeepbel.
-    Bij een lage $k$-waarde presteerd deze iets slechter omdat er door één splitsingsactie terug minder nieuwe zeepbellen bijkomen waardoor er vlugger gesplitst zal moeten worden.
-    Wanneer deze $k$ groter wordt is dit maximum beter. Er is namelijk een punt waarop er teveel nieuwe zeepbellen worden aangemaakt en deze splitsingsactie trager zal verlopen.
-    \section*{Semi-splay zeepbelbomen}
+    Bij een lage $k$-waarde presteert deze iets slechter omdat er door één splitsing terug minder nieuwe zeepbellen bijkomen waardoor er vlugger gesplitst zal moeten worden.
+     Wanneer deze $k$ groter wordt is dit maximum beter. Er is namelijk een punt waarop er teveel nieuwe zeepbellen worden aangemaakt en deze splitsing trager zal verlopen.
+    \subsection{Semi-splay zeepbelbomen}
     \begin{figure}[H]
         \begin{tikzpicture}
             \begin{axis}[title=Semi-splay zeepbelboom, xlabel=$k$-waarde, ylabel=Tijd (ms), legend pos=north east, scaled ticks=false, width=13cm, height=7cm, /pgf/number format/.cd, use comma]
@@ -768,9 +773,9 @@
     Maar bij een $k$ van 150 (en eigenlijk al vanaf 100) doet er zich iets vreemd voor: de toevoeg- en opzoekbewerking verloopt enorm veel vlugger en stijgt ook minder snel in functie van $k$.
     Bij het bespreken van deze merkwaardige resultaten met medeleerlingen hebben ze mij verteld dat hun Zeepbelboom4 ongeveer hetzelfde gedrag vertoond, alleen is het bij mij wel erg extreem.
     Ik heb helaas geen tijd meer om dit fenomeen te onderzoeken, maar waarschijnlijk zit er ergens een fout in mijn code.
-    \section*{Besluit}
-    Zeepbelbomen zijn een manier om binaire bomen min of meer gebalanceerd te houden. Zeepbelboom1 presteerd het beste wanneer er veel toevoegingen gebeuren.
+    \section{Besluit}
+    Zeepbelbomen zijn een manier om binaire bomen min of meer gebalanceerd te houden. Zeepbelboom1 presteert het beste wanneer er veel toevoegingen gebeuren.
     Als er meer opzoekingen gebeuren is het beter om Zeepbelboom2 te gebruiken.
     Zeepbelboom3 is een middenweg, maar ik kan aanbevelen om een maximum mee te geven wanneer een grote $k$-waarde wordt gebruikt.
-    Ten slotte kan ik u afraden om de semi-splay zeepbelboom te gebruiken. Het is namelijk enorm traag, zelfs voor een kleine $k$. Daarnaast vertrouw ik mijn eigen implementatie ook niet genoeg.
+    Ten slot te kan ik u afraden om de semi-splay zeepbelboom te gebruiken. Het is namelijk enorm traag, zelfs voor een kleine $k$. Daarnaast vertrouw ik mijn eigen implementatie ook niet genoeg.
     \end{document}
