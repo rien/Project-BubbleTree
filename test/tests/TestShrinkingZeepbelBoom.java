@@ -1,4 +1,4 @@
-package Tests;
+package tests;
 
 import zeepbelboom.*;
 import org.junit.Test;
@@ -8,19 +8,17 @@ import org.junit.runners.Parameterized;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static CustomAssert.AssertBool.assertFalse;
-import static CustomAssert.AssertBool.assertTrue;
+import static customassert.AssertBool.assertFalse;
+import static customassert.AssertBool.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Test die de gebalanceerde zeepbelbomen toetst of alle ze correct werken.
  * @author Rien Maertens
- * Test die een zeepbelboom test of alle methodes correct werken.
  */
 
 @RunWith(Parameterized.class)
 public class TestShrinkingZeepbelBoom extends AbstractZeepbelBoomTest {
-
-    private static final int SEED = 25547878;
 
     @Parameterized.Parameters
     public static Collection<Object[]> configs(){

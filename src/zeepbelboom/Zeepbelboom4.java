@@ -4,9 +4,8 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * @author Rien Maertens
- *
  * Implementatie van Semi-splay Zeepbelbomen
+ * @author Rien Maertens
  */
 
 public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
@@ -30,6 +29,19 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
         size++;
     }
 
+    /**
+     * Deze methode roept de find-methode van zijn superklasse aan maar gaat na iedere zoekactie
+     * nog eens splayen.
+     *
+     * @param o object die moet gevonden worden.
+     * @param found als het object gevonden werd wordt het aan deze consumer meegegeven.
+     * @param closest als het object niet in de zeepbelboom zit wordt de top aan deze consumer weergegeven
+     *                die normaal de parent van de top zou zijn die het item bevat, moest het item zich
+     *                in de zeepbelboom bevinden.
+     * @param tombStone als het object in de zeepbelboom zit maar een grafsteen is wordt de top aan deze
+     *
+     * @return <tt>true</tt> wanneer het gezochte object in de zeepbelboom zit en niet is verwijderd.
+     */
     @Override
     protected boolean find(Object o, Consumer<Node<E>> found, Consumer<Node<E>> closest, Consumer<Node<E>> tombStone) {
         return super.find(o,
@@ -45,6 +57,10 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
                 );
     }
 
+    /**
+     * De semi-splay operatie die de zeepbel, zijn ouderzeepbel en zijn grootouderzeepbel gaat splayen.
+     * @param node van waaruit de semisplay vertrekt.
+     */
     private void semiSplay(Node<E> node){
         Zeepbel<E> bubble = node.getZeepbel();
 
@@ -135,6 +151,9 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
     }
 
 
+    /**
+     * Private klasse die door de semisplay methode wordt gebruikt.
+     */
     private class BubbleContainer{
 
         private Zeepbel<E> zb1;
@@ -147,6 +166,11 @@ public class Zeepbelboom4<E extends Comparable<E>> extends Zeepbelboom<E>{
             this.zb3 = zb3;
         }
 
+        /**
+         * Bepaald in constante tijd of de gegeven zeepbel in deze container zit.
+         * @param zb gezochte zeepbel.
+         * @return <tt>true</tt> wanneer de zeepbel aanwezig is.
+         */
         public boolean contains(Zeepbel<E> zb){
             return zb == zb1 || zb == zb2 || zb == zb3;
         }

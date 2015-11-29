@@ -1,4 +1,4 @@
-package Tests;
+package tests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -10,7 +10,8 @@ import java.util.Collection;
 import java.util.function.Supplier;
 
 /**
- * Created by Rien on 14/11/2015.
+ * Klasse die de correctheid van een semi-splay zeepbelboom gaat testen.
+ * @author Rien Maertens
  */
 @RunWith(Parameterized.class)
 public class TestSemiSplayZeepbelboom extends AbstractZeepbelBoomTest {
